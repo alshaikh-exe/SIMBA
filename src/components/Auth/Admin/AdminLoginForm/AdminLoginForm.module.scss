@@ -1,0 +1,137 @@
+/* AdminLoginForm.module.scss — Neumorphic theme */
+
+$bg: #e0e5ec;
+$shadow-dark: #bec3cf;
+$shadow-light: #ffffff;
+
+$text: #3d4468;
+$muted: #6c7293;
+$error: #ff3b5c;
+
+$radius-card: 30px;
+$radius-field: 15px;
+
+/* Card-like form wrapper */
+.form {
+  width: min(92vw, 420px);
+  margin: 6vh auto 0;
+  padding: 48px 36px;
+  background: $bg;
+  border-radius: $radius-card;
+  box-shadow: 20px 20px 60px $shadow-dark, -20px -20px 60px $shadow-light;
+
+  display: grid;
+  gap: 18px;
+  color: $text;
+
+  /* generic link text inside the form (for your <p> links) */
+  p {
+    margin: 2px 0 0;
+    text-align: center;
+    color: $muted;
+    a {
+      color: $muted;
+      font-weight: 700;
+      text-decoration: none;
+      &:hover { color: $text; text-decoration: underline; }
+    }
+  }
+}
+
+/* Neumorphic inputs */
+.input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  border-radius: $radius-field;
+  padding: 18px 22px;
+  background: $bg;
+  color: $text;
+  font-size: 1rem;
+  font-weight: 500;
+
+  box-shadow:
+    inset 8px 8px 16px $shadow-dark,
+    inset -8px -8px 16px $shadow-light;
+  transition: box-shadow .22s ease;
+
+  &::placeholder { color: lighten($muted, 12%); }
+
+  &:focus {
+    box-shadow:
+      inset 4px 4px 8px $shadow-dark,
+      inset -4px -4px 8px $shadow-light;
+  }
+}
+
+/* Neumorphic button */
+.button {
+  margin-top: 4px;
+  border: 0;
+  border-radius: $radius-field;
+  padding: 16px 24px;
+  background: $bg;
+  color: $text;
+  font-weight: 700;
+  letter-spacing: .2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  box-shadow: 8px 8px 20px $shadow-dark, -8px -8px 20px $shadow-light;
+  transition: transform .08s ease, box-shadow .18s ease;
+
+  &::before {
+    content: '';
+    position: absolute; inset: 0;
+    left: -100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+    transition: left .5s ease;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 12px 12px 30px $shadow-dark, -12px -12px 30px $shadow-light;
+    &::before { left: 100%; }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: inset 4px 4px 10px $shadow-dark, inset -4px -4px 10px $shadow-light;
+  }
+
+  &:disabled { opacity: .6; cursor: not-allowed; }
+}
+
+/* Error toast */
+.error {
+  margin-top: -4px;
+  padding: .6rem .8rem;
+  border-left: 4px solid $error;
+  background: #fff1f4;
+  color: darken($error, 20%);
+  border-radius: 10px;
+  font-size: .92rem;
+}
+
+/* Optional: use instead of raw <p> links
+.links {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: $muted;
+
+  a {
+    color: $muted;
+    font-weight: 700;
+    text-decoration: none;
+    &:hover { color: $text; text-decoration: underline; }
+  }
+}
+*/
+
+@media (max-width: 480px) {
+  .form { padding: 36px 24px; border-radius: 22px; }
+  .input { padding: 16px 18px; }
+}
