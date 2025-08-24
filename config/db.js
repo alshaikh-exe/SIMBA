@@ -1,3 +1,4 @@
+
 import dotenv from 'dotenv'
 import mongoose from 'mongoose';
 
@@ -20,3 +21,4 @@ db.on('disconnected', function() {
 });
 
 export default db
+

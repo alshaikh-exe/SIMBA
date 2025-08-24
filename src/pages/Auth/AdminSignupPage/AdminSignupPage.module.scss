@@ -1,0 +1,64 @@
+/* AdminSignupPage.module.scss — white/neutral neumorphic theme to match AdminLoginPage */
+
+$bg: #f3f6fb;           // page background
+$shadow-dark: #d6dbe6;  // outer shadow (soft grey)
+$shadow-light: #ffffff; // light lift
+$title: #3d4468;        // heading color
+
+.AuthPage {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 2.5rem 1.25rem;
+  background: radial-gradient(1200px 600px at 70% 30%, #ffffff 0%, $bg 60%),
+              linear-gradient(135deg, #ffffff 0%, $bg 100%);
+
+  .toggleTitle {
+    margin: 0 0 1.25rem;
+    text-align: center;
+    color: $title;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+    user-select: none;
+
+    /* subtle underline accent */
+    &::after {
+      content: "";
+      display: block;
+      width: 86px;
+      height: 4px;
+      margin: .55rem auto 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,.06), transparent);
+    }
+  }
+
+  .formContainer {
+    width: min(92vw, 480px);
+    padding: 46px 36px;
+    border-radius: 28px;
+    background: #ffffff;
+    box-shadow:
+      20px 20px 60px $shadow-dark,
+      -20px -20px 60px $shadow-light;
+    outline: 1px solid rgba(0,0,0,0.03);
+
+    /* optional helper text inside the card */
+    .note {
+      margin-top: 12px;
+      text-align: center;
+      font-size: .9rem;
+      color: #6c7293;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .AuthPage {
+    padding: 1.5rem .75rem;
+
+    .toggleTitle { font-size: 1.5rem; }
+    .formContainer { padding: 32px 22px; border-radius: 22px; }
+  }
+}
