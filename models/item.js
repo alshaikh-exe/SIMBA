@@ -33,7 +33,11 @@ const itemSchema = new Schema(
             enum: ["returnable", "nonreturnable"], 
             default: "returnable",
         },
-        deadline: { type: Number, default: 7, min: 1, max: 50}, 
+        deadline: { 
+            type: Number, 
+            default: 7, 
+            min: 1, 
+            max: 50}, 
 
     },
     { timestamps: true }
