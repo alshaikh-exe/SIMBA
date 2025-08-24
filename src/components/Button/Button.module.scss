@@ -1,0 +1,203 @@
+//Zahraa
+// src/components/Button/Button.scss
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+  overflow: hidden;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+  }
+
+  // Variants
+  &--primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    border-color: transparent;
+
+    &:hover:not(.button--disabled):not(.button--loading) {
+      background: linear-gradient(135deg, #2980b9, #1f5f8b);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    &:active:not(.button--disabled):not(.button--loading) {
+      transform: translateY(0);
+    }
+  }
+
+  &--secondary {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    border-color: transparent;
+
+    &:hover:not(.button--disabled):not(.button--loading) {
+      background: linear-gradient(135deg, #7f8c8d, #6c7b7d);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(149, 165, 166, 0.4);
+    }
+  }
+
+  &--success {
+    background: linear-gradient(135deg, #27ae60, #219a52);
+    color: white;
+    border-color: transparent;
+
+    &:hover:not(.button--disabled):not(.button--loading) {
+      background: linear-gradient(135deg, #219a52, #1e8449);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+  }
+
+  &--danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border-color: transparent;
+
+    &:hover:not(.button--disabled):not(.button--loading) {
+      background: linear-gradient(135deg, #c0392b, #a93226);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+  }
+
+  &--outline {
+    background: transparent;
+    color: #3498db;
+    border-color: #3498db;
+
+    &:hover:not(.button--disabled):not(.button--loading) {
+      background: #3498db;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: #2c3e50;
+    border-color: transparent;
+
+    &:hover:not(.button--disabled):not(.button--loading) {
+      background: #ecf0f1;
+      color: #2c3e50;
+    }
+  }
+
+  // Sizes
+  &--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 36px;
+  }
+
+  &--medium {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-height: 44px;
+  }
+
+  &--large {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    min-height: 52px;
+  }
+
+  // States
+  &--loading {
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+
+  // Loading spinner
+  &__spinner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  &__content {
+    transition: opacity 0.3s ease;
+
+    &--hidden {
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Focus styles for accessibility
+.button:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .button {
+    border-width: 2px;
+    
+    &--primary {
+      border-color: #2980b9;
+    }
+    
+    &--secondary {
+      border-color: #7f8c8d;
+    }
+    
+    &--success {
+      border-color: #219a52;
+    }
+    
+    &--danger {
+      border-color: #c0392b;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+    
+    &:hover {
+      transform: none;
+    }
+    
+    &__spinner {
+      animation: none;
+    }
+  }
+}
