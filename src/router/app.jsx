@@ -5,7 +5,7 @@ import { getUser } from '../utilities/users-service';
 import AdminLoginPage from '../pages/Auth/AdminLoginPage/AdminLoginPage';
 import AdminSignupPage from '../pages/Auth/AdminSignupPage/AdminSignupPage';
 import UserAuthPage from '../pages/Auth/UserAuthPage/UserAuthPage';
-import MainPage from '../pages/MainPage/MainPage';
+
 
 const AppRouter = () => {
   const [user, setUser] = useState(getUser());
