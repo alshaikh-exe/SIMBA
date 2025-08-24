@@ -28,17 +28,13 @@ function clampInt(n, min, max) {
 
 function sanitizePolicyInputs({ returnPolicy, deadline }) {
   const sanitized = {};
-
   if (typeof returnPolicy === "string" && VALID_RETURN_POLICIES.includes(returnPolicy)) {
     sanitized.returnPolicy = returnPolicy;
   }
-
-  // Always accept deadline as an integer within [1..50], since the schema enforces it anyway
   if (deadline !== undefined) {
     const d = clampInt(deadline, DEADLINE_MIN, DEADLINE_MAX);
     if (d !== null) sanitized.deadline = d;
   }
-
   return sanitized;
 }
 
@@ -57,17 +53,13 @@ async function resolveLocation({ locationId, campus, building, classroom }) {
     }
     return loc;
   }
-
   if (campus && building && classroom) {
-    // Upsert a location based on the triple
-    const loc = await Location.findOneAndUpdate(
+    return await Location.findOneAndUpdate(
       { campus, building, classroom },
       { $setOnInsert: { campus, building, classroom } },
       { new: true, upsert: true }
     );
-    return loc;
   }
-
   const err = new Error("Provide either locationId or campus+building+classroom");
   err.status = 400;
   throw err;
@@ -88,38 +80,62 @@ function selectUpdatableFields(body) {
   if (typeof body.name === "string") updatable.name = body.name;
   if (typeof body.details === "string") updatable.details = body.details;
   if (typeof body.picture === "string") updatable.picture = body.picture;
-
-  // Handle policy fields together
   Object.assign(updatable, sanitizePolicyInputs({ returnPolicy: body.returnPolicy, deadline: body.deadline }));
-
   return updatable;
 }
 
 function populateItem(query) {
-  return query
-    .populate("location")
-    .populate("createdBy", "name email");
+  return query.populate("location").populate("createdBy", "name email");
+}
+
+// ---- datasheet utilities (no external API) ----
+const ALLDATASHEET_BASE = "https://www.alldatasheet.net/view.jsp?Searchword=";
+
+// Light heuristic for common electronics part numbers
+function extractLikelyPartNumbers(...texts) {
+  const prefixes = [
+    "LM","TL","NE","OPA","AD","LT","IRF","IRL","BC","BD","2N","1N",
+    "SS","ATMEGA","STM32","ESP32","ESP8266","MAX","MIC","TPS","AMS",
+    "AP","AOZ","SI","SN","74HC","74HCT","74LS","MB","NCP","MP"
+  ];
+  const regex = new RegExp(String.raw`\b(?:${prefixes.join("|")})[A-Z0-9\-]*\d+[A-Z0-9\-]*\b`, "gi");
+
+  const found = new Set();
+  texts.join(" ").replace(regex, (m) => {
+    const clean = m.toUpperCase().replace(/[.,;:)\]]+$/, "");
+    if (clean.length >= 4 && clean.length <= 24) found.add(clean);
+    return m;
+  });
+  return Array.from(found).slice(0, 12);
+}
+
+function makeAlldatasheetLink(query) {
+  return `${ALLDATASHEET_BASE}${encodeURIComponent(query)}`;
+}
+
+function buildDatasheetLinks(parts) {
+  return parts.map((p) => ({
+    title: p,
+    url: makeAlldatasheetLink(p),
+    source: "alldatasheet.net",
+  }));
+}
+
+function policySummary(item) {
+  if (item.returnPolicy === "returnable") {
+    return `Returnable; deadline ${item.deadline} day(s).`;
+  }
+  return "Non-returnable/one-way issue.";
 }
 
 // ----------------- controllers -----------------
 
 // GET /api/items
-// Supports: text search, campus/building/classroom filters, returnPolicy filter, pagination, sorting
 export async function index(req, res) {
   try {
-    const {
-      q,
-      campus,
-      building,
-      classroom,
-      returnPolicy, // optional filter
-      page = 1,
-      limit = 10,
-      sort = "-createdAt",
-    } = req.query;
+    const { q, campus, building, classroom, returnPolicy, page = 1, limit = 10, sort = "-createdAt" } = req.query;
 
     const filters = { ...buildTextFilter(q) };
-
     if (typeof returnPolicy === "string" && VALID_RETURN_POLICIES.includes(returnPolicy)) {
       filters.returnPolicy = returnPolicy;
     }
@@ -139,64 +155,57 @@ export async function index(req, res) {
     res.status(200).json({
       success: true,
       data: items,
-      meta: {
-        total,
-        page: $page,
-        pages: Math.max(1, Math.ceil(total / $limit)),
-        limit: $limit,
-      },
+      meta: { total, page: $page, pages: Math.max(1, Math.ceil(total / $limit)), limit: $limit },
     });
   } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ success: false, message: err.message || "Server error" });
+    res.status(err.status || 500).json({ success: false, message: err.message || "Server error" });
   }
 }
 
 // GET /api/items/:id
+// Enhances response with partNumbers, datasheetLinks, and policySummary
 export async function show(req, res) {
   try {
     const { id } = req.params;
-    if (!Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid id" });
-    }
+    if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid id" });
 
     const item = await populateItem(Item.findById(id));
     if (!item) return res.status(404).json({ success: false, message: "Item not found" });
 
-    res.status(200).json({ success: true, data: item });
+    // Allow manual override via ?parts=LM358,IRFZ44N
+    const partsParam = (req.query.parts || "").toString().trim();
+    const manualParts = partsParam
+      ? partsParam.split(",").map(s => s.trim().toUpperCase()).filter(Boolean)
+      : [];
+
+    const autoParts = extractLikelyPartNumbers(item.name || "", item.details || "");
+    const partNumbers = Array.from(new Set([...manualParts, ...autoParts]));
+    const datasheetLinks = buildDatasheetLinks(partNumbers);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        item,
+        partNumbers,
+        datasheetLinks,
+        policySummary: policySummary(item),
+      },
+    });
   } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ success: false, message: err.message || "Server error" });
+    res.status(err.status || 500).json({ success: false, message: err.message || "Server error" });
   }
 }
 
 // POST /api/items
-// Requires auth; accepts either locationId OR campus+building+classroom
 export async function create(req, res) {
   try {
-    if (!req.user?._id) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const {
-      name,
-      details,
-      picture,
-      returnPolicy,
-      deadline,
-      locationId,
-      campus,
-      building,
-      classroom,
-    } = req.body;
-
+    const { name, details, picture, returnPolicy, deadline, locationId, campus, building, classroom } = req.body;
     if (!name || !details) {
       return res.status(400).json({ success: false, message: "name and details are required" });
     }
 
-    // Validate returnPolicy explicitly if supplied
     if (returnPolicy && !VALID_RETURN_POLICIES.includes(returnPolicy)) {
       return res.status(400).json({
         success: false,
@@ -205,7 +214,6 @@ export async function create(req, res) {
     }
 
     const loc = await resolveLocation({ locationId, campus, building, classroom });
-
     const policy = sanitizePolicyInputs({ returnPolicy, deadline });
 
     const toCreate = {
@@ -214,12 +222,11 @@ export async function create(req, res) {
       picture,
       location: loc._id,
       createdBy: req.user._id,
-      ...policy, // adds returnPolicy/deadline if provided (deadline will be clamped)
+      ...policy,
     };
 
     const created = await Item.create(toCreate);
     const populated = await populateItem(Item.findById(created._id));
-
     res.status(201).json({ success: true, data: populated });
   } catch (err) {
     const code = err.code === 11000 ? 400 : err.status || 500;
@@ -230,26 +237,19 @@ export async function create(req, res) {
 }
 
 // PUT /api/items/:id
-// Owner-only; can move location or change policy
 export async function update(req, res) {
   try {
-    if (!req.user?._id) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
     const { id } = req.params;
-    if (!Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid id" });
-    }
+    if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid id" });
 
     const existing = await Item.findById(id);
     if (!existing) return res.status(404).json({ success: false, message: "Item not found" });
-
     if (existing.createdBy?.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
-    // Validate returnPolicy explicitly if client tries to set it
     if ("returnPolicy" in req.body && !VALID_RETURN_POLICIES.includes(req.body.returnPolicy)) {
       return res.status(400).json({
         success: false,
@@ -259,18 +259,13 @@ export async function update(req, res) {
 
     const updates = selectUpdatableFields(req.body);
 
-    // Optional: move to a new location
     const { locationId, campus, building, classroom } = req.body;
     if (locationId || (campus && building && classroom)) {
       const loc = await resolveLocation({ locationId, campus, building, classroom });
       updates.location = loc._id;
     }
 
-    const updated = await Item.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true,
-    });
-
+    const updated = await Item.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
     const populated = await populateItem(Item.findById(updated._id));
     res.status(200).json({ success: true, data: populated });
   } catch (err) {
@@ -282,21 +277,15 @@ export async function update(req, res) {
 }
 
 // DELETE /api/items/:id
-// Owner-only
 export async function destroy(req, res) {
   try {
-    if (!req.user?._id) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
     const { id } = req.params;
-    if (!Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid id" });
-    }
+    if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid id" });
 
     const existing = await Item.findById(id);
     if (!existing) return res.status(404).json({ success: false, message: "Item not found" });
-
     if (existing.createdBy?.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
@@ -304,10 +293,8 @@ export async function destroy(req, res) {
     await Item.findByIdAndDelete(id);
     res.status(200).json({ success: true, data: id });
   } catch (err) {
-    res
-      .status(err.status || 500)
-      .json({ success: false, message: err.message || "Server error" });
+    res.status(err.status || 500).json({ success: false, message: err.message || "Server error" });
   }
 }
 
-export default { index, show, create, update, destroy };git 
+export default { index, show, create, update, destroy };
