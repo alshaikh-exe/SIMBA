@@ -4,6 +4,7 @@ import itemSchema from './item.js';
 
 const lineItemSchema = new Schema({
   qty: { type: Number, default: 1 },
+  
   item: itemSchema
 }, {
   timestamps: true,
