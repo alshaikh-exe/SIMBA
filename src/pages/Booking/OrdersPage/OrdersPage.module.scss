@@ -1,0 +1,337 @@
+//Zahraa
+// src/components/Booking/Orders/Orders.scss
+.orders-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .orders-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h2 {
+      color: #2c3e50;
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .orders-controls {
+      display: flex;
+      gap: 1rem;
+
+      .filter-select {
+        padding: 0.75rem;
+        border: 2px solid #e1e8ed;
+        border-radius: 8px;
+        background: white;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #3498db;
+        }
+      }
+    }
+  }
+
+  .orders-loading {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #7f8c8d;
+  }
+
+  .error-message {
+    background-color: #fee;
+    color: #c53030;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #feb2b2;
+  }
+
+  .no-orders {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    p {
+      color: #7f8c8d;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+
+      &:first-child {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+    }
+  }
+
+  .orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    .order-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e1e8ed;
+      overflow: hidden;
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e1e8ed;
+
+        .order-info {
+          h3 {
+            color: #2c3e50;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+          }
+
+          .order-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin: 0;
+          }
+        }
+
+        .order-status {
+          .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+
+            &.status-pending {
+              background: #fef5e7;
+              color: #f39c12;
+            }
+
+            &.status-approved {
+              background: #e3f2fd;
+              color: #2196f3;
+            }
+
+            &.status-active {
+              background: #e8f5e8;
+              color: #4caf50;
+            }
+
+            &.status-completed {
+              background: #d5f4e6;
+              color: #27ae60;
+            }
+
+            &.status-cancelled {
+              background: #fdeaea;
+              color: #e74c3c;
+            }
+
+            &.status-rejected {
+              background: #fdf2f8;
+              color: #e91e63;
+            }
+
+            &.status-unknown {
+              background: #f8f9fa;
+              color: #6c757d;
+            }
+          }
+        }
+      }
+
+      .order-details {
+        padding: 1.5rem;
+
+        .order-summary {
+          display: flex;
+          gap: 2rem;
+          margin-bottom: 1.5rem;
+          padding: 1rem;
+          background: #f8f9fa;
+          border-radius: 8px;
+
+          p {
+            margin: 0;
+            color: #2c3e50;
+
+            strong {
+              color: #34495e;
+            }
+          }
+        }
+
+        .order-items {
+          margin-bottom: 1.5rem;
+
+          h4 {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+          }
+
+          .booking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            background: white;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .item-info {
+              flex: 1;
+
+              strong {
+                display: block;
+                color: #2c3e50;
+                font-size: 1rem;
+                margin-bottom: 0.25rem;
+              }
+
+              .item-category {
+                background: #ecf0f1;
+                color: #2c3e50;
+                padding: 0.25rem 0.75rem;
+                border-radius: 15px;
+                font-size: 0.75rem;
+                font-weight: 500;
+              }
+            }
+
+            .booking-time {
+              text-align: right;
+              font-size: 0.9rem;
+
+              p {
+                margin: 0.25rem 0;
+                color: #7f8c8d;
+
+                strong {
+                  color: #2c3e50;
+                }
+              }
+            }
+          }
+        }
+
+        .order-notes,
+        .rejection-reason {
+          margin-bottom: 1rem;
+
+          h4 {
+            color: #2c3e50;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+          }
+
+          p {
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin: 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+          }
+        }
+
+        .rejection-reason {
+          p {
+            background: #fdeaea;
+            color: #c53030;
+          }
+        }
+      }
+
+      .order-actions {
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        border-top: 1px solid #e1e8ed;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 1rem;
+
+    .orders-header {
+      flex-direction: column;
+      align-items: stretch;
+
+      .orders-controls {
+        flex-direction: column;
+      }
+    }
+
+    .orders-list {
+      .order-card {
+        .order-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+
+        .order-details {
+          padding: 1rem;
+
+          .order-summary {
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .booking-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+
+            .booking-time {
+              text-align: left;
+            }
+          }
+        }
+
+        .order-actions {
+          flex-direction: column;
+          padding: 1rem;
+        }
+      }
+    }
+  }
+}
