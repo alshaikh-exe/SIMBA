@@ -10,26 +10,20 @@ const lineItemSchema = new Schema({
   toJSON: { virtuals: true }
 });
 
-lineItemSchema.virtual('extPrice').get(function() {
-  // 'this' is bound to the lineItem subdoc
-  return this.qty * this.item.price;
-});
 
 const orderSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
-  lineItems: [lineItemSchema],
-  isPaid: { type: Boolean, default: false }
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
+    lineItems: [lineItemSchema],
+    status: { type: String, default: 'pending' },
+    message: {type: Schema.Types.ObjectId, ref: 'Message'}
 }, {
   timestamps: true,
   toJSON: { virtuals: true }
 });
 
-orderSchema.virtual('orderTotal').get(function() {
-  return this.lineItems.reduce((total, item) => total + item.extPrice, 0);
-});
 
 orderSchema.virtual('totalQty').get(function() {
-  return this.lineItems.reduce((total, item) => total + item.qty, 0);
+    return this.lineItems.reduce((total, item) => total + item.qty, 0);
 });
 
 orderSchema.virtual('orderId').get(function() {
@@ -40,7 +34,7 @@ orderSchema.statics.getCart = function(userId) {
   // 'this' is the Order model
   return this.findOneAndUpdate(
     // query
-    { user: userId, isPaid: false },
+    { user: userId, status: 'pending' },
     // update
     { user: userId },
     // upsert option will create the doc if
