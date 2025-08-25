@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useState } from 'react';
 import styles from './AppRouter.module.scss';
 import { getUser } from '../utilities/users-service';
+import Navbar from "../components/Navbar/Navbar";
 
 //Auth Pages
 import AdminLoginPage from '../pages/Auth/AdminLoginPage/AdminLoginPage';
@@ -27,7 +28,7 @@ const AppRouter = () => {
   return (
     <Router>
       <main className={styles.App}>
-
+        <Navbar user={user} setUser={setUser}/>
         <Routes>
           {/* Routes for authentication pages */}
           {!user && (
@@ -43,7 +44,7 @@ const AppRouter = () => {
           {user && user.role === 'admin' && (
             <>
               <Route path="/analytics" element={<AnalyticsPage user={user} setUser={setUser} />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile" element={<ProfilePage user={user} />} /> /* Modified */
               <Route path="/stock-request" element={<StockRequestPage user={user} setUser={setUser}/>} />
               <Route path="/*" element={<Navigate to="/stock-request" />} />
             </>
@@ -52,8 +53,8 @@ const AppRouter = () => {
           {user && user.role === 'user' && (
             <>
               <Route path="/analytics" element={<AnalyticsPage user={user} setUser={setUser}/>} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/items" element={<ItemsPage />} />
+              <Route path="/profile" element={<ProfilePage user={user}/>} />
+              <Route path="/items" element={<ItemsPage user={user}/>} />
               <Route path="/items/edit/:id" element={<ItemsEditPage />} />
               <Route path="/items/:id" element={<ItemsShowPage />} />
               <Route path="/orders" element={<OrdersPage user={user} setUser={setUser}/>} />
