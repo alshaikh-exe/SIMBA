@@ -29,10 +29,10 @@ app.use((req, res, next) => {
 
 // ---------- API ROUTES ----------
 // Public auth endpoints first (register/login live here)
-app.use("/api/users", userRoutes)
+app.use("/user", userRoutes)
 
 // Protected routes (attach checkToken + ensureLoggedIn)
-app.use("/api/users", checkToken, ensureLoggedIn, adminRoutes)
+app.use("/api/user", checkToken, ensureLoggedIn, adminRoutes)
 app.use("/api/roles", checkToken, ensureLoggedIn, roleRoutes)
 app.use("/api/items", checkToken, ensureLoggedIn, itemsRoutes)
 app.use("/api/orders", checkToken, ensureLoggedIn, ordersRoutes)

@@ -1,14 +1,19 @@
-
-import { Router } from "express";
-import { index, show, create, update, destroy } from "../../controllers/api/items.js";
+import express from "express";
+import { index, show, create, update, destroy, lowStock } from "../../controllers/api/items.js";
 import ensureLoggedIn from "../../config/ensureLoggedIn.js";
 
-const router = Router();
+const router = express.Router();
 
+// Public
 router.get("/", index);
 router.get("/:id", show);
-router.post("/",ensureLoggedIn,  create);
-router.put("/:id", ensureLoggedIn,  update);
+
+// Protected
+router.post("/", ensureLoggedIn, create);
+router.put("/:id", ensureLoggedIn, update);
 router.delete("/:id", ensureLoggedIn, destroy);
+
+// Low stock check
+router.get("/low-stock", ensureLoggedIn, lowStock);
 
 export default router;
