@@ -13,6 +13,8 @@ import itemsRoutes from "./routes/api/items.js"
 import ordersRoutes from "./routes/api/orders.js"
 import checkToken from "./config/checkToken.js"
 import ensureLoggedIn from "./config/ensureLoggedIn.js"
+import managementRoutes from "./routes/api/management.js";
+
 
 const app = express()
 
@@ -36,6 +38,7 @@ app.use("/api/users", checkToken, ensureLoggedIn, adminRoutes)
 app.use("/api/roles", checkToken, ensureLoggedIn, roleRoutes)
 app.use("/api/items", checkToken, ensureLoggedIn, itemsRoutes)
 app.use("/api/orders", checkToken, ensureLoggedIn, ordersRoutes)
+app.use("/api/management", checkToken, ensureLoggedIn, managementRoutes);
 
 // ---------- STATIC / REACT ----------
 const staticDir = process.env.NODE_ENV === "production" ? "dist" : "public"
