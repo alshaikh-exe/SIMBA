@@ -1,4 +1,3 @@
-// controllers/api/items.js
 import mongoose from "mongoose";
 import Item from "../../models/item.js";
 import Location from "../../models/location.js";
@@ -65,21 +64,14 @@ async function resolveLocation({ locationId, campus, building, classroom }) {
   throw err;
 }
 
-async function filterByLocationQuery({ campus, building, classroom }) {
-  if (!campus && !building && !classroom) return {};
-  const locQuery = {};
-  if (campus) locQuery.campus = campus;
-  if (building) locQuery.building = building;
-  if (classroom) locQuery.classroom = classroom;
-  const locs = await Location.find(locQuery).select("_id");
-  return locs.length ? { location: { $in: locs.map((l) => l._id) } } : { location: { $in: [] } };
-}
-
 function selectUpdatableFields(body) {
   const updatable = {};
   if (typeof body.name === "string") updatable.name = body.name;
   if (typeof body.details === "string") updatable.details = body.details;
   if (typeof body.picture === "string") updatable.picture = body.picture;
+  if (typeof body.quantity === "number") updatable.quantity = body.quantity;
+  if (typeof body.threshold === "number") updatable.threshold = body.threshold;
+
   Object.assign(updatable, sanitizePolicyInputs({ returnPolicy: body.returnPolicy, deadline: body.deadline }));
   return updatable;
 }
@@ -88,10 +80,9 @@ function populateItem(query) {
   return query.populate("location").populate("createdBy", "name email");
 }
 
-// ---- datasheet utilities (no external API) ----
+// ---- datasheet utilities ----
 const ALLDATASHEET_BASE = "https://www.alldatasheet.net/view.jsp?Searchword=";
 
-// Light heuristic for common electronics part numbers
 function extractLikelyPartNumbers(...texts) {
   const prefixes = [
     "LM","TL","NE","OPA","AD","LT","IRF","IRL","BC","BD","2N","1N",
@@ -130,7 +121,6 @@ function policySummary(item) {
 
 // ----------------- controllers -----------------
 
-// GET /api/items
 export async function index(req, res) {
   try {
     const { q, campus, building, classroom, returnPolicy, page = 1, limit = 10, sort = "-createdAt" } = req.query;
@@ -162,8 +152,6 @@ export async function index(req, res) {
   }
 }
 
-// GET /api/items/:id
-// Enhances response with partNumbers, datasheetLinks, and policySummary
 export async function show(req, res) {
   try {
     const { id } = req.params;
@@ -172,7 +160,6 @@ export async function show(req, res) {
     const item = await populateItem(Item.findById(id));
     if (!item) return res.status(404).json({ success: false, message: "Item not found" });
 
-    // Allow manual override via ?parts=LM358,IRFZ44N
     const partsParam = (req.query.parts || "").toString().trim();
     const manualParts = partsParam
       ? partsParam.split(",").map(s => s.trim().toUpperCase()).filter(Boolean)
@@ -184,28 +171,18 @@ export async function show(req, res) {
 
     res.status(200).json({
       success: true,
-      data: {
-        item,
-        partNumbers,
-        datasheetLinks,
-        policySummary: policySummary(item),
-      },
+      data: { item, partNumbers, datasheetLinks, policySummary: policySummary(item) },
     });
   } catch (err) {
     res.status(err.status || 500).json({ success: false, message: err.message || "Server error" });
   }
 }
 
-// POST /api/items
-import { enrichItemDetails } from "../../config/aiService.js"; // <-- make sure this is in place
-
 export async function create(req, res) {
   try {
-    if (!req.user?._id) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const { name, details, picture, returnPolicy, deadline, locationId, campus, building, classroom } = req.body;
+    const { name, details, picture, returnPolicy, deadline, quantity, threshold, locationId, campus, building, classroom } = req.body;
     if (!name || !details) {
       return res.status(400).json({ success: false, message: "name and details are required" });
     }
@@ -220,15 +197,14 @@ export async function create(req, res) {
     const loc = await resolveLocation({ locationId, campus, building, classroom });
     const policy = sanitizePolicyInputs({ returnPolicy, deadline });
 
-    // 🔮 Call AI service to enrich details
-    const aiDetails = await enrichItemDetails(name);
-
     const toCreate = {
       name: name.trim(),
-      details: `${details}\n\nAI Generated Details:\n${aiDetails}`, // append AI results
+      details,
       picture,
       location: loc._id,
       createdBy: req.user._id,
+      quantity: quantity || 0,
+      threshold: threshold || 5,
       ...policy,
     };
 
@@ -237,13 +213,10 @@ export async function create(req, res) {
     res.status(201).json({ success: true, data: populated });
   } catch (err) {
     const code = err.code === 11000 ? 400 : err.status || 500;
-    const message =
-      err.code === 11000 ? "Duplicate key error (likely Location uniqueness)" : err.message || "Server error";
-    res.status(code).json({ success: false, message });
+    res.status(code).json({ success: false, message: err.message || "Server error" });
   }
 }
 
-// PUT /api/items/:id
 export async function update(req, res) {
   try {
     if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -257,15 +230,7 @@ export async function update(req, res) {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
-    if ("returnPolicy" in req.body && !VALID_RETURN_POLICIES.includes(req.body.returnPolicy)) {
-      return res.status(400).json({
-        success: false,
-        message: `returnPolicy must be one of: ${VALID_RETURN_POLICIES.join(", ")}`,
-      });
-    }
-
     const updates = selectUpdatableFields(req.body);
-
     const { locationId, campus, building, classroom } = req.body;
     if (locationId || (campus && building && classroom)) {
       const loc = await resolveLocation({ locationId, campus, building, classroom });
@@ -276,14 +241,10 @@ export async function update(req, res) {
     const populated = await populateItem(Item.findById(updated._id));
     res.status(200).json({ success: true, data: populated });
   } catch (err) {
-    const code = err.code === 11000 ? 400 : err.status || 500;
-    const message =
-      err.code === 11000 ? "Duplicate key error (likely Location uniqueness)" : err.message || "Server error";
-    res.status(code).json({ success: false, message });
+    res.status(err.status || 500).json({ success: false, message: err.message || "Server error" });
   }
 }
 
-// DELETE /api/items/:id
 export async function destroy(req, res) {
   try {
     if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -304,4 +265,15 @@ export async function destroy(req, res) {
   }
 }
 
-export default { index, show, create, update, destroy };
+// NEW: Low-stock route
+export async function lowStock(req, res) {
+  try {
+    const items = await Item.find({ $expr: { $lt: ["$quantity", "$threshold"] } });
+    res.status(200).json({ success: true, count: items.length, data: items });
+  } catch (err) {
+    console.error("Error fetching low stock items:", err);
+    res.status(500).json({ success: false, message: "Failed to fetch low stock items" });
+  }
+}
+
+export default { index, show, create, update, destroy, lowStock };
