@@ -197,9 +197,13 @@ export async function show(req, res) {
 }
 
 // POST /api/items
+import { enrichItemDetails } from "../../config/aiService.js"; // <-- make sure this is in place
+
 export async function create(req, res) {
   try {
-    if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
+    if (!req.user?._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
 
     const { name, details, picture, returnPolicy, deadline, locationId, campus, building, classroom } = req.body;
     if (!name || !details) {
@@ -216,9 +220,12 @@ export async function create(req, res) {
     const loc = await resolveLocation({ locationId, campus, building, classroom });
     const policy = sanitizePolicyInputs({ returnPolicy, deadline });
 
+    // 🔮 Call AI service to enrich details
+    const aiDetails = await enrichItemDetails(name);
+
     const toCreate = {
       name: name.trim(),
-      details,
+      details: `${details}\n\nAI Generated Details:\n${aiDetails}`, // append AI results
       picture,
       location: loc._id,
       createdBy: req.user._id,
