@@ -1,7 +1,7 @@
 //Zahraa
 import React from "react";
 import NavBar from "../../../components/Navbar/Navbar";
-import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
+// import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
 
 const StudentRequestsPage = ({ user, setUser }) => {
   return (
