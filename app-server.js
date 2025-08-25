@@ -15,6 +15,7 @@ import checkToken from "./config/checkToken.js"
 import ensureLoggedIn from "./config/ensureLoggedIn.js"
 import managementRoutes from "./routes/api/management.js";
 
+
 const app = express()
 
 const __filename = fileURLToPath(import.meta.url)
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
   res.locals.data = {}
   next()
 })
+
 // ---------- API ROUTES ----------
 // Public auth endpoints first (register/login live here)
 app.use("/api/users", userRoutes)
