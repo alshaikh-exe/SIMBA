@@ -1,5 +1,5 @@
 // services/aiService.js
-import fetch from "node-fetch";
+import fetch from "fetch";
 
 export async function enrichItemDetails(name) {
   try {
