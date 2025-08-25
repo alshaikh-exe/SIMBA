@@ -121,6 +121,19 @@ function policySummary(item) {
 
 // ----------------- controllers -----------------
 
+async function filterByLocationQuery({ campus, building, classroom }) {
+  if (!campus && !building && !classroom) return {};
+  const locQuery = {};
+  if (campus) locQuery.campus = campus;
+  if (building) locQuery.building = building;
+  if (classroom) locQuery.classroom = classroom;
+
+  const locs = await Location.find(locQuery).select("_id");
+  return locs.length
+    ? { location: { $in: locs.map(l => l._id) } }
+    : { location: { $in: [] } };
+}
+
 export async function index(req, res) {
   try {
     const { q, campus, building, classroom, returnPolicy, page = 1, limit = 10, sort = "-createdAt" } = req.query;
