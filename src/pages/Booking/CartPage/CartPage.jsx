@@ -1,7 +1,7 @@
 //Zahraa
 import React from "react";
 import NavBar from "../../../components/Navbar/Navbar";
-import Cart from "../../../components/Booking/Cart/Cart";
+// import Cart from "../../../components/Booking/Cart/Cart";
 
 const CartPage = ({ user, setUser }) => {
   return (

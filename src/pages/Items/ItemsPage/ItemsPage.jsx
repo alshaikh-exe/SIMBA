@@ -1,7 +1,7 @@
 //Zahraa
 import React from "react";
 import NavBar from "../../../components/Navbar/Navbar";
-import Items from "../../../components/Items/Items";
+// import Items from "../../../components/Items/Items";
 
 const ItemsPage = ({ user, setUser }) => {
   return (
