@@ -1,6 +1,6 @@
 import express from 'express';
 import ensureLoggedIn from '../../config/ensureLoggedIn.js';
-import requireRole from '../../config/requireRole.js';
+import requireRole from '../../config/requireRoles.js';
 
 const router = express.Router();
 
