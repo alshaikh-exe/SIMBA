@@ -1,18 +1,22 @@
 import React from "react";
+import NavBar from "../../../components/Navbar/Navbar";
+import UserProfile from "../../../components/Profile/UserProfile";
+import AdminProfile from "../../../components/Profile/AdminProfile";
 
-function Profile({ user }) {
-    return (
-        <div className="profile-container">
-            <h1>My Profile</h1>
-            <h2 className="profile-name">{user.name}</h2>
-            <p className="profile-email">{user.email}</p>
-            <p className="user-role">{user.role}</p>
+const ProfilePage = ({ user, setUser }) => {
+  return (
+    <main className="page-container">
+      <NavBar user={user} setUser={setUser} />
+      <section className="main-content">
+        <h1>Profile</h1>
+        {user?.role === "admin" ? (
+          <AdminProfile admin={user} />
+        ) : (
+          <UserProfile user={user} />
+        )}
+      </section>
+    </main>
+  );
+};
 
-            <div className="profile-btns">
-                <a href="/users/edit" className="profile-edit-btn">Edit Profile</a>
-            </div>
-            </div>
-    )
-}
-
-export default Profile;
+export default ProfilePage;
