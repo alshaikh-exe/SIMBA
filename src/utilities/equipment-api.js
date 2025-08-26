@@ -44,6 +44,7 @@ export const getItemById = async (itemId) => {
 };
 
 export const createItem = async (itemData) => {
+  console.log(itemData)
   const response = await fetch(`${BASE_URL}/items`, {
     method: 'POST',
     headers: getAuthHeaders(),
