@@ -1,35 +1,37 @@
-// services/aiService.js
-import fetch from "fetch";
+import OpenAI from "openai";
+
+
+const client = new OpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: "https://api.deepseek.com",
+});
 
 export async function enrichItemDetails(name) {
   try {
-    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`, 
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [
-          {
-            role: "admin",
-            content: "You are a technical assistant. For any electronic part, generate a detailed description and suggest datasheet links from alldatasheet.com, TI, STMicro, etc."
-          },
-          {
-            role: "user",
-            content: `Generate details and datasheet links for: ${name}`
-          }
-        ]
-      })
+    const completion = await client.chat.completions.create({
+      model: "deepseek-chat",
+      temperature: 0.2,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a concise technical assistant. For an electronic part, provide a short overview and key specs. Do not invent pricing/stock. Keep it factual and compact.",
+        },
+        {
+          role: "user",
+          content: `Part: ${name}
+
+Return a short paragraph (2–4 sentences) describing typical function and use cases.
+Then include 3–6 bullet points with typical key specs (e.g., supply voltage range, package options).
+End with a line: "Datasheet suggestions: TI, STMicro, Onsemi, alldatasheet.com" (adjust brands if obvious).`,
+        },
+      ],
     });
 
-    const data = await response.json();
-
-    // Extract the text DeepSeek returned
-    return data?.choices?.[0]?.message?.content || "No extra details generated.";
+    const text = completion?.choices?.[0]?.message?.content?.trim();
+    return text || "No extra details generated.";
   } catch (err) {
-    console.error("AI service error:", err.message);
+    console.error("DeepSeek error:", err?.status || "", err?.message || err);
     return "AI enrichment failed.";
   }
 }
