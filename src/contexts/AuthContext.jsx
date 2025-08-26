@@ -1,6 +1,6 @@
 // contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getToken, removeToken, setToken } from '../utilities/send-request';
+import { getToken, removeToken, setToken } from '../utilities/users-service';
 import * as usersAPI from '../utilities/users-api';
 
 const AuthContext = createContext();
