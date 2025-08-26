@@ -6,16 +6,16 @@ const AdminProfile = ({ admin }) => {
   return (
     <div className="profile-container">
       <img
-        src={admin.profilePic || "/default-avatar.png"}
+        src={admin.profilePicture || "/default-avatar.png"}
         alt={`${admin.name}'s profile`}
         className="profile-pic"
       />
       <h2>{admin.name}</h2>
       <p><strong>ID:</strong> {admin._id}</p>
       <p><strong>Email:</strong> {admin.email}</p>
-      <p><strong>Campus:</strong> {admin.campus}</p>
-      <p><strong>Office Hours:</strong> {admin.officeHours}</p>
-      <p><strong>Availability:</strong> {admin.availability ? "Available ✅" : "Not Available ❌"}</p>
+      <p><strong>Campus:</strong> {admin.adminCampus}</p>
+      <p><strong>Office Hours:</strong> {admin.adminOfficeHours}</p>
+      <p><strong>Availability:</strong> {admin.adminAvailability ? "Available ✅" : "Not Available ❌"}</p>
     </div>
   );
 };
