@@ -13,9 +13,29 @@ const ItemsShowPage = ({ user, setUser }) => {
 };
 
 export default ItemsShowPage;
+
+
+// import React from "react";
+// import NavBar from "../../../components/Navbar/Navbar";
+
+// const ItemsShowPage = ({ user, setUser }) => {
+//   return (
+//     <main>
+//       <aside>
+//         <NavBar user={user} setUser={setUser} />
+//       </aside>
+//       <div>
+//         <h1>Item Details</h1>
+//         {/* Add your item details component here */}
+//       </div>
+//     </main>
+//   );
+// };
+
+
 // import React, { useState, useEffect } from 'react';
 // import { useParams, useNavigate } from 'react-router-dom';
-// import './ItemsShowPage.scss';
+// import './Items.module.scss';
 // import Button from '../../../components/Button/Button';
 // import Calendar from '../../../components/Calendar/Calendar';
 
