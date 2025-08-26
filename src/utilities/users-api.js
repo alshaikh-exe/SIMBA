@@ -17,7 +17,7 @@ const BASE_URL = '/api/users';
 
 // Basic authentication
 export function signUp(userData) {
-  return sendRequest(`${BASE_URL}/signup`, 'POST', userData);
+  return sendRequest(`${BASE_URL}/`, 'POST', userData);
 }
 
 export function login(credentials) {
