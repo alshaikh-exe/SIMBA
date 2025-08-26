@@ -197,7 +197,7 @@ export async function create(req, res) {
     if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
 
-    const { name, details, picture, returnPolicy, deadline, quantity, threshold, locationId, campus, building, classroom } = req.body;
+    const { name, details, picture, returnPolicy, deadline, quantity, threshold, location, campus, building, classroom } = req.body;
 
     if (!name || !details) {
       return res.status(400).json({ success: false, message: "name and details are required" });
@@ -224,7 +224,7 @@ export async function create(req, res) {
       name: name.trim(),
       details: combinedDetails,
       picture,
-      location: loc._id,
+      location: location,
       createdBy: req.user._id,
       quantity: quantity ?? 0,
       threshold: threshold ?? 5,
