@@ -1,14 +1,11 @@
 //Zahraa
 import React from "react";
-import NavBar from "../../../components/Navbar/Navbar";
-// import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
+import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
 
 const StudentRequestsPage = ({ user, setUser }) => {
   return (
     <main>
-      <aside>
-        <NavBar user={user} setUser={setUser} />
-      </aside>
+
       <div>
         <h1>Student Requests</h1>
         <StudentRequests user={user} />

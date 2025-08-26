@@ -1,14 +1,10 @@
 //Zahraa
 import React from "react";
-import NavBar from "../../../components/Navbar/Navbar";
-// import Items from "../../../components/Items/Items";
+import Items from "../../../components/Items/Items";
 
 const ItemsPage = ({ user, setUser }) => {
   return (
     <main>
-      <aside>
-        <NavBar user={user} setUser={setUser} />
-      </aside>
       <div>
         <h1>Items</h1>
         <Items user={user} />

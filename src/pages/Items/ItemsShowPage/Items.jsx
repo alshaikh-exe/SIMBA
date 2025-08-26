@@ -1,13 +1,9 @@
 //Zahraa
 import React from "react";
-import NavBar from "../../../components/Navbar/Navbar";
 
 const ItemsShowPage = ({ user, setUser }) => {
   return (
     <main>
-      <aside>
-        <NavBar user={user} setUser={setUser} />
-      </aside>
       <div>
         <h1>Item Details</h1>
         {/* Add your item details component here */}
