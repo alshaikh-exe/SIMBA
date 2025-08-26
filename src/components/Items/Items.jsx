@@ -45,7 +45,7 @@
 import React, { useState, useEffect } from 'react';
 import { getItems, addItemToCart } from '../../utilities/equipment-api';
 import Button from '../Button/Button';
-import './Items.scss';
+import './Items.module.scss';
 
 export default function Items({ user, onAddToCart }) {
   const [items, setItems] = useState([]);

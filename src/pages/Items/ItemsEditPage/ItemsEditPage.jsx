@@ -20,7 +20,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './ItemsEditPage.scss';
+import './Items.module.scss';
 import Button from '../../../components/Button/Button';
 
 const ItemsEditPage = ({ user }) => {

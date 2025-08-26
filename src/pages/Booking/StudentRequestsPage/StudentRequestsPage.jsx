@@ -22,7 +22,7 @@ import NavBar from "../../../components/Navbar/Navbar";
 import React, { useState, useEffect } from 'react';
 import { getStudentRequests, updateRequestStatus } from '../../../utilities/requests-api';
 import { useAuth } from '../../../contexts/AuthContext';
-import './StudentRequests.scss';
+import './StudentRequestsPage.module.scss';
 
 export default function StudentRequests() {
   const [requests, setRequests] = useState([]);

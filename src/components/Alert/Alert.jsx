@@ -14,7 +14,7 @@
 
 // src/components/Alert/Alert.jsx
 import React, { useEffect, useState } from 'react';
-import './Alert.scss';
+import './Alert.module.scss';
 
 export default function Alert({
   message,
