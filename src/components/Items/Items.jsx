@@ -43,7 +43,7 @@
 // export default Items;
 // src/components/Items/Items.jsx
 import React, { useState, useEffect } from 'react';
-import { getItems, addItemToCart } from '../../utilities/equipment-api';
+import { getItems, addToCart } from '../../utilities/equipment-api';
 import Button from '../Button/Button';
 import './Items.module.scss';
 
@@ -126,7 +126,7 @@ export default function Items({ user, onAddToCart }) {
     }
   };
 
-  const categories = [...new Set(items.map(item => item.category))];
+  const categories = [...new Set(items?.map(item => item.category))];
 
   if (loading) return <div className="items-loading">Loading equipment...</div>;
 

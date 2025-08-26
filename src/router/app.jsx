@@ -12,6 +12,7 @@ import ProfilePage from '../pages/Profile/ProfilePage/ProfilePage';
 import ItemsPage from '../pages/Items/ItemsPage/ItemsPage';
 import ItemsEditPage from '../pages/Items/ItemsEditPage/ItemsEditPage';
 import ItemsShowPage from '../pages/Items/ItemsShowPage/Items';
+import ItemsCreatePage from '../pages/Items/ItemsCreate/ItemsCreate';
 import OrdersPage from '../pages/Booking/OrdersPage/OrdersPage';
 import CartPage from '../pages/Booking/CartPage/CartPage';
 import StudentRequestsPage from '../pages/Booking/StudentRequestsPage/StudentRequestsPage';
@@ -44,6 +45,7 @@ const AppRouter = () => {
               <Route path="/items" element={<ItemsPage user={user} setUser={setUser} />} />
               <Route path="/items/edit/:id" element={<ItemsEditPage user={user} setUser={setUser} />} />
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
+              <Route path="/items/create" element={<ItemsCreatePage user={user} setUser={setUser} />} />
               <Route path="/stock-request" element={<StockRequestPage user={user} setUser={setUser} />} />
               <Route path="/requests" element={<StudentRequestsPage user={user} setUser={setUser} />} />
               <Route path="/*" element={<Navigate to="/stock-request" />} />
