@@ -14,9 +14,9 @@ const ItemsCreatePage = ({ user }) => {
 
   useEffect (()=>{
     async function getAllLocations (){
-      const res = await getLocations () 
-      console.log(res.data)
-      setLocations(res)
+      const res = await getLocations() 
+      console.log(res)
+      setLocations(res.data)
     }
     getAllLocations()
   }, [])
@@ -271,9 +271,10 @@ const ItemsCreatePage = ({ user }) => {
                   id="location"
                   value={equipment.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder="Room, building, or area">
+                >
+                  <option value="">-----</option>
                   {locations?.map((location, i) => (
-                    <option key = {i} value = {location._id} >{location.building}.{location.class} {location.campus}</option>
+                    <option key={i} value={location._id}>{location.building}.{location.classroom} {location.campus}</option>
                   ))}
                 </select>
               </div>
