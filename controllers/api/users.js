@@ -41,6 +41,7 @@ const dataController = {
             userData.studentId = `${year}${nextIdNumber}`;
 
             // Other user fields
+            userData.profilePicture = body.profilePicture;
             userData.academicYear = body.academicYear;
             userData.major = body.major;
             userData.age = body.age;
