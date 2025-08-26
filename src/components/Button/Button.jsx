@@ -28,7 +28,7 @@
 // export default Button;
 // src/components/Button/Button.jsx
 import React from 'react';
-import './Button.scss';
+import './Button.module.scss';
 
 export default function Button({
   children,

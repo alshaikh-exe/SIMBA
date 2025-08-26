@@ -21,7 +21,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ItemsPage.scss';
+import './Items.module.scss';
 import Button from '../../../components/Button/Button';
 
 const ItemsPage = ({ user, cart, setCart }) => {

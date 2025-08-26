@@ -26,7 +26,7 @@
 // src/components/Calendar/Calendar.jsx
 import React, { useState, useEffect } from 'react';
 import { getItemAvailability } from '../../utilities/equipment-api';
-import './Calendar.scss';
+import './Calender.module.scss';
 
 export default function Calendar({ item, onDateChange, selectedDates }) {
   const [currentDate, setCurrentDate] = useState(new Date());
