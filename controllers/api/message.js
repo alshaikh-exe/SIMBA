@@ -13,6 +13,7 @@ async function createMessage(req, res) {
     const message = await Message.create({
       user: req.user._id,
       order: req.body.orderId,
+      type: req.body.type,
       message: req.body.message
     })
          res.status(201).json(message)
@@ -45,6 +46,7 @@ async function getUserMessages(req, res) {
   }
 }
 
+//Deleting message 
 async function deleteMessage(req, res) {
     try{
       const deleted = await Message.findOneAndDelete({
