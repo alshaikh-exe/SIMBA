@@ -9,10 +9,18 @@ export default function SignUpForm({ setUser }) {
         email: '',
         password: '',
         role: 'admin',
+        profilePicture: '',
+        adminCampus: '',
+        adminOfficeHours: '',
+        adminAvailability: false,
     });
 
     function handleChange(e) {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === 'checkbox' ? checked : value
+        });
     }
 
     async function handleSubmit(e) {
@@ -27,9 +35,58 @@ export default function SignUpForm({ setUser }) {
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
-            <input className={styles.input} name="name" value={formData.name} onChange={handleChange} placeholder="Name" />
-            <input className={styles.input} name="email" value={formData.email} onChange={handleChange} placeholder="Email" />
-            <input className={styles.input} type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Password" />
+            <input
+                className={styles.input}
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Name"
+            />
+            <input
+                className={styles.input}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+            />
+            <input
+                className={styles.input}
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+            />
+            <input
+                className={styles.input}
+                name="profilePicture"
+                value={formData.profilePicture}
+                onChange={handleChange}
+                placeholder="Profile Picture URL"
+            />
+            <input
+                className={styles.input}
+                name="adminCampus"
+                value={formData.adminCampus}
+                onChange={handleChange}
+                placeholder="Campus (A/B/C)"
+            />
+            <input
+                className={styles.input}
+                name="adminOfficeHours"
+                value={formData.adminOfficeHours}
+                onChange={handleChange}
+                placeholder="Office Hours (e.g. 9am-5pm)"
+            />
+            <label>
+                Available:
+                <input
+                    type="checkbox"
+                    name="adminAvailability"
+                    checked={formData.adminAvailability}
+                    onChange={handleChange}
+                />
+            </label>
             <button type="submit" className={styles.button}>Sign Up</button>
             <p>
                 <p>Already Have an Account?<Link to="/admin/login">Login as Admin</Link></p>
