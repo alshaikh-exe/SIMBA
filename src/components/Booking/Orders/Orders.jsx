@@ -6,8 +6,6 @@ const Orders = ({ user }) => {
 
   return (
     <div>
-      <h2>Orders</h2>
-      <p>User: {user?.name || "Guest"}</p>
       {orders.length === 0 ? (
         <p>No orders found</p>
       ) : (
