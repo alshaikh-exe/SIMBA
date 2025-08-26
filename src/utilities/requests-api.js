@@ -1,5 +1,6 @@
 // utilities/requests-api.js
-import { sendRequest, getToken } from './send-request';
+import sendRequest from './send-request';
+import { getToken } from './users-service';
 
 const BASE_URL = '/api/requests';
 
