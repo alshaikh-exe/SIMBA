@@ -12,8 +12,9 @@ export default function SignUpForm({ setUser }) {
         profilePicture: '',
         adminCampus: '',
         adminOfficeHours: '',
-        adminAvailability: false,
     });
+
+    const [error, setError] = useState('');
 
     function handleChange(e) {
         const { name, value, type, checked } = e.target;
@@ -25,13 +26,28 @@ export default function SignUpForm({ setUser }) {
 
     async function handleSubmit(e) {
         e.preventDefault();
+        setError('');
+
+        // Check if all fields are filled
+        const missingFields = Object.entries(formData)
+            .filter(([key, value]) => value === '')
+            .map(([key]) => key);
+
+        if (missingFields.length > 0) {
+            setError(`Please fill in all fields: ${missingFields.join(', ')}`);
+            return;
+        }
+
         try {
             const user = await signUp(formData);
             setUser(user);
         } catch (err) {
             console.error(err);
+            setError('Sign up failed. Please try again.');
         }
     }
+
+    const isFormComplete = Object.values(formData).every(v => v !== '');
 
     return (
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -66,30 +82,43 @@ export default function SignUpForm({ setUser }) {
             />
             <input
                 className={styles.input}
-                name="adminCampus"
-                value={formData.adminCampus}
-                onChange={handleChange}
-                placeholder="Campus (A/B/C)"
-            />
-            <input
-                className={styles.input}
                 name="adminOfficeHours"
                 value={formData.adminOfficeHours}
                 onChange={handleChange}
                 placeholder="Office Hours (e.g. 9am-5pm)"
             />
-            <label>
-                Available:
-                <input
-                    type="checkbox"
-                    name="adminAvailability"
-                    checked={formData.adminAvailability}
-                    onChange={handleChange}
-                />
-            </label>
-            <button type="submit" className={styles.button}>Sign Up</button>
+
+            <div>
+                <label>
+                    <input
+                        type="radio"
+                        name="adminCampus"
+                        value="A"
+                        checked={formData.adminCampus === 'A'}
+                        onChange={handleChange}
+                    />
+                    Campus A
+                </label>
+                <label>
+                    <input
+                        type="radio"
+                        name="adminCampus"
+                        value="B"
+                        checked={formData.adminCampus === 'B'}
+                        onChange={handleChange}
+                    />
+                    Campus B
+                </label>
+            </div>
+
+            {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
+
+            <button type="submit" className={styles.button} disabled={!isFormComplete}>
+                Sign Up
+            </button>
+
             <p>
-                <p>Already Have an Account?<Link to="/admin/login">Login as Admin</Link></p>
+                <p>Already Have an Account? <Link to="/admin/login">Login as Admin</Link></p>
                 <Link to="/user">User</Link>
             </p>
         </form>
