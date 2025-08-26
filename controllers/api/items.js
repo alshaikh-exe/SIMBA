@@ -192,10 +192,14 @@ export async function show(req, res) {
 }
 
 export async function create(req, res) {
+  console.log(req.body)
+  console.log(req.body.name)
   try {
     if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
+
     const { name, details, picture, returnPolicy, deadline, quantity, threshold, locationId, campus, building, classroom } = req.body;
+
     if (!name || !details) {
       return res.status(400).json({ success: false, message: "name and details are required" });
     }
