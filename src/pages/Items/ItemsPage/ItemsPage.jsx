@@ -63,6 +63,7 @@ const ItemsPage = ({ user, setUser }) => {
 
 
       // Add to localStorage cart
+
       // const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
       // const existing = savedCart.find(i => i._id === item._id);
 
@@ -77,6 +78,22 @@ const ItemsPage = ({ user, setUser }) => {
 
       // localStorage.setItem('cart', JSON.stringify(updatedCart));
       // onAddToCart && onAddToCart(); // notify parent
+
+      const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = savedCart.find(i => i._id === item._id);
+      
+      let updatedCart;
+      if (existing) {
+        updatedCart = savedCart.map(i =>
+          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      } else {
+        updatedCart = [...savedCart, { ...item, quantity: 1 }];
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+
+
     } catch (err) {
       console.error(err);
       setError('Failed to add item to cart');

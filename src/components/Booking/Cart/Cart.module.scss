@@ -1,1 +1,208 @@
-//Zahraa
+/* Neumorphic cart list — white panel, soft shadows, blue accent */
+
+$bg: #f3f6fb;
+$panel: #ffffff;
+$inset: #e0e5ec;
+
+$shadow-dark: #d6dbe6;
+$shadow-light: #ffffff;
+
+$text: #2f3552;
+$muted: #6f7597;
+$accent: #6aa7ff;
+
+@keyframes pop {
+  from { transform: translateY(2px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
+}
+
+:global(.cart) {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+  color: $text;
+}
+
+:global(.cart__title) {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+  text-align: center;
+  margin: 10px auto 18px;
+  color: $text;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 86px;
+    height: 4px;
+    margin: .55rem auto 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,.06), transparent);
+  }
+}
+
+:global(.cart__empty) {
+  margin: 40px auto;
+  text-align: center;
+  background: $panel;
+  border-radius: 24px;
+  padding: 36px 20px;
+  box-shadow: 20px 20px 60px $shadow-dark, -20px -20px 60px $shadow-light;
+
+  h2 { margin-bottom: 6px; }
+  p  { color: $muted; }
+}
+
+:global(.cart__list) {
+  display: grid;
+  gap: 16px;
+}
+
+/* Card */
+:global(.cartCard) {
+  background: $panel;
+  border-radius: 20px;
+  padding: 14px;
+  animation: pop .18s ease-out;
+  box-shadow:
+    14px 14px 36px $shadow-dark,
+    -14px -14px 36px $shadow-light;
+  outline: 1px solid rgba(0,0,0,.03);
+}
+
+:global(.cartCard__grid) {
+  display: grid;
+  grid-template-columns: 1fr 140px; /* details | image (right) */
+  gap: 16px;
+  align-items: center;
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;      /* stack on mobile: image top */
+    .cartCard__image { order: -1; }  /* put image first */
+  }
+}
+
+:global(.cartCard__image) {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $inset;
+  box-shadow:
+    inset 8px 8px 16px #cdd3de,
+    inset -8px -8px 16px $shadow-light;
+
+  display: grid; place-items: center;
+
+  img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: transform .25s ease;
+  }
+
+  &:hover img { transform: scale(1.03); }
+
+  .placeholder {
+    color: $muted;
+    font-size: .9rem;
+  }
+}
+
+:global(.cartCard__details) {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+:global(.cartCard__meta) {
+  .cartCard__desc {
+    color: $muted;
+    line-height: 1.35;
+    margin: 0 0 8px;
+
+    /* multi-line clamp with WebKit + standard property */
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* Safari/Chromium */
+    line-clamp: 3;         /* standard, satisfies the linter */
+
+    /* non-clamp visual fallback so text doesn't overflow */
+    max-height: calc(1.35em * 3);
+  }
+
+  .cartCard__tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+}
+
+
+/* Footer row: name + quantity controls */
+:global(.cartCard__footer) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+:global(.cartCard__name) {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Quantity controls */
+:global(.cartCard__qty) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:global(.qtyBtn) {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  width: 36px; height: 36px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  color: $text;
+  background: $inset;
+  box-shadow:
+    inset 6px 6px 12px #cdd3de,
+    inset -6px -6px 12px $shadow-light;
+  transition: transform .06s ease, box-shadow .18s ease, background .18s ease;
+
+  &:hover {
+    background: lighten($inset, 2%);
+  }
+  &:active {
+    transform: translateY(1px);
+    box-shadow: inset 4px 4px 10px #cdd3de, inset -4px -4px 10px $shadow-light;
+  }
+}
+
+:global(.qtyBadge) {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  font-weight: 800;
+  color: $text;
+  background: linear-gradient(180deg, rgba($accent,.18), rgba($accent,.08));
+  border: 1px solid rgba($accent,.28);
+  box-shadow:
+    inset 2px 2px 6px rgba(255,255,255,.75),
+    inset -2px -2px 6px rgba(0,0,0,.06);
+}

@@ -1,17 +1,178 @@
-/* src/components/Orders/Orders.module.scss */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 12px 0;
-  font-size: 0.95rem;
+
+/* Neumorphic white theme with a hint of electronics blue */
+$bg: #e0e5ec;
+$light: #ffffff;
+$shadow: #bec3cf;
+
+$text: #3d4468;
+$muted: #6f7496;
+$blue: #4aa3ff;
+$blue-soft: rgba(74,163,255,.18);
+$green: #26c281;
+$amber: #ffb020;
+$red: #ff5d6c;
+$slate: #8b91b3;
+
+@mixin neu($d: 12px, $b: 24px) {
+  box-shadow: #{$d} #{$d} #{$b} $shadow, -#{$d} -#{$d} #{$b} $light;
 }
-.table th,
-.table td {
-  border: 1px solid #e2e2e2;
+@mixin neu-inset($d: 8px, $b: 16px) {
+  box-shadow: inset #{$d} #{$d} #{$b} $shadow, inset -#{$d} -#{$d} #{$b} $light;
+}
+
+.orders {
+  width: min(960px, 92vw);
+  margin: 24px auto;
+  color: $text;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  h2 {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: .2px;
+  }
+
+  .count {
+    background: $blue-soft;
+    color: darken($blue, 8%);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-weight: 700;
+    font-size: .9rem;
+  }
+}
+
+.empty {
+  background: $bg;
+  border-radius: 22px;
+  padding: 32px 22px;
+  text-align: center;
+  @include neu(16px, 40px);
+
+  .emptyIcon { font-size: 2rem; margin-bottom: 8px; }
+  h3 { margin: 6px 0 4px; }
+  p  { margin: 0; color: $slate; }
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (min-width: 720px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card {
+  background: $bg;
+  border-radius: 18px;
+  padding: 16px 14px;
+  @include neu(10px, 22px);
+  transition: transform .12s ease, box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    @include neu(12px, 28px);
+  }
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.orderId {
+  font-weight: 800;
+  letter-spacing: .2px;
+  .hash { opacity: .5; margin-right: 2px; }
+}
+
+.badge {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: .82rem;
+  font-weight: 800;
+  border: 1px solid transparent;
+  background: rgba(0,0,0,.04);
+  color: $text;
+}
+
+/* status colors */
+.badgeApproved { background: rgba($green,.16); color: darken($green, 10%); border-color: rgba($green,.28); }
+.badgeRejected { background: rgba($red,.14);   color: darken($red, 10%);   border-color: rgba($red,.28); }
+.badgeFulfilled{ background: rgba($blue,.16);  color: darken($blue,10%);   border-color: rgba($blue,.28); }
+.badgePending  { background: rgba($amber,.18); color: darken($amber,15%);  border-color: rgba($amber,.30); }
+.badgeDefault  { background: rgba(0,0,0,.06);  color: $text;               border-color: rgba(0,0,0,.10); }
+
+.meta {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .metaIcon {
+    width: 20px;
+    display: grid;
+    place-items: center;
+    opacity: .65;
+  }
+  .metaText {
+    color: $slate;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.note .metaText { color: $text; }
+
+.items {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.itemRow {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 8px;
   padding: 8px 10px;
-  text-align: left;
+  border-radius: 12px;
+  @include neu-inset(6px, 12px);
 }
-.table thead th {
-  background: #fafafa;
-  font-weight: 600;
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $blue;
+  opacity: .85;
+}
+
+.itemName { font-weight: 600; color: $text; }
+.itemQty  { color: $slate; font-weight: 700; }
+
+.more {
+  text-align: center;
+  font-size: .9rem;
+  color: $muted;
+  padding-top: 2px;
 }
