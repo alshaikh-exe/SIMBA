@@ -28,8 +28,8 @@ export default function Navbar({ user, setUser }) {
     <>
       <Link className={styles.btn} to="/profile">Profile</Link>
       <Link className={styles.btn} to="/items">Items</Link>
-      <Link className={styles.btn} to="/orders">Orders</Link>
       <Link className={styles.btn} to="/cart">Cart</Link>
+      <Link className={styles.btn} to="/orders">Orders</Link>
     </>
   );
 
