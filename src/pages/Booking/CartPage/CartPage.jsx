@@ -74,26 +74,55 @@ export default function CartPage({ user, onCartUpdate }) {
   };
 
 const handleCheckout = async () => {
+  const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
+  if (!savedCart.length) return alert("Your cart is empty");
+  if (!pickupDate || !returnDate) return alert("Select both pickup and return dates");
+
+  const requestedDays = Math.ceil((returnDate - pickupDate) / (1000 * 60 * 60 * 24));
+
   try {
-    const res = await fetch(`${API_BASE}/api/orders/submit`, {   // 👈 use submit
+
+    for (const item of savedCart) {
+      await fetch(`${API_BASE}/api/orders/cart/items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ itemId: item._id }),
+      });
+    }
+
+
+    const lines = savedCart.map(item => ({
+      item: item._id,
+      requestedDays: requestedDays || 1,
+    }));
+
+    const res = await fetch(`${API_BASE}/api/orders/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({
-        pickupDate: pickupDate?.toISOString(),
-        returnDate: returnDate?.toISOString(),
-      }),
+      body: JSON.stringify({ lines }),
     });
 
     const data = await res.json();
     console.log("Order submitted:", data);
+
+    if (res.ok && data.success) {
+      alert("Order submitted successfully!");
+      localStorage.removeItem("cart");
+      onCartUpdate && onCartUpdate();
+    } else {
+      alert(data.message || "Checkout failed");
+    }
   } catch (err) {
     console.error("Checkout failed", err);
+    alert("Checkout failed, see console");
   }
 };
-
   return (
     <div style={{ padding: "1rem" }}>
       {/* Cart items */}
