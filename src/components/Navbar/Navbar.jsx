@@ -15,11 +15,11 @@ export default function Navbar({ user, setUser }) {
       <div>{user.email}</div>
       {user.role === "admin" ? (
         <>
-          <Link to="/analytics">Analytics</Link>
           <Link to="/profile">Profile</Link>
+          <Link to="/requests">Student Requests</Link>
           <Link to="/items">Items</Link>
           <Link to="/stock-request">Stock Request</Link>
-          <Link to="/requests">Student Requests</Link>
+          <Link to="/analytics">Analytics</Link>
         </>
       ) : (
         <>
