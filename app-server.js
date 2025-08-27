@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 app.use("/api/users", userRoutes)
 
 // Protected routes (attach checkToken + ensureLoggedIn)
-app.use("/api/users", checkToken, ensureLoggedIn, adminRoutes)
+app.use("/api/admin", checkToken, ensureLoggedIn, adminRoutes)
 app.use("/api/roles", checkToken, ensureLoggedIn, roleRoutes)
 app.use("/api/items", checkToken, ensureLoggedIn, itemsRoutes)
 app.use("/api/orders", checkToken, ensureLoggedIn, ordersRoutes)
