@@ -88,28 +88,31 @@ export default function SignUpForm({ setUser }) {
                 placeholder="Office Hours (e.g. 9am-5pm)"
             />
 
-            <div>
-                <label>
-                    <input
-                        type="radio"
-                        name="adminCampus"
-                        value="A"
-                        checked={formData.adminCampus === 'A'}
-                        onChange={handleChange}
-                    />
-                    Campus A
-                </label>
-                <label>
-                    <input
-                        type="radio"
-                        name="adminCampus"
-                        value="B"
-                        checked={formData.adminCampus === 'B'}
-                        onChange={handleChange}
-                    />
-                    Campus B
-                </label>
+            <div className={styles.campusGroup} role="radiogroup" aria-label="Admin campus">
+                <span
+                    className={styles.slider}
+                    data-pos={formData.adminCampus === 'B' ? 'right' : 'left'}
+                />
+                <input
+                    id="campusA"
+                    type="radio"
+                    name="adminCampus"
+                    value="A"
+                    checked={formData.adminCampus === 'A'}
+                    onChange={handleChange}
+                />
+                <label htmlFor="campusA">Campus A</label>
+                <input
+                    id="campusB"
+                    type="radio"
+                    name="adminCampus"
+                    value="B"
+                    checked={formData.adminCampus === 'B'}
+                    onChange={handleChange}
+                />
+                <label htmlFor="campusB">Campus B</label>
             </div>
+
 
             {error && <p style={{ color: 'red', marginTop: '0.5rem' }}>{error}</p>}
 
