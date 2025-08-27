@@ -12,13 +12,14 @@ import UserAuthPage from '../pages/Auth/UserAuthPage/UserAuthPage';
 import ProfilePage from '../pages/Profile/ProfilePage/ProfilePage';
 import ItemsPage from '../pages/Items/ItemsPage/ItemsPage';
 import ItemsEditPage from '../pages/Items/ItemsEditPage/ItemsEditPage';
-import ItemsShowPage from '../pages/Items/ItemsShowPage/Items';
+import ItemsShowPage from '../pages/Items/ItemsShowPage/ItemsShow';
 import ItemsCreatePage from '../pages/Items/ItemsCreate/ItemsCreate';
 import OrdersPage from '../pages/Booking/OrdersPage/OrdersPage';
 import CartPage from '../pages/Booking/CartPage/CartPage';
 import StudentRequestsPage from '../pages/Booking/StudentRequestsPage/StudentRequestsPage';
 import StockRequestPage from '../pages/Management/StockRequest/StockRequestPage';
 import AnalyticsPage from '../pages/Analytics/AnalyticsPage/AnalyticsPage';
+
 
 const AppRouter = () => {
   const [user, setUser] = useState(getUser());
@@ -60,7 +61,10 @@ const AppRouter = () => {
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
               <Route path="/orders" element={<OrdersPage user={user} setUser={setUser} />} />
               <Route path="/cart" element={<CartPage user={user} setUser={setUser} />} />
-              <Route path="/*" element={<Navigate to="/orders" />} />
+              <Route path="/*" element={<Navigate to="/orders"/>} />
+              <Route path="/orders/:orderId" element={<OrdersPage user={user} setUser={setUser} />} />
+
+              
             </>
           )}
         </Routes>

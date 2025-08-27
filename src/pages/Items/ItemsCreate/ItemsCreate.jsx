@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ItemsCreate.module.scss';
-import { createItem } from '../../../utilities/equipment-api'
+import { createItem } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
@@ -19,8 +19,8 @@ const ItemsCreatePage = ({ user }) => {
     getAllLocations()
   }, [])
 
-  const [equipment, setEquipment] = useState({
-     name: '',
+  const [item, setItem] = useState({
+    name: '',
     details: '',
     image: '',
     values: '',
@@ -61,12 +61,12 @@ const ItemsCreatePage = ({ user }) => {
 
   useEffect(() => {
     if (user.role !== 'manager' && user.role !== 'admin') {
-      navigate('/equipment');
+      navigate('/items');
     }
   }, [user.role, navigate]);
 
   const handleInputChange = (field, value) => {
-    setEquipment(prev => ({
+    setItem(prev => ({
       ...prev,
       [field]: value
     }));
@@ -74,37 +74,32 @@ const ItemsCreatePage = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!equipment.name.trim()) {
-      alert('Equipment name is required');
+    if (!item.name.trim()) {
+      alert('Item name is required');
       return;
     }
 
     try {
-      const response = await createItem(equipment)
-
-      if (response.ok) {
-        alert(`Equipment created successfully!`);
-        navigate('/equipment');
-      } else {
-        throw new Error('Failed to save equipment');
-      }
+      const response = await createItem(item)
+      alert(`Item created successfully!`);
+      navigate('/items');
     } catch (error) {
-      alert('Error saving equipment: ' + error.message);
+      alert('Error saving item: ' + error.message);
     }
   };
 
   return (
     <div className="items-edit-page">
       <div className="page-header">
-        <h1>'Add New Equipment'</h1>
+        <h1>'Add New Item'</h1>
         <div className="header-actions">
-          <Button onClick={() => navigate('/equipment')} className="secondary">
-            ← Back to Equipment
+          <Button onClick={() => navigate('/items')} className="secondary">
+            ← Back to Item
           </Button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="equipment-form">
+      <form onSubmit={handleSubmit} className="item-form">
         <div className="form-sections">
           {/* Basic Information */}
           <div className="form-section">
@@ -112,13 +107,13 @@ const ItemsCreatePage = ({ user }) => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="name">Equipment Name *</label>
+                <label htmlFor="name">Item Name *</label>
                 <input
                   type="text"
                   id="name"
-                  value={equipment.name}
+                  value={item.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Enter equipment name"
+                  placeholder="Enter item name"
                   required
                 />
               </div>
@@ -127,7 +122,7 @@ const ItemsCreatePage = ({ user }) => {
                 <label htmlFor="category">Category</label>
                 <select
                   id="category"
-                  value={equipment.category}
+                  value={item.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
                 >
                   <option value="">Select category</option>
@@ -142,7 +137,7 @@ const ItemsCreatePage = ({ user }) => {
                 <input
                   type="text"
                   id="values"
-                  value={equipment.values}
+                  value={item.values}
                   onChange={(e) => handleInputChange('values', e.target.value)}
                   placeholder="Enter item values"
                 />
@@ -153,9 +148,9 @@ const ItemsCreatePage = ({ user }) => {
               <label htmlFor="details">Details</label>
               <textarea
                 id="details"
-                value={equipment.details}
+                value={item.details}
                 onChange={(e) => handleInputChange('details', e.target.value)}
-                placeholder="Describe the equipment's purpose and features"
+                placeholder="Describe the item's purpose and features"
                 rows="3"
               />
             </div>
@@ -170,10 +165,10 @@ const ItemsCreatePage = ({ user }) => {
                 <label htmlFor="location">Location</label>
                 <select
                   id="location"
-                  value={equipment.location}
+                  value={item.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                 >
-                  <option value="">-----</option>
+                  <option value="">Select Location</option>
                   {locations?.map((location, i) => (
                     <option key={i} value={location._id}>{location.building}.{location.classroom} {location.campus}</option>
                   ))}
@@ -184,7 +179,7 @@ const ItemsCreatePage = ({ user }) => {
                 <label htmlFor="status">Status</label>
                 <select
                   id="status"
-                  value={equipment.status}
+                  value={item.status}
                   onChange={(e) => handleInputChange('status', e.target.value)}
                 >
                   {statusOptions.map(option => (
@@ -200,7 +195,7 @@ const ItemsCreatePage = ({ user }) => {
                 <input
                   type="number"
                   id="quantity"
-                  value={equipment.quantity}
+                  value={item.quantity}
                   onChange={(e) => handleInputChange('quantity', parseInt(e.target.value))}
                 />
               </div>
@@ -211,7 +206,7 @@ const ItemsCreatePage = ({ user }) => {
               <input
                 type="url"
                 id="image"
-                value={equipment.image}
+                value={item.image}
                 onChange={(e) => handleInputChange('image', e.target.value)}
                 placeholder="https://example.com/image.jpg"
               />
@@ -228,7 +223,7 @@ const ItemsCreatePage = ({ user }) => {
                 <input
                   type="number"
                   id="deadline"
-                  value={equipment.deadline}
+                  value={item.deadline}
                   onChange={(e) => handleInputChange('deadline', parseInt(e.target.value))}
                   min="1"
                   max="70"
@@ -239,7 +234,7 @@ const ItemsCreatePage = ({ user }) => {
                 <label htmlFor="returnPolicy">Return Policy</label>
                 <select
                   id="returnPolicy"
-                  value={equipment.returnPolicy}
+                  value={item.returnPolicy}
                   onChange={(e) => handleInputChange('returnPolicy', e.target.value)}
                 >
                   {returnPolicyOptions.map(option => (
@@ -261,7 +256,7 @@ const ItemsCreatePage = ({ user }) => {
               <input
                 type="text"
                 id="maintenanceSchedule"
-                value={equipment.maintenanceSchedule}
+                value={item.maintenanceSchedule}
                 onChange={(e) => handleInputChange('maintenanceSchedule', e.target.value)}
                 placeholder="e.g., Monthly calibration, Quarterly cleaning"
               />
@@ -270,11 +265,11 @@ const ItemsCreatePage = ({ user }) => {
         </div>
 
         <div className="form-actions">
-          <Button type="button" onClick={() => navigate('/equipment')} className="secondary">
+          <Button type="button" onClick={() => navigate('/items')} className="secondary">
             Cancel
           </Button>
           <Button type="submit" className="primary">
-            Create Equipment
+            Create Item
           </Button>
         </div>
       </form>

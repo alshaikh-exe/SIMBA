@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Items.module.scss';
-import { updateItem, getItemById } from '../../../utilities/equipment-api'
+import { updateItem, getItemById } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
@@ -21,7 +21,7 @@ const ItemsEditPage = ({ user }) => {
   }, [])
 
   const [loading, setLoading] = useState(isEditing);
-  const [equipment, setEquipment] = useState({
+  const [item, setItem] = useState({
     name: '',
     details: '',
     image: '',
@@ -62,29 +62,29 @@ const ItemsEditPage = ({ user }) => {
   ];
 
   useEffect(() => {
-      const fetchEquipment = async () => {
-        try {
-          const response = await getItemById(id)
-          const data = response.data.item
-          
-          setEquipment({...equipment, ...data});
-        } catch (error) {
-          console.error('Error fetching equipment:', error);
-          alert('Error loading equipment data');
-        }
-        setLoading(false);
-      };
-    fetchEquipment();
+    const fetchItem = async () => {
+      try {
+        const response = await getItemById(id)
+        const data = response.data.item
+
+        setItem({ ...item, ...data });
+      } catch (error) {
+        console.error('Error fetching item:', error);
+        alert('Error loading item data');
+      }
+      setLoading(false);
+    };
+    fetchItem();
   }, [id]);
 
   useEffect(() => {
     if (user.role !== 'manager' && user.role !== 'admin') {
-      navigate('/equipment');
+      navigate('/items');
     }
   }, [user.role, navigate]);
 
   const handleInputChange = (field, value) => {
-    setEquipment(prev => ({
+    setItem(prev => ({
       ...prev,
       [field]: value
     }));
@@ -94,27 +94,22 @@ const ItemsEditPage = ({ user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!equipment.name.trim()) {
-      alert('Equipment name is required');
+    if (!item.name.trim()) {
+      alert('Item name is required');
       return;
     }
 
     try {
-      const response = await updateItem(id, equipment)
-
-      if (response.ok) {
-        alert(`Equipment updated successfully!`);
-        navigate('/equipment');
-      } else {
-        throw new Error('Failed to save equipment');
-      }
+      const response = await updateItem(id, item)
+      alert(`Item updated successfully!`);
+      navigate('/items');
     } catch (error) {
-      alert('Error saving equipment: ' + error.message);
+      alert('Error saving item: ' + error.message);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this equipment? This action cannot be undone.')) {
+    if (!window.confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
       return;
     }
 
@@ -127,20 +122,20 @@ const ItemsEditPage = ({ user }) => {
       });
 
       if (response.ok) {
-        alert('Equipment deleted successfully');
-        navigate('/equipment');
+        alert('Item deleted successfully');
+        navigate('/items');
       } else {
-        throw new Error('Failed to delete equipment');
+        throw new Error('Failed to delete item');
       }
     } catch (error) {
-      alert('Error deleting equipment: ' + error.message);
+      alert('Error deleting item: ' + error.message);
     }
   };
 
   if (loading) {
     return (
       <div className="items-edit-page">
-        <div className="loading">Loading equipment data...</div>
+        <div className="loading">Loading item data...</div>
       </div>
     );
   }
@@ -148,20 +143,20 @@ const ItemsEditPage = ({ user }) => {
   return (
     <div className="items-edit-page">
       <div className="page-header">
-        <h1>Edit Equipment</h1>
+        <h1>Edit Item</h1>
         <div className="header-actions">
-          <Button onClick={() => navigate('/equipment')} className="secondary">
-            ← Back to Equipment
+          <Button onClick={() => navigate('/items')} className="secondary">
+            ← Back to Item
           </Button>
           {isEditing && (
             <Button onClick={handleDelete} className="danger">
-              Delete Equipment
+              Delete Item
             </Button>
           )}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="equipment-form">
+      <form onSubmit={handleSubmit} className="item-form">
         <div className="form-sections">
           {/* Basic Information */}
           <div className="form-section">
@@ -169,13 +164,13 @@ const ItemsEditPage = ({ user }) => {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="name">Equipment Name *</label>
+                <label htmlFor="name">Item Name *</label>
                 <input
                   type="text"
                   id="name"
-                  value={equipment.name}
+                  value={item.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Enter equipment name"
+                  placeholder="Enter item name"
                   required
                 />
               </div>
@@ -184,7 +179,7 @@ const ItemsEditPage = ({ user }) => {
                 <label htmlFor="category">Category</label>
                 <select
                   id="category"
-                  value={equipment.category}
+                  value={item.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
                 >
                   <option value="">Select category</option>
@@ -194,12 +189,12 @@ const ItemsEditPage = ({ user }) => {
                 </select>
               </div>
 
-                <div className="form-group">
+              <div className="form-group">
                 <label htmlFor="values">Item Values</label>
                 <input
                   type="text"
                   id="values"
-                  value={equipment.values}
+                  value={item.values}
                   onChange={(e) => handleInputChange('values', e.target.value)}
                   placeholder="Enter item values"
                 />
@@ -210,9 +205,9 @@ const ItemsEditPage = ({ user }) => {
               <label htmlFor="details">Details</label>
               <textarea
                 id="details"
-                value={equipment.details}
+                value={item.details}
                 onChange={(e) => handleInputChange('details', e.target.value)}
-                placeholder="Describe the equipment's purpose and features"
+                placeholder="Describe the item's purpose and features"
                 rows="3"
               />
             </div>
@@ -227,7 +222,7 @@ const ItemsEditPage = ({ user }) => {
                 <label htmlFor="location">Location</label>
                 <select
                   id="location"
-                  value={equipment.location}
+                  value={item.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                 >
                   <option value="">-----</option>
@@ -241,7 +236,7 @@ const ItemsEditPage = ({ user }) => {
                 <label htmlFor="status">Status</label>
                 <select
                   id="status"
-                  value={equipment.status}
+                  value={item.status}
                   onChange={(e) => handleInputChange('status', e.target.value)}
                 >
                   {statusOptions.map(option => (
@@ -257,7 +252,7 @@ const ItemsEditPage = ({ user }) => {
                 <input
                   type="number"
                   id="quantity"
-                  value={equipment.quantity}
+                  value={item.quantity}
                   onChange={(e) => handleInputChange('quantity', parseInt(e.target.value))}
                 />
               </div>
@@ -268,7 +263,7 @@ const ItemsEditPage = ({ user }) => {
               <input
                 type="url"
                 id="image"
-                value={equipment.image}
+                value={item.image}
                 onChange={(e) => handleInputChange('image', e.target.value)}
                 placeholder="https://example.com/image.jpg"
               />
@@ -285,18 +280,18 @@ const ItemsEditPage = ({ user }) => {
                 <input
                   type="number"
                   id="deadline"
-                  value={equipment.deadline}
+                  value={item.deadline}
                   onChange={(e) => handleInputChange('deadline', parseInt(e.target.value))}
                   min="1"
                   max="70"
                 />
               </div>
 
-               <div className="form-group">
+              <div className="form-group">
                 <label htmlFor="returnPolicy">Return Policy</label>
                 <select
                   id="returnPolicy"
-                  value={equipment.returnPolicy}
+                  value={item.returnPolicy}
                   onChange={(e) => handleInputChange('returnPolicy', e.target.value)}
                 >
                   {returnPolicyOptions.map(option => (
@@ -318,7 +313,7 @@ const ItemsEditPage = ({ user }) => {
               <input
                 type="text"
                 id="maintenanceSchedule"
-                value={equipment.maintenanceSchedule}
+                value={item.maintenanceSchedule}
                 onChange={(e) => handleInputChange('maintenanceSchedule', e.target.value)}
                 placeholder="e.g., Monthly calibration, Quarterly cleaning"
               />
@@ -327,11 +322,11 @@ const ItemsEditPage = ({ user }) => {
         </div>
 
         <div className="form-actions">
-          <Button type="button" onClick={() => navigate('/equipment')} className="secondary">
+          <Button type="button" onClick={() => navigate('/items')} className="secondary">
             Cancel
           </Button>
-          <Button type="submit" className="primary">
-            Update Equipment
+          <Button type="submit" onClick={() => navigate('/items')} className="primary">
+            Update Item
           </Button>
         </div>
       </form>
