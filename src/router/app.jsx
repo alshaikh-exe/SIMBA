@@ -3,6 +3,7 @@ import { useState } from 'react';
 import styles from './AppRouter.module.scss';
 import { getUser } from '../utilities/users-service';
 import Navbar from "../components/Navbar/Navbar";
+import Footer from "../components/Footer/Footer";
 
 import AdminLoginPage from '../pages/Auth/AdminLoginPage/AdminLoginPage';
 import AdminSignupPage from '../pages/Auth/AdminSignupPage/AdminSignupPage';
@@ -63,6 +64,7 @@ const AppRouter = () => {
             </>
           )}
         </Routes>
+        <Footer />
       </main>
     </Router>
   );
