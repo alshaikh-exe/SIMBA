@@ -11,48 +11,52 @@ export default function Items({ user, onAddToCart }) {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    loadItems();
-  }, []);
-
-  useEffect(() => {
-    filterItems();
-  }, [items, searchTerm]);
+  useEffect(() => { loadItems(); }, []);
+  useEffect(() => { filterItems(); }, [items, searchTerm]);
 
   const loadItems = async () => {
     try {
       setLoading(true);
       const res = await getItems();
-      // backend returns { success, data, meta }
       setItems(res.data || []);
       setError('');
     } catch (err) {
       setError('Failed to load equipment');
       console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const filterItems = () => {
-    let filtered = items;
-    if (searchTerm) {
-      filtered = filtered.filter(item =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.details.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+    const filtered = items.filter(item =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.details.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     setFilteredItems(filtered);
   };
 
-  const handleAddToCart = async (item) => {
-    try {
-      if (onAddToCart) await onAddToCart(item);
-    } catch (err) {
-      setError('Failed to add item to cart');
-      console.error(err);
-    }
-  };
+  // --- Updated handleAddToCart ---
+  const handleAddToCart = (item) => {
+  if (!user) return alert("Please log in to add items to cart.");
+  
+  const storedCart = localStorage.getItem(`cart_${user._id}`);
+  const cart = storedCart ? JSON.parse(storedCart) : [];
+  const existing = cart.find(ci => ci._id === item._id);
+
+  const updatedCart = existing
+    ? cart.map(ci => ci._id === item._id ? { ...ci, quantity: ci.quantity + 1 } : ci)
+    : [...cart, { ...item, quantity: 1 }];
+
+  localStorage.setItem(`cart_${user._id}`, JSON.stringify(updatedCart));
+
+  // Update the items list quantity
+  setItems(prevItems =>
+    prevItems.map(i =>
+      i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
+    )
+  );
+
+  onAddToCart && onAddToCart(); // notify parent
+};
 
   if (loading) return <div className="items-loading">Loading equipment...</div>;
 
@@ -75,8 +79,8 @@ export default function Items({ user, onAddToCart }) {
         {filteredItems.map(item => (
           <div key={item._id} className="item-card">
             <div className="item-image">
-              {item.picture ? (
-                <img src={item.picture} alt={item.name} />
+              {item.image ? (
+                <img src={item.image} alt={item.name} />
               ) : (
                 <div className="no-image">No Image</div>
               )}
