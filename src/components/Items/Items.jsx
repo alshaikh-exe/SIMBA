@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getItems } from '../../utilities/items-api';
+import { getItems, addToCart } from '../../utilities/items-api';
 import Button from '../Button/Button';
 import './Items.module.scss';
 
@@ -45,16 +45,18 @@ export default function Items({ user, onAddToCart }) {
 
   const handleAddToCart = async (item) => {
     try {
+
       // Decrement quantity in database
-      await fetch(`/api/items/${item._id}`, {
+      /*await fetch(`/api/items/${item._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${user.token}`
         },
         body: JSON.stringify({ quantity: item.quantity - 1 })
-      });
+      });*/
 
+      await addToCart (item._id)
       // Update items page locally
       setItems(prev =>
         prev.map(i => i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i)

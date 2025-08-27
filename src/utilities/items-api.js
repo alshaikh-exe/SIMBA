@@ -98,15 +98,21 @@ export const deleteItem = async (itemId) => {
 //   }
 // };
 
-// export const addToCart = async (itemId) => {
-//   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+export const addToCart = async (itemId) => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const response = await fetch (`${BASE_URL}/items/${itemId}/adjust-qty`, {
+    method:'PATCH',
+    headers:getAuthHeaders(),
+    body: JSON.stringify({amount:1})
+  })
+  return { success: true, message: 'Item added to cart' };
+  
 //   if (cart.some(c => (c.itemId || c._id) === itemId)) {
 //     throw new Error('Item is already in your cart');
 //   }
 //   cart.push({ itemId, addedAt: new Date().toISOString() });
 //   localStorage.setItem('cart', JSON.stringify(cart));
-//   return { success: true, message: 'Item added to cart' };
-// };
+};
 
 // export const removeFromCart = async (itemId) => {
 //   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
