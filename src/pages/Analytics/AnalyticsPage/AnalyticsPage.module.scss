@@ -1,3 +1,4 @@
+/* AnalyticsPage.module.scss — white/neutral neumorphic dashboard */
 
 $bg: #f3f6fb;
 $panel: #ffffff;
@@ -10,22 +11,6 @@ $muted: #6c7293;
 $radius-lg: 28px;
 $radius-md: 16px;
 
-/* ------------------ Mixins ------------------ */
-@mixin neumorphic($radius, $blur: 28px) {
-  background: $panel;
-  border-radius: $radius;
-  box-shadow:
-    12px 12px $blur $shadow-dark,
-    -12px -12px $blur $shadow-light;
-}
-
-@mixin inset-field {
-  box-shadow:
-    inset 6px 6px 14px rgba(0,0,0,0.05),
-    inset -6px -6px 14px rgba(255,255,255,0.7);
-}
-
-/* ------------------ Layout ------------------ */
 .Page {
   min-height: 100dvh;
   padding: 2rem clamp(12px, 2vw, 24px);
@@ -37,33 +22,25 @@ $radius-md: 16px;
   gap: 1.25rem;
 }
 
-/* ------------------ Header ------------------ */
 .Header {
-  h1 {
-    margin: 0 0 .25rem;
-    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
-    font-weight: 700;
-  }
+  h1 { margin: 0 0 .25rem; font-size: clamp(1.4rem, 2.2vw, 1.9rem); }
   .Muted { color: $muted; }
 }
 
-/* ------------------ Controls ------------------ */
 .Controls {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
   gap: .75rem;
 
   .Control {
-    @include neumorphic($radius-md);
+    background: $panel;
+    border-radius: $radius-md;
     padding: .75rem .9rem;
+    box-shadow: 12px 12px 28px $shadow-dark, -12px -12px 28px $shadow-light;
     display: grid;
     gap: .45rem;
 
-    label {
-      font-size: .85rem;
-      color: $muted;
-      font-weight: 500;
-    }
+    label { font-size: .85rem; color: $muted; }
 
     select {
       border: 0;
@@ -72,54 +49,57 @@ $radius-md: 16px;
       color: $text;
       padding: .55rem .65rem;
       border-radius: 10px;
-      @include inset-field;
-      font-size: .9rem;
-      transition: all 0.2s ease;
-
-      &:hover {
-        filter: brightness(1.03);
-      }
+      box-shadow:
+        inset 6px 6px 14px rgba(0,0,0,0.04),
+        inset -6px -6px 14px rgba(255,255,255,0.8);
+      appearance: none;
     }
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
   }
 }
 
-/* ------------------ Stats ------------------ */
 .Stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
   gap: .75rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .StatCard {
-  @include neumorphic($radius-md);
+  background: $panel;
+  border-radius: $radius-md;
   padding: 1rem 1.1rem;
+  box-shadow: 12px 12px 28px $shadow-dark, -12px -12px 28px $shadow-light;
   display: grid;
   gap: .25rem;
-  transition: transform 0.15s ease;
 
-  &:hover {
-    transform: translateY(-2px);
-  }
-
-  .StatTitle { color: $muted; font-size: .86rem; font-weight: 500; }
+  .StatTitle { color: $muted; font-size: .86rem; }
   .StatValue { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 800; }
   .StatSub { color: $muted; font-size: .85rem; }
 }
 
-/* ------------------ Chart ------------------ */
 .ChartCard {
   background: $panel;
   border-radius: $radius-lg;
   padding: 1rem 1.25rem 1.25rem;
-  box-shadow:
-    18px 18px 48px $shadow-dark,
-    -18px -18px 48px $shadow-light;
+  box-shadow: 18px 18px 48px $shadow-dark, -18px -18px 48px $shadow-light;
 
   h2 {
     margin: .25rem 0 .75rem;
     font-size: clamp(1.1rem, 1.8vw, 1.4rem);
     color: $text;
-    font-weight: 600;
   }
 }
 
