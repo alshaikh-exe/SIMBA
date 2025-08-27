@@ -1,11 +1,14 @@
 // src/pages/Items/ItemShow.jsx
+//user permissions aka user.role for 'add to cart' for only the user and edit/delete for only the admin in show page and index, add delete link
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getItemById } from "../../../utilities/items-api";
+import { Link } from "react-router-dom";
 import Button from "../../../components/Button/Button";
 
 export default function ItemShow({ user, onAddToCart }) {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [itemData, setItemData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -43,7 +46,7 @@ export default function ItemShow({ user, onAddToCart }) {
       )}
 
       <section>
-        <h3>Description</h3>
+        <h3>Details</h3>
         <p>{item.details}</p>
       </section>
 
@@ -88,6 +91,10 @@ export default function ItemShow({ user, onAddToCart }) {
           Add to Cart
         </Button>
       )}
+      <Button onClick={() => navigate('/items')} className="secondary">
+        ← Back to Item
+      </Button>
+      <Link to={`/items/edit/${item._id}`}>Edit Item</Link>
     </main>
   );
 }

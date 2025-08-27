@@ -79,7 +79,7 @@ const ItemsEditPage = ({ user }) => {
 
   useEffect(() => {
     if (user.role !== 'manager' && user.role !== 'admin') {
-      navigate('/item');
+      navigate('/items');
     }
   }, [user.role, navigate]);
 
@@ -102,7 +102,7 @@ const ItemsEditPage = ({ user }) => {
     try {
       const response = await updateItem(id, item)
       alert(`Item updated successfully!`);
-      navigate('/item');
+      navigate('/items');
     } catch (error) {
       alert('Error saving item: ' + error.message);
     }
@@ -123,7 +123,7 @@ const ItemsEditPage = ({ user }) => {
 
       if (response.ok) {
         alert('Item deleted successfully');
-        navigate('/item');
+        navigate('/items');
       } else {
         throw new Error('Failed to delete item');
       }
@@ -145,7 +145,7 @@ const ItemsEditPage = ({ user }) => {
       <div className="page-header">
         <h1>Edit Item</h1>
         <div className="header-actions">
-          <Button onClick={() => navigate('/item')} className="secondary">
+          <Button onClick={() => navigate('/items')} className="secondary">
             ← Back to Item
           </Button>
           {isEditing && (
@@ -322,7 +322,7 @@ const ItemsEditPage = ({ user }) => {
         </div>
 
         <div className="form-actions">
-          <Button type="button" onClick={() => navigate('/item')} className="secondary">
+          <Button type="button" onClick={() => navigate('/items')} className="secondary">
             Cancel
           </Button>
           <Button type="submit" className="primary">
