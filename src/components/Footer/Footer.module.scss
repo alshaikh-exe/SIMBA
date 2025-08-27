@@ -1,0 +1,139 @@
+/* src/components/Footer/Footer.module.scss */
+
+$bg: #0b0f1a;
+$bg2: #0e1424;
+$text: #eaf0ff;
+$muted: rgba(234, 240, 255, .68);
+$line: rgba(255, 255, 255, .08);
+$blue: #6aa9ff;
+
+.footer {
+  position: relative;
+  color: $text;
+  background:
+    radial-gradient(1200px 420px at 10% -15%, rgba($blue,.10), transparent 60%),
+    radial-gradient(1000px 420px at 115% 5%, rgba($blue,.08), transparent 60%),
+    linear-gradient(180deg, $bg2 0%, $bg 100%);
+  padding-top: 56px;
+
+  &::before {
+    content: "";
+    position: absolute; inset: 0 auto auto 0;
+    height: 2px; width: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba($blue,.65) 20%, rgba($blue,.25) 60%, transparent 100%);
+  }
+}
+
+.container {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+
+  /* 5 columns: logo | brand | contributors | contact | about */
+  display: grid;
+  grid-template-columns: 120px 1.4fr 1fr 1fr 1.6fr;
+  gap: 48px 56px;           /* more air between columns/rows */
+  align-items: start;
+}
+
+/* dedicated logo square on the far left */
+.logoSlot {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  display: grid; place-items: center;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.05);
+
+  img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    filter: drop-shadow(0 6px 16px rgba($blue,.2));
+  }
+}
+
+/* Fallback icon if no image is used yet */
+.logoFallback {
+  font-size: 42px;
+  line-height: 1;
+  color: lighten($blue, 10%);
+  filter: drop-shadow(0 8px 24px rgba($blue,.35));
+}
+
+/* brand column */
+.logoCol {
+  display: flex; flex-direction: column; gap: 10px;
+  padding-right: 12px;
+}
+
+.logo {
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 900; letter-spacing: .8px;
+  background: linear-gradient(135deg, #ffffff, #cfe2ff 40%, lighten($blue, 12%));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 6px 20px rgba($blue,.12));
+}
+
+.tagline { color: $muted; max-width: 32ch; line-height: 1.4; }
+
+.col, .aboutCol { min-width: 0; }
+
+.heading {
+  font-size: 1rem; letter-spacing: .6px; text-transform: uppercase;
+  color: lighten($text, 6%); margin: 2px 0 14px; position: relative;
+
+  &::after {
+    content: ""; display: block; width: 64px; height: 2px; margin-top: 10px;
+    background: linear-gradient(90deg, rgba($blue,.6), rgba($blue,.1));
+    border-radius: 999px;
+  }
+}
+
+.list {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; gap: 10px;
+
+  li { min-width: 0; }
+}
+
+.link {
+  color: $text; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 10px;
+  background: transparent; border: 1px solid transparent;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+
+  &:hover { background: rgba($blue,.10); border-color: rgba($blue,.26); color: #fff; }
+  &:focus-visible { outline: 2px dashed rgba($blue,.6); outline-offset: 3px; }
+}
+
+/* small pill inside links */
+.role {
+  font-size: .72rem; font-weight: 900; letter-spacing: .4px;
+  padding: 3px 8px; border-radius: 999px;
+  color: lighten($blue, 8%); background: rgba($blue,.14); border: 1px solid rgba($blue,.28);
+}
+
+.aboutCol .copy { color: $text; line-height: 1.7; margin: 0 0 10px; }
+.copyDim { color: $muted; margin: 0; }
+
+.credits {
+  border-top: 1px solid $line; margin-top: 44px; padding: 16px 0 26px;
+  display: flex; align-items: center; justify-content: center;
+  color: $muted; font-size: .95rem;
+}
+
+/* responsive */
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 100px 1.2fr 1fr 1fr; /* logo + 3 cols */
+  }
+  .aboutCol { grid-column: 2 / -1; } /* move under when narrower */
+}
+
+@media (max-width: 820px) {
+  .container { grid-template-columns: 90px 1fr; gap: 28px 22px; }
+  .logoCol { grid-column: 2; }
+  .col { grid-column: 1 / -1; }
+  .aboutCol { grid-column: 1 / -1; }
+}

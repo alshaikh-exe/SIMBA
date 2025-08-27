@@ -1,11 +1,12 @@
-// src/components/Calendar/Calendar.jsx
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Calendar as BigCalendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import enUS from "date-fns/locale/en-US";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-const locales = { "en-US": enUS };
+const locales = {
+  "en-US": enUS,
+};
 
 const localizer = dateFnsLocalizer({
   format,
@@ -15,16 +16,14 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-export default function AdminCalendar() {
+export default function Calendar({ user }) {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    const fetchAdminCalendar = async () => {
+    const fetchCalendar = async () => {
       try {
-        const res = await fetch("/api/calendar/admin", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        const res = await fetch("/api/calendar/user", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },//who is making the request
         });
         const data = await res.json();
 
@@ -38,26 +37,25 @@ export default function AdminCalendar() {
 
         setEvents(formatted);
       } catch (err) {
-        console.error("Failed to load admin calendar:", err);
+        console.error("Failed to load calendar:", err);
       }
     };
 
-    fetchAdminCalendar();
-  }, []);
+    fetchCalendar();
+  }, [user]);
 
   return (
     <div>
-      <h2>Admin Order Calendar</h2>
+      <h2>Your Order Calendar</h2>
       <BigCalendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
         eventPropGetter={(event) => {
-          const bg = event.type === "pickup" ? "#4caf50" : "#f44336";
+          let bg = event.type === "pickup" ? "#4caf50" : "#f44336";
           return { style: { backgroundColor: bg } };
         }}
-        style={{ height: 500 }}
       />
     </div>
   );
