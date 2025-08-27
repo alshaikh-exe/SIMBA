@@ -1,7 +1,7 @@
 // src/pages/Items/ItemShow.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getItemById } from "../../../utilities/equipment-api";
+import { getItemById } from "../../../utilities/items-api";
 import Button from "../../../components/Button/Button";
 
 export default function ItemShow({ user, onAddToCart }) {
