@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Cart from "../../../components/Booking/Cart/Cart";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE =
   import.meta?.env?.VITE_API_BASE_URL || "http://localhost:3000";
@@ -10,7 +11,7 @@ const API_BASE =
 export default function CartPage({ user, onCartUpdate }) {
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
-
+const navigate = useNavigate();
   // optional: preload existing saved dates from the cart
   useEffect(() => {
     const loadCart = async () => {
@@ -116,6 +117,8 @@ const handleCheckout = async () => {
       alert("Order submitted successfully!");
       localStorage.removeItem("cart");
       onCartUpdate && onCartUpdate();
+
+          navigate(`/orders/${data.data._id}`);
     } else {
       alert(data.message || "Checkout failed");
     }

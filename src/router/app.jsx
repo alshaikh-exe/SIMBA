@@ -59,7 +59,7 @@ const AppRouter = () => {
               <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} />
               <Route path="/items" element={<ItemsPage user={user} setUser={setUser} />} />
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
-              <Route path="/orders/:id" element={<OrdersPage user={user} setUser={setUser} />} />
+              <Route path="/orders/:orderId" element={<OrdersPage />} />
               <Route path="/cart" element={<CartPage user={user} setUser={setUser} />} />
               <Route path="/*" element={<Navigate to="/orders"/>} />
               <Route path="/orders/:orderId" element={<OrdersPage user={user} setUser={setUser} />} />
