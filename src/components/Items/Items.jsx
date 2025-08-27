@@ -1,4 +1,3 @@
-// src/components/Items/Items.jsx
 import React, { useState, useEffect } from 'react';
 import { getItems } from '../../utilities/equipment-api';
 import Button from '../Button/Button';
@@ -11,8 +10,13 @@ export default function Items({ user, onAddToCart }) {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => { loadItems(); }, []);
-  useEffect(() => { filterItems(); }, [items, searchTerm]);
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  useEffect(() => {
+    filterItems();
+  }, [items, searchTerm]);
 
   const loadItems = async () => {
     try {
@@ -23,40 +27,59 @@ export default function Items({ user, onAddToCart }) {
     } catch (err) {
       setError('Failed to load equipment');
       console.error(err);
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filterItems = () => {
-    const filtered = items.filter(item =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.details.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    let filtered = items;
+    if (searchTerm) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.details.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
     setFilteredItems(filtered);
   };
 
-  // --- Updated handleAddToCart ---
-  const handleAddToCart = (item) => {
-  if (!user) return alert("Please log in to add items to cart.");
-  
-  const storedCart = localStorage.getItem(`cart_${user._id}`);
-  const cart = storedCart ? JSON.parse(storedCart) : [];
-  const existing = cart.find(ci => ci._id === item._id);
+  const handleAddToCart = async (item) => {
+    try {
+      // Decrement quantity in database
+      await fetch(`/api/items/${item._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`
+        },
+        body: JSON.stringify({ quantity: item.quantity - 1 })
+      });
 
-  const updatedCart = existing
-    ? cart.map(ci => ci._id === item._id ? { ...ci, quantity: ci.quantity + 1 } : ci)
-    : [...cart, { ...item, quantity: 1 }];
+      // Update items page locally
+      setItems(prev =>
+        prev.map(i => i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i)
+      );
 
-  localStorage.setItem(`cart_${user._id}`, JSON.stringify(updatedCart));
+      // Add to localStorage cart
+      const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = savedCart.find(i => i._id === item._id);
 
-  // Update the items list quantity
-  setItems(prevItems =>
-    prevItems.map(i =>
-      i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
-    )
-  );
+      let updatedCart;
+      if (existing) {
+        updatedCart = savedCart.map(i =>
+          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+        );
+      } else {
+        updatedCart = [...savedCart, { ...item, quantity: 1 }];
+      }
 
-  onAddToCart && onAddToCart(); // notify parent
-};
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      onAddToCart && onAddToCart(); // notify parent
+    } catch (err) {
+      console.error(err);
+      setError('Failed to add item to cart');
+    }
+  };
 
   if (loading) return <div className="items-loading">Loading equipment...</div>;
 
@@ -79,11 +102,7 @@ export default function Items({ user, onAddToCart }) {
         {filteredItems.map(item => (
           <div key={item._id} className="item-card">
             <div className="item-image">
-              {item.image ? (
-                <img src={item.image} alt={item.name} />
-              ) : (
-                <div className="no-image">No Image</div>
-              )}
+              {item.picture ? <img src={item.picture} alt={item.name} /> : <div className="no-image">No Image</div>}
             </div>
 
             <div className="item-info">

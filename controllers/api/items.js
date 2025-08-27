@@ -375,4 +375,38 @@ export async function lowStock(req, res) {
   }
 }
 
-export default { index, show, create, update, destroy, lowStock };
+
+// PATCH /api/items/:id/adjust-qty   body: { amount: 1 }
+export async function adjustQty(req, res) {
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    const { id } = req.params;
+    const amount = Math.floor(Number(req.body.amount ?? 0));
+
+    if (!Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid id" });
+    }
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({ success: false, message: "amount must be a positive integer" });
+    }
+
+    // Atomic guard: only decrement if enough stock exists
+    const updated = await Item.findOneAndUpdate(
+      { _id: id, quantity: { $gte: amount } },
+      { $inc: { quantity: -amount } },
+      { new: true }
+    ).populate("location").populate("createdBy", "name email");
+
+    if (!updated) {
+      return res.status(409).json({ success: false, message: "Insufficient stock" });
+    }
+
+    res.status(200).json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message || "Server error" });
+  }
+}
+export default { index, show, create, update, destroy, lowStock, adjustQty };
