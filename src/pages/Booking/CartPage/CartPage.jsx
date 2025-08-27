@@ -1,6 +1,7 @@
 //Zahraa
 import React from "react";
 import NavBar from "../../../components/Navbar/Navbar";
+import Calendar from "../../Calendar/userCalendar";
 // import Cart from "../../../components/Booking/Cart/Cart";
 
 const CartPage = ({ user, setUser }) => {
@@ -12,6 +13,7 @@ const CartPage = ({ user, setUser }) => {
       <div>
         <h1>Shopping Cart</h1>
         <Cart user={user} />
+        <Calendar />
       </div>
     </main>
   );
