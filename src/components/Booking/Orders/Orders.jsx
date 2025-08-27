@@ -93,4 +93,4 @@ function OrdersTable({
   );
 }
 
-export default OrdersTable
+export default OrdersTable;
