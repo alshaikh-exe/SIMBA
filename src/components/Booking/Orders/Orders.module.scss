@@ -1,1 +1,17 @@
-//Zahraa
+/* src/components/Orders/Orders.module.scss */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.95rem;
+}
+.table th,
+.table td {
+  border: 1px solid #e2e2e2;
+  padding: 8px 10px;
+  text-align: left;
+}
+.table thead th {
+  background: #fafafa;
+  font-weight: 600;
+}
