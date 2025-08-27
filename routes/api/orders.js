@@ -7,6 +7,7 @@ import {
   approve,
   show,
   setCartDates,
+  index,
 } from "../../controllers/api/orders.js";
 import { setOrderDates, getUserCalendar, getAdminCalendar } from "../../controllers/api/calender.js";
 import ensureLoggedIn from "../../config/ensureLoggedIn.js";
@@ -21,6 +22,7 @@ router.put("/cart/items/:itemId", ensureLoggedIn, setCartQty);
 router.post("/cart/set-dates", ensureLoggedIn, setCartDates); // moved ABOVE :id
 
 // ---------------- ORDER ROUTES ----------------
+router.get("/", ensureLoggedIn, index)
 router.post("/submit", ensureLoggedIn, submit);
 router.post("/:orderId/set-dates", ensureLoggedIn, setOrderDates);
 router.put("/:id/approve", ensureLoggedIn, requireRoles("admin"), approve);

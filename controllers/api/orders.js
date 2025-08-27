@@ -192,4 +192,18 @@ export async function setCartDates(req, res) {
   }
 }
 
-export default { getCart, addToCart, setCartQty, submit, approve, show, setCartDates };
+// GET /api/orders (all orders for logged-in user)
+export async function index(req, res) {
+  try {
+    const orders = await Order.find({ user: req.user._id })
+      .populate("lineItems.item")
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message || "Server error" });
+  }
+}
+
+export default { getCart, addToCart, setCartQty, submit, approve, show, setCartDates, index };
