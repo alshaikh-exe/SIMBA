@@ -16,4 +16,6 @@ router.delete("/:id", ensureLoggedIn, destroy);
 // Low stock check
 router.get("/low-stock", ensureLoggedIn, lowStock);
 
+router.patch("/:id/adjust-qty", ensureLoggedIn, itemsCtrl.adjustQty)
+
 export default router;
