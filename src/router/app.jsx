@@ -20,6 +20,7 @@ import StudentRequestsPage from '../pages/Booking/StudentRequestsPage/StudentReq
 import StockRequestPage from '../pages/Management/StockRequest/StockRequestPage';
 import AnalyticsPage from '../pages/Analytics/AnalyticsPage/AnalyticsPage';
 
+
 const AppRouter = () => {
   const [user, setUser] = useState(getUser());
 
@@ -60,7 +61,10 @@ const AppRouter = () => {
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
               <Route path="/orders" element={<OrdersPage user={user} setUser={setUser} />} />
               <Route path="/cart" element={<CartPage user={user} setUser={setUser} />} />
-              <Route path="/*" element={<Navigate to="/orders" />} />
+              <Route path="/*" element={<Navigate to="/orders"/>} />
+              <Route path="/orders/:orderId" element={<OrdersPage user={user} setUser={setUser} />} />
+
+              
             </>
           )}
         </Routes>
