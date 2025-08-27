@@ -99,6 +99,7 @@ const handleCheckout = async () => {
       requestedDays: requestedDays || 1,
     }));
 
+    // 3️⃣ Submit
     const res = await fetch(`${API_BASE}/api/orders/submit`, {
       method: "POST",
       headers: {
