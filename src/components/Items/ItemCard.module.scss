@@ -1,252 +1,161 @@
-//Zahraa
-// src/components/Items/Items.scss
-// .items-container {
-//   padding: 2rem;
-//   max-width: 1200px;
-//   margin: 0 auto;
+/* ItemCard.module.scss — light neumorphic grid card
+   Uses :global so your existing classNames work unchanged. */
 
-//   .items-header {
-//     margin-bottom: 2rem;
-    
-//     h2 {
-//       margin-bottom: 1rem;
-//       color: #2c3e50;
-//       font-size: 2rem;
-//       font-weight: 600;
-//     }
+$bg: #f3f6fb;             // page bg
+$card: #e7ecf6;           // card bg
+$white: #fff;
+$text: #3d4468;           // primary text
+$muted: #7d84a3;          // secondary text
+$accent: #5aa6ff;         // soft electronics blue
+$shadow-dark: #d4dae6;
+$shadow-light: #ffffff;
+$radius: 18px;
 
-//     .items-filters {
-//       display: flex;
-//       gap: 1rem;
-//       flex-wrap: wrap;
-//       align-items: center;
+:global(.items-loading) {
+  margin: 3rem auto;
+  max-width: 720px;
+  text-align: center;
+  color: $muted;
+  font-weight: 600;
+}
 
-//       .search-input {
-//         flex: 1;
-//         min-width: 250px;
-//         padding: 0.75rem;
-//         border: 2px solid #e1e8ed;
-//         border-radius: 8px;
-//         font-size: 1rem;
-//         transition: all 0.3s ease;
+/* OPTIONAL container if you want the page to flow in a grid.
+   You can wrap your list with <div className="items-grid">…</div> */
+:global(.items-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
 
-//         &:focus {
-//           outline: none;
-//           border-color: #3498db;
-//           box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-//         }
-//       }
+/* The card */
+:global(.item-card) {
+  background: $card;
+  color: $text;
+  border-radius: $radius;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 14px;
+  align-items: center;
 
-//       .filter-select {
-//         padding: 0.75rem;
-//         border: 2px solid #e1e8ed;
-//         border-radius: 8px;
-//         background: white;
-//         font-size: 1rem;
-//         cursor: pointer;
-//         transition: all 0.3s ease;
+  box-shadow:
+    14px 14px 34px $shadow-dark,
+    -14px -14px 34px $shadow-light;
+  transition: transform .12s ease, box-shadow .2s ease, background .2s ease;
 
-//         &:focus {
-//           outline: none;
-//           border-color: #3498db;
-//         }
-//       }
-//     }
-//   }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      18px 18px 44px $shadow-dark,
+      -18px -18px 44px $shadow-light;
+  }
 
-//   .items-loading {
-//     text-align: center;
-//     padding: 3rem;
-//     font-size: 1.2rem;
-//     color: #7f8c8d;
-//   }
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
 
-//   .error-message {
-//     background-color: #fee;
-//     color: #c53030;
-//     padding: 1rem;
-//     border-radius: 8px;
-//     margin-bottom: 1rem;
-//     border: 1px solid #feb2b2;
-//   }
+/* Image */
+:global(.item-image) {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #eef2fb, #f9fbff);
+  box-shadow: inset 6px 6px 14px rgba(0,0,0,.06), inset -6px -6px 14px rgba(255,255,255,.7);
 
-//   .items-grid {
-//     display: grid;
-//     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-//     gap: 2rem;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .35s ease;
+  }
 
-//     .item-card {
-//       background: white;
-//       border-radius: 12px;
-//       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-//       overflow: hidden;
-//       transition: all 0.3s ease;
-//       border: 1px solid #e1e8ed;
+  /* gentle zoom on hover */
+  .item-card:hover & img { transform: scale(1.03); }
+}
 
-//       &:hover {
-//         transform: translateY(-5px);
-//         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-//       }
+/* Info block */
+:global(.item-info) {
+  min-width: 0; /* text truncation safety */
+}
 
-//       .item-image {
-//         height: 200px;
-//         background: #f8f9fa;
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-//         overflow: hidden;
+/* Name */
+:global(.item-name) {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: $text;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-//         img {
-//           width: 100%;
-//           height: 100%;
-//           object-fit: cover;
-//         }
+/* Meta lines */
+:global(.item-meta) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 14px;
+  margin-bottom: 8px;
 
-//         .no-image {
-//           color: #95a5a6;
-//           font-size: 1rem;
-//         }
-//       }
+  p {
+    margin: 0;
+    font-size: .92rem;
+    color: $muted;
 
-//       .item-info {
-//         padding: 1.5rem;
+    strong { color: $text; font-weight: 700; }
+  }
 
-//         .item-name {
-//           font-size: 1.25rem;
-//           font-weight: 600;
-//           margin-bottom: 0.5rem;
-//           color: #2c3e50;
-//         }
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+  }
+}
 
-//         .item-description {
-//           color: #7f8c8d;
-//           margin-bottom: 1rem;
-//           line-height: 1.5;
-//         }
+/* Location row */
+:global(.item-location) {
+  margin: 2px 0 10px;
+  font-size: .9rem;
+  color: $muted;
 
-//         .item-details {
-//           display: flex;
-//           justify-content: space-between;
-//           align-items: center;
-//           margin-bottom: 1rem;
+  strong {
+    color: $accent;
+    font-weight: 800;
+    letter-spacing: .15px;
+  }
+}
 
-//           .item-category {
-//             background: #ecf0f1;
-//             color: #2c3e50;
-//             padding: 0.25rem 0.75rem;
-//             border-radius: 20px;
-//             font-size: 0.875rem;
-//             font-weight: 500;
-//           }
+/* Actions */
+:global(.item-actions) {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 
-//           .item-status {
-//             padding: 0.25rem 0.75rem;
-//             border-radius: 20px;
-//             font-size: 0.875rem;
-//             font-weight: 500;
+  /* Light-ghost tweak for your existing Button component */
+  button {
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 700;
+    border: 1px solid rgba(0,0,0,.06);
+    background: $white;
+    color: $text;
+    box-shadow: 8px 8px 18px $shadow-dark, -8px -8px 18px $shadow-light;
+    transition: transform .08s ease, box-shadow .18s ease, border-color .18s ease;
 
-//             &.status-available {
-//               background: #d5f4e6;
-//               color: #27ae60;
-//             }
+    &:hover {
+      transform: translateY(-1px);
+      border-color: rgba(0,0,0,.12);
+      box-shadow: 10px 10px 22px $shadow-dark, -10px -10px 22px $shadow-light;
+    }
+    &:active { transform: translateY(0); }
+  }
 
-//             &.status-reserved {
-//               background: #fef5e7;
-//               color: #f39c12;
-//             }
-
-//             &.status-maintenance {
-//               background: #fdeaea;
-//               color: #e74c3c;
-//             }
-
-//             &.status-repair {
-//               background: #f4f3ff;
-//               color: #8b5cf6;
-//             }
-
-//             &.status-unknown {
-//               background: #f8f9fa;
-//               color: #6c757d;
-//             }
-//           }
-//         }
-
-//         .item-specs {
-//           margin-bottom: 1.5rem;
-//           font-size: 0.9rem;
-
-//           h4 {
-//             margin-bottom: 0.5rem;
-//             color: #2c3e50;
-//             font-size: 1rem;
-//           }
-
-//           ul {
-//             list-style: none;
-//             padding: 0;
-//             margin: 0;
-
-//             li {
-//               padding: 0.25rem 0;
-//               color: #7f8c8d;
-
-//               strong {
-//                 color: #2c3e50;
-//               }
-//             }
-//           }
-//         }
-
-//         .item-actions {
-//           display: flex;
-//           gap: 1rem;
-//           justify-content: space-between;
-//         }
-//       }
-//     }
-//   }
-
-//   .no-items {
-//     text-align: center;
-//     padding: 3rem;
-//     color: #7f8c8d;
-
-//     p {
-//       font-size: 1.1rem;
-//     }
-//   }
-// }
-
-// // Responsive design
-// @media (max-width: 768px) {
-//   .items-container {
-//     padding: 1rem;
-
-//     .items-header {
-//       .items-filters {
-//         flex-direction: column;
-//         align-items: stretch;
-
-//         .search-input {
-//           min-width: auto;
-//         }
-//       }
-//     }
-
-//     .items-grid {
-//       grid-template-columns: 1fr;
-//       gap: 1rem;
-
-//       .item-card {
-//         .item-info {
-//           padding: 1rem;
-
-//           .item-actions {
-//             flex-direction: column;
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
+  /* a hint of blue for primary-looking actions if your Button adds classes */
+  button[data-variant="primary"],
+  button.variant-primary {
+    border-color: rgba($accent, .35);
+  }
+}
