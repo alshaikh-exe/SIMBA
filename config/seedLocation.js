@@ -1,7 +1,9 @@
+// seedLocations.js
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 import Location from "./models/location.js";
 
-await mongoose.connect(process.env.MONGO_URI);
+dotenv.config(); // make sure .env is loaded
 
 const seed = [
   { campus: "Campus A", building: "10", classroom: "20.124" },
@@ -10,6 +12,24 @@ const seed = [
   { campus: "Campus B", building: "20", classroom: "20.165" },
 ];
 
-await Location.insertMany(seed);
-console.log("Seeded locations");
-await mongoose.disconnect();
+async function run() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+
+    for (const loc of seed) {
+      await Location.findOneAndUpdate(
+        { campus: loc.campus, building: loc.building, classroom: loc.classroom },
+        loc,
+        { upsert: true, new: true }
+      );
+    }
+
+    console.log("✅ Locations seeded (safe against duplicates)");
+  } catch (err) {
+    console.error("❌ Error seeding locations:", err);
+  } finally {
+    await mongoose.disconnect();
+  }
+}
+
+run();

@@ -1,14 +1,12 @@
 //Zahraa
+
 import React from "react";
-import NavBar from "../../../components/Navbar/Navbar";
-// import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
+import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
 
 const StudentRequestsPage = ({ user, setUser }) => {
   return (
     <main>
-      <aside>
-        <NavBar user={user} setUser={setUser} />
-      </aside>
+
       <div>
         <h1>Student Requests</h1>
         <StudentRequests user={user} />
@@ -18,10 +16,30 @@ const StudentRequestsPage = ({ user, setUser }) => {
 };
 
 export default StudentRequestsPage;
+
+
+// import React from "react";
+// import NavBar from "../../../components/Navbar/Navbar";
+// import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
+
+// const StudentRequestsPage = ({ user, setUser }) => {
+//   return (
+//     <main>
+//       <aside>
+//         <NavBar user={user} setUser={setUser} />
+//       </aside>
+//       <div>
+//         <h1>Student Requests</h1>
+//         <StudentRequests user={user} />
+//       </div>
+//     </main>
+//   );
+// };
+
 // import React, { useState, useEffect } from 'react';
-// import { getStudentRequests, updateRequestStatus } from '../../utilities/requests-api';
-// import { useAuth } from '../../contexts/AuthContext';
-// import './StudentRequests.scss';
+// import { getStudentRequests, updateRequestStatus } from '../../../utilities/requests-api';
+// import { useAuth } from '../../../contexts/AuthContext';
+// import './StudentRequestsPage.module.scss';
 
 // export default function StudentRequests() {
 //   const [requests, setRequests] = useState([]);

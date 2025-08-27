@@ -15,7 +15,8 @@ export default function LoginForm({ setUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = await login(credentials);
+      // Add role before sending
+      const user = await login({ ...credentials, role: 'user' });
       setUser(user);
     } catch {
       setError('Invalid credentials');
@@ -48,6 +49,5 @@ export default function LoginForm({ setUser }) {
         <Link to="/admin/login">Admin</Link>
       </p>
     </form>
-    
   );
 }

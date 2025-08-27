@@ -1,146 +1,109 @@
-/* AdminSignupForm.module.scss — Neumorphic theme to match AdminLoginForm */
+/* UserSignupForm.module.scss */
+/* Neumorphism — soft white/grey card + inset inputs */
 
 $bg: #e0e5ec;
-$shadow-dark: #bec3cf;
-$shadow-light: #ffffff;
-
+$light: #ffffff;
+$shadow: #bec3cf;
 $text: #3d4468;
-$muted: #6c7293;
-$error: #ff3b5c;
+$muted: #8d93b8;
+$accent: #6c7293;
 
-$radius-card: 30px;
-$radius-field: 15px;
+@mixin neu($d: 12px, $b: 24px) {
+  box-shadow: #{$d} #{$d} #{$b} $shadow, -#{$d} -#{$d} #{$b} $light;
+}
+@mixin neu-inset($d: 8px, $b: 16px) {
+  box-shadow: inset #{$d} #{$d} #{$b} $shadow, inset -#{$d} -#{$d} #{$b} $light;
+}
 
-/* Card-style wrapper */
 .form {
-  width: min(92vw, 420px);
-  margin: 6vh auto 0;
-  padding: 48px 36px;
+  width: min(420px, 92vw);
+  margin: 0 auto;
+  padding: 36px 28px;
+  border-radius: 28px;
   background: $bg;
-  border-radius: $radius-card;
-  box-shadow: 20px 20px 60px $shadow-dark, -20px -20px 60px $shadow-light;
+  @include neu(20px, 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform .2s ease, box-shadow .2s ease;
 
-  display: grid;
-  gap: 18px;
-  color: $text;
-
-  /* inline links area at the bottom */
-  p {
-    margin: 2px 0 0;
-    text-align: center;
-    color: $muted;
-
-    a {
-      color: $muted;
-      font-weight: 700;
-      text-decoration: none;
-
-      &:hover {
-        color: $text;
-        text-decoration: underline;
-      }
-    }
-  }
+  &:hover { transform: translateY(-2px); }
 }
 
-/* Field styles (inputs/selects share the same look) */
-%neu-field {
-  width: 100%;
+.input {
+  background: $bg;
   border: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 16px;
+  color: $text;
+  @include neu-inset(8px, 16px);
   outline: none;
-  border-radius: $radius-field;
-  padding: 18px 22px;
-  background: $bg;
-  color: $text;
-  font-size: 1rem;
-  font-weight: 500;
-  box-shadow:
-    inset 8px 8px 16px $shadow-dark,
-    inset -8px -8px 16px $shadow-light;
-  transition: box-shadow .22s ease;
+  transition: box-shadow .2s ease, transform .06s ease;
 
-  &::placeholder {
-    color: lighten($muted, 12%);
-  }
+  &::placeholder { color: $muted; }
 
-  &:focus {
-    box-shadow:
-      inset 4px 4px 8px $shadow-dark,
-      inset -4px -4px 8px $shadow-light;
-  }
+  &:focus { @include neu-inset(4px, 8px); }
+  &:active { transform: scale(0.998); }
 }
 
-.input { @extend %neu-field; }
-.select { @extend %neu-field; appearance: none; }
-
-/* Optional: arrange first two inputs side-by-side on wider screens */
-.row {
-  display: grid;
-  gap: 18px;
-
-  @media (min-width: 560px) {
-    grid-template-columns: 1fr 1fr;
-  }
+/* keep autofill from turning inputs yellow */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-text-fill-color: $text;
+  -webkit-box-shadow: 0 0 0px 1000px $bg inset, inset 8px 8px 16px $shadow, inset -8px -8px 16px $light;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
-/* Neumorphic submit button */
 .button {
-  margin-top: 4px;
-  border: 0;
-  border-radius: $radius-field;
-  padding: 16px 24px;
+  margin-top: 6px;
+  width: 100%;
   background: $bg;
   color: $text;
+  border: 0;
+  border-radius: 16px;
+  padding: 14px 18px;
   font-weight: 700;
   letter-spacing: .2px;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
-
-  box-shadow: 8px 8px 20px $shadow-dark, -8px -8px 20px $shadow-light;
-  transition: transform .08s ease, box-shadow .18s ease;
-
-  &::before {
-    content: '';
-    position: absolute; inset: 0;
-    left: -100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-    transition: left .5s ease;
-  }
+  @include neu(10px, 22px);
+  transition: transform .12s ease, box-shadow .2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 12px 12px 30px $shadow-dark, -12px -12px 30px $shadow-light;
-
-    &::before { left: 100%; }
+    transform: translateY(-1px);
+    @include neu(12px, 28px);
   }
-
   &:active {
+    box-shadow: inset 4px 4px 10px $shadow, inset -4px -4px 10px $light;
     transform: translateY(0);
-    box-shadow: inset 4px 4px 10px $shadow-dark, inset -4px -4px 10px $shadow-light;
   }
-
-  &:disabled { opacity: .6; cursor: not-allowed; }
 }
 
-/* Optional helper classes */
-.error {
-  margin-top: -4px;
-  padding: .6rem .8rem;
-  border-left: 4px solid $error;
-  background: #fff1f4;
-  color: darken($error, 20%);
-  border-radius: 10px;
-  font-size: .92rem;
-}
-
-.hint {
+.adminLink {
+  margin-top: 6px;
   text-align: center;
-  font-size: .9rem;
+
+  a {
+    color: $accent;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color .15s ease;
+
+    &:hover { color: $text; }
+    &:active { opacity: .85; }
+  }
+}
+
+/* Optional small helper text style if you add any later */
+.hint {
+  font-size: .85rem;
   color: $muted;
+  text-align: center;
 }
 
 @media (max-width: 480px) {
-  .form { padding: 36px 24px; border-radius: 22px; }
-  .input, .select { padding: 16px 18px; }
+  .form { padding: 28px 22px; border-radius: 22px; }
+  .input { padding: 14px 16px; }
+  .button { padding: 12px 16px; }
 }

@@ -44,6 +44,7 @@ export const getItemById = async (itemId) => {
 };
 
 export const createItem = async (itemData) => {
+  console.log(itemData)
   const response = await fetch(`${BASE_URL}/items`, {
     method: 'POST',
     headers: getAuthHeaders(),
@@ -86,10 +87,11 @@ export const getCartItems = async () => {
   // For now, using localStorage. In production, this could be server-based
   try {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if(!cart.length) return [];
     // Fetch full item details for cart items
     const itemPromises = cart.map(cartItem => getItemById(cartItem.itemId || cartItem._id));
     const items = await Promise.all(itemPromises);
-    return items;
+    return items.filter(Boolean);
   } catch (error) {
     console.error('Failed to get cart items:', error);
     return [];
@@ -97,38 +99,22 @@ export const getCartItems = async () => {
 };
 
 export const addToCart = async (itemId) => {
-  try {
-    // Check if item is already in cart
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItem = cart.find(item => (item.itemId || item._id) === itemId);
-    
-    if (existingItem) {
-      throw new Error('Item is already in your cart');
-    }
-    
-    // Add item to cart
-    cart.push({ itemId, addedAt: new Date().toISOString() });
-    localStorage.setItem('cart', JSON.stringify(cart));
-    
-    return { success: true, message: 'Item added to cart' };
-  } catch (error) {
-    console.error('Failed to add to cart:', error);
-    throw error;
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if (cart.some(c => (c.itemId || c._id) === itemId)) {
+    throw new Error('Item is already in your cart');
   }
+  cart.push({ itemId, addedAt: new Date().toISOString() });
+  localStorage.setItem('cart', JSON.stringify(cart));
+  return { success: true, message: 'Item added to cart' };
 };
 
 export const removeFromCart = async (itemId) => {
-  try {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const updatedCart = cart.filter(item => (item.itemId || item._id) !== itemId);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    
-    return { success: true, message: 'Item removed from cart' };
-  } catch (error) {
-    console.error('Failed to remove from cart:', error);
-    throw error;
-  }
-};
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const next = cart.filter(c => (c.itemId || c._id) !== itemId);
+  localStorage.setItem('cart', JSON.stringify(next));
+  return { success: true, message: 'Item removed from cart' };
+
+}
 
 export const clearCart = async () => {
   try {

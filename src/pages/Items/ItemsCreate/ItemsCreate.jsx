@@ -1,38 +1,30 @@
 //Zahraa
-// import React from "react";
-// import NavBar from "../../../components/Navbar/Navbar";
-
-// const ItemsEditPage = ({ user, setUser }) => {
-//   return (
-//     <main>
-//       <aside>
-//         <NavBar user={user} setUser={setUser} />
-//       </aside>
-//       <div>
-//         <h1>Edit Items</h1>
-//         {/* Add your edit form component here */}
-//       </div>
-//     </main>
-//   );
-// };
-
-// export default ItemsEditPage;
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './Items.module.scss';
+import './ItemsCreate.module.scss';
+import {createItem} from '../../../utilities/equipment-api'
+import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
-const ItemsEditPage = ({ user }) => {
-  const { id } = useParams();
+const ItemsCreatePage = ({ user }) => {
   const navigate = useNavigate();
-  const isEditing = id !== 'new';
+
+  const [locations, setLocations] = useState ([])
+
+  useEffect (()=>{
+    async function getAllLocations (){
+      const res = await getLocations() 
+      console.log(res)
+      setLocations(res.data)
+    }
+    getAllLocations()
+  }, [])
   
-  const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [equipment, setEquipment] = useState({
     name: '',
-    description: '',
+    details: '',
     category: '',
     manufacturer: '',
     model: '',
@@ -74,11 +66,11 @@ const ItemsEditPage = ({ user }) => {
     { value: 'out of order', label: 'Out of Order' }
   ];
 
-  useEffect(() => {
-    if (isEditing) {
-      fetchEquipment();
-    }
-  }, [id, isEditing]);
+//   useEffect(() => {
+//     if (isEditing) {
+//       fetchEquipment();
+//     }
+//   }, [id, isEditing]);
 
   // Check permissions
   useEffect(() => {
@@ -87,32 +79,32 @@ const ItemsEditPage = ({ user }) => {
     }
   }, [user.role, navigate]);
 
-  const fetchEquipment = async () => {
-    try {
-      const response = await fetch(`/api/items/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+//   const fetchEquipment = async () => {
+//     try {
+//       const response = await fetch(`/api/items/${id}`, {
+//         headers: {
+//           'Authorization': `Bearer ${localStorage.getItem('token')}`
+//         }
+//       });
       
-      if (response.ok) {
-        const data = await response.json();
-        setEquipment(data);
+//       if (response.ok) {
+//         const data = await response.json();
+//         setEquipment(data);
         
-        // Convert specifications object to input array
-        if (data.specifications && Object.keys(data.specifications).length > 0) {
-          const specs = Object.entries(data.specifications).map(([key, value]) => ({
-            key, value
-          }));
-          setSpecificationInputs([...specs, { key: '', value: '' }]);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching equipment:', error);
-      alert('Error loading equipment data');
-    }
-    setLoading(false);
-  };
+//         // Convert specifications object to input array
+//         if (data.specifications && Object.keys(data.specifications).length > 0) {
+//           const specs = Object.entries(data.specifications).map(([key, value]) => ({
+//             key, value
+//           }));
+//           setSpecificationInputs([...specs, { key: '', value: '' }]);
+//         }
+//       }
+//     } catch (error) {
+//       console.error('Error fetching equipment:', error);
+//       alert('Error loading equipment data');
+//     }
+//     setLoading(false);
+//   };
 
   const handleInputChange = (field, value) => {
     setEquipment(prev => ({
@@ -143,39 +135,30 @@ const ItemsEditPage = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!equipment.name.trim()) {
-      alert('Equipment name is required');
-      return;
+        alert('Equipment name is required');
+        return;
     }
-
+    
     setSaving(true);
-
+    
+    const specifications = {};
+    specificationInputs.forEach(spec => {
+        if (spec.key && spec.value) {
+            specifications[spec.key] = spec.value;
+        }
+    });
+    
+    const equipmentData = {
+        ...equipment,
+        specifications: specifications
+    };
+    console.log(equipmentData)
     try {
       // Convert specification inputs to object
-      const specifications = {};
-      specificationInputs.forEach(spec => {
-        if (spec.key && spec.value) {
-          specifications[spec.key] = spec.value;
-        }
-      });
 
-      const equipmentData = {
-        ...equipment,
-        specifications
-      };
+    const response = await createItem (equipmentData)
 
-      const url = isEditing ? `/api/items/${id}` : '/api/items';
-      const method = isEditing ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(equipmentData)
-      });
 
       if (response.ok) {
         alert(`Equipment ${isEditing ? 'updated' : 'created'} successfully!`);
@@ -190,55 +173,20 @@ const ItemsEditPage = ({ user }) => {
     setSaving(false);
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this equipment? This action cannot be undone.')) {
-      return;
-    }
-
-    setSaving(true);
-
-    try {
-      const response = await fetch(`/api/items/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.ok) {
-        alert('Equipment deleted successfully');
-        navigate('/equipment');
-      } else {
-        throw new Error('Failed to delete equipment');
-      }
-    } catch (error) {
-      alert('Error deleting equipment: ' + error.message);
-    }
-
-    setSaving(false);
-  };
-
-  if (loading) {
-    return (
-      <div className="items-edit-page">
-        <div className="loading">Loading equipment data...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="items-edit-page">
       <div className="page-header">
-        <h1>{isEditing ? 'Edit Equipment' : 'Add New Equipment'}</h1>
+        <h1>'Add New Equipment'</h1>
         <div className="header-actions">
           <Button onClick={() => navigate('/equipment')} className="secondary">
             ← Back to Equipment
           </Button>
-          {isEditing && (
+          {/* {isEditing && (
             <Button onClick={handleDelete} className="danger" disabled={saving}>
               Delete Equipment
             </Button>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -277,11 +225,11 @@ const ItemsEditPage = ({ user }) => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="details">Details</label>
               <textarea
-                id="description"
-                value={equipment.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                id="details"
+                value={equipment.details}
+                onChange={(e) => handleInputChange('details', e.target.value)}
                 placeholder="Describe the equipment's purpose and features"
                 rows="3"
               />
@@ -319,13 +267,16 @@ const ItemsEditPage = ({ user }) => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="location">Location</label>
-                <input
-                  type="text"
+                <select
                   id="location"
                   value={equipment.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder="Room, building, or area"
-                />
+                >
+                  <option value="">-----</option>
+                  {locations?.map((location, i) => (
+                    <option key={i} value={location._id}>{location.building}.{location.classroom} {location.campus}</option>
+                  ))}
+                </select>
               </div>
               
               <div className="form-group">
@@ -499,7 +450,7 @@ const ItemsEditPage = ({ user }) => {
             Cancel
           </Button>
           <Button type="submit" className="primary" disabled={saving}>
-            {saving ? 'Saving...' : (isEditing ? 'Update Equipment' : 'Create Equipment')}
+            Create Equipment
           </Button>
         </div>
       </form>
@@ -507,4 +458,4 @@ const ItemsEditPage = ({ user }) => {
   );
 };
 
-export default ItemsEditPage;
+export default ItemsCreatePage;

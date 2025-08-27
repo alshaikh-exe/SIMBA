@@ -2,14 +2,37 @@
 import mongoose from "mongoose";
 import Item from "../../models/item.js";
 import Location from "../../models/location.js";
+import { enrichItemDetails } from "../../config/aiService.js"; // DeepSeek integration
 
 const { Types } = mongoose;
 
+/* ----------------- constants ----------------- */
 const VALID_RETURN_POLICIES = ["returnable", "nonreturnable"];
 const DEADLINE_MIN = 1;
-const DEADLINE_MAX = 50;
+const DEADLINE_MAX = 70; // match schema
 
-// ----------------- helpers -----------------
+const VALID_STATUS = new Set([
+  "available",
+  "reserved",         // fixed typo
+  "maintenance",
+  "out of order",
+  "repair",
+  "out of stock",
+]);
+
+const VALID_CATEGORIES = new Set([
+  "electronics",
+  "3d printing",
+  "machining",
+  "testing",
+  "measurement",
+  "fabrication",
+  "assembly",
+  "safety",
+  "general",
+]);
+
+/* ----------------- helpers ----------------- */
 function buildTextFilter(q) {
   if (!q) return {};
   return {
@@ -38,6 +61,7 @@ function sanitizePolicyInputs({ returnPolicy, deadline }) {
   return sanitized;
 }
 
+// keep location logic unchanged
 async function resolveLocation({ locationId, campus, building, classroom }) {
   if (locationId) {
     if (!Types.ObjectId.isValid(locationId)) {
@@ -65,22 +89,38 @@ async function resolveLocation({ locationId, campus, building, classroom }) {
   throw err;
 }
 
-async function filterByLocationQuery({ campus, building, classroom }) {
-  if (!campus && !building && !classroom) return {};
-  const locQuery = {};
-  if (campus) locQuery.campus = campus;
-  if (building) locQuery.building = building;
-  if (classroom) locQuery.classroom = classroom;
-  const locs = await Location.find(locQuery).select("_id");
-  return locs.length ? { location: { $in: locs.map((l) => l._id) } } : { location: { $in: [] } };
+function sanitizeItemInputs(body) {
+  const out = {};
+
+  // strings
+  if (typeof body.image === "string" && body.image.trim()) out.image = body.image.trim();
+  if (typeof body.maintenanceSchedule === "string") out.maintenanceSchedule = body.maintenanceSchedule.trim();
+
+  // values is a STRING in your schema; stringify objects/arrays
+  if (body.values !== undefined) {
+    if (typeof body.values === "string") out.values = body.values;
+    else out.values = JSON.stringify(body.values);
+  }
+
+  // enums
+  if (typeof body.status === "string" && VALID_STATUS.has(body.status)) out.status = body.status;
+  if (typeof body.category === "string" && VALID_CATEGORIES.has(body.category)) out.category = body.category;
+
+  // stock
+  if (body.quantity !== undefined && Number.isFinite(Number(body.quantity))) out.quantity = Number(body.quantity);
+  if (body.threshold !== undefined && Number.isFinite(Number(body.threshold))) out.threshold = Number(body.threshold);
+
+  return out;
 }
 
 function selectUpdatableFields(body) {
   const updatable = {};
   if (typeof body.name === "string") updatable.name = body.name;
   if (typeof body.details === "string") updatable.details = body.details;
-  if (typeof body.picture === "string") updatable.picture = body.picture;
+
+  Object.assign(updatable, sanitizeItemInputs(body)); // image, values, status, category, etc.
   Object.assign(updatable, sanitizePolicyInputs({ returnPolicy: body.returnPolicy, deadline: body.deadline }));
+
   return updatable;
 }
 
@@ -88,10 +128,9 @@ function populateItem(query) {
   return query.populate("location").populate("createdBy", "name email");
 }
 
-// ---- datasheet utilities (no external API) ----
+/* ---- datasheet helpers (no external API) ---- */
 const ALLDATASHEET_BASE = "https://www.alldatasheet.net/view.jsp?Searchword=";
 
-// Light heuristic for common electronics part numbers
 function extractLikelyPartNumbers(...texts) {
   const prefixes = [
     "LM","TL","NE","OPA","AD","LT","IRF","IRL","BC","BD","2N","1N",
@@ -114,34 +153,41 @@ function makeAlldatasheetLink(query) {
 }
 
 function buildDatasheetLinks(parts) {
-  return parts.map((p) => ({
-    title: p,
-    url: makeAlldatasheetLink(p),
-    source: "alldatasheet.net",
-  }));
+  return parts.map((p) => ({ title: p, url: makeAlldatasheetLink(p), source: "alldatasheet.net" }));
 }
 
 function policySummary(item) {
-  if (item.returnPolicy === "returnable") {
-    return `Returnable; deadline ${item.deadline} day(s).`;
-  }
-  return "Non-returnable/one-way issue.";
+  return item.returnPolicy === "returnable"
+    ? `Returnable; deadline ${item.deadline} day(s).`
+    : "Non-returnable/one-way issue.";
 }
 
-// ----------------- controllers -----------------
+/* ----------------- controllers ----------------- */
 
 // GET /api/items
 export async function index(req, res) {
   try {
-    const { q, campus, building, classroom, returnPolicy, page = 1, limit = 10, sort = "-createdAt" } = req.query;
+    const { q, campus, building, classroom, returnPolicy, status, category, page = 1, limit = 10, sort = "-createdAt" } = req.query;
 
     const filters = { ...buildTextFilter(q) };
     if (typeof returnPolicy === "string" && VALID_RETURN_POLICIES.includes(returnPolicy)) {
       filters.returnPolicy = returnPolicy;
     }
+    if (typeof status === "string" && VALID_STATUS.has(status)) {
+      filters.status = status;
+    }
+    if (typeof category === "string" && VALID_CATEGORIES.has(category)) {
+      filters.category = category;
+    }
 
-    const locFilter = await filterByLocationQuery({ campus, building, classroom });
-    Object.assign(filters, locFilter);
+    if (campus || building || classroom) {
+      const locQuery = {};
+      if (campus) locQuery.campus = campus;
+      if (building) locQuery.building = building;
+      if (classroom) locQuery.classroom = classroom;
+      const locs = await Location.find(locQuery).select("_id");
+      filters.location = locs.length ? { $in: locs.map((l) => l._id) } : { $in: [] };
+    }
 
     const $page = Math.max(1, Number(page));
     const $limit = Math.min(100, Math.max(1, Number(limit)));
@@ -163,7 +209,7 @@ export async function index(req, res) {
 }
 
 // GET /api/items/:id
-// Enhances response with partNumbers, datasheetLinks, and policySummary
+// Adds derived datasheet links (not stored)
 export async function show(req, res) {
   try {
     const { id } = req.params;
@@ -197,37 +243,43 @@ export async function show(req, res) {
 }
 
 // POST /api/items
-import { enrichItemDetails } from "../../config/aiService.js"; // <-- make sure this is in place
-
 export async function create(req, res) {
+  console.log(req.body);
+  console.log(req.body.name);
   try {
-    if (!req.user?._id) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-    const { name, details, picture, returnPolicy, deadline, locationId, campus, building, classroom } = req.body;
+    const { name, details, image, values, status, category, maintenanceSchedule, returnPolicy, deadline, quantity, threshold, location, campus, building, classroom } = req.body;
+
     if (!name || !details) {
       return res.status(400).json({ success: false, message: "name and details are required" });
     }
-
     if (returnPolicy && !VALID_RETURN_POLICIES.includes(returnPolicy)) {
-      return res.status(400).json({
-        success: false,
-        message: `returnPolicy must be one of: ${VALID_RETURN_POLICIES.join(", ")}`,
-      });
+      return res.status(400).json({ success: false, message: `returnPolicy must be one of: ${VALID_RETURN_POLICIES.join(", ")}` });
     }
 
-    const loc = await resolveLocation({ locationId, campus, building, classroom });
+    // const loc = await resolveLocation({ location, campus, building, classroom });
     const policy = sanitizePolicyInputs({ returnPolicy, deadline });
 
-    // 🔮 Call AI service to enrich details
-    const aiDetails = await enrichItemDetails(name);
+    // 🔮 DeepSeek enrichment
+    let combinedDetails = details;
+    try {
+      const ai = await enrichItemDetails(name);
+      if (ai && typeof ai === "string") {
+        combinedDetails = `${details}\n\nAI Generated Details:\n${ai}`.trim();
+      }
+    } catch (_) {
+      // keep original details on AI failure
+    }
+
+    // sanitize new fields
+    const misc = sanitizeItemInputs({ image, values, status, category, maintenanceSchedule, quantity, threshold });
 
     const toCreate = {
       name: name.trim(),
-      details: `${details}\n\nAI Generated Details:\n${aiDetails}`, // append AI results
-      picture,
-      location: loc._id,
+      details: combinedDetails,
+      ...misc,
+      location: location,              
       createdBy: req.user._id,
       ...policy,
     };
@@ -237,13 +289,12 @@ export async function create(req, res) {
     res.status(201).json({ success: true, data: populated });
   } catch (err) {
     const code = err.code === 11000 ? 400 : err.status || 500;
-    const message =
-      err.code === 11000 ? "Duplicate key error (likely Location uniqueness)" : err.message || "Server error";
-    res.status(code).json({ success: false, message });
+    res.status(code).json({ success: false, message: err.message || "Server error" });
   }
 }
 
 // PUT /api/items/:id
+// If name or details are updated, regenerate AI and replace `details` with base + AI
 export async function update(req, res) {
   try {
     if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -258,13 +309,26 @@ export async function update(req, res) {
     }
 
     if ("returnPolicy" in req.body && !VALID_RETURN_POLICIES.includes(req.body.returnPolicy)) {
-      return res.status(400).json({
-        success: false,
-        message: `returnPolicy must be one of: ${VALID_RETURN_POLICIES.join(", ")}`,
-      });
+      return res.status(400).json({ success: false, message: `returnPolicy must be one of: ${VALID_RETURN_POLICIES.join(", ")}` });
     }
 
     const updates = selectUpdatableFields(req.body);
+
+    // If either name or details changed, refresh AI details and **replace** combined text
+    const baseName = typeof req.body.name === "string" ? req.body.name : existing.name;
+    const baseDetails = typeof req.body.details === "string"
+      ? req.body.details
+      : (existing.details.split("\n\nAI Generated Details:\n")[0] || existing.details);
+
+    if (req.body.name || req.body.details) {
+      try {
+        const ai = await enrichItemDetails(baseName);
+        updates.details = `${baseDetails}\n\nAI Generated Details:\n${ai}`.trim();
+      } catch (_) {
+        // fall back to provided/new baseDetails if AI fails
+        updates.details = baseDetails;
+      }
+    }
 
     const { locationId, campus, building, classroom } = req.body;
     if (locationId || (campus && building && classroom)) {
@@ -276,10 +340,7 @@ export async function update(req, res) {
     const populated = await populateItem(Item.findById(updated._id));
     res.status(200).json({ success: true, data: populated });
   } catch (err) {
-    const code = err.code === 11000 ? 400 : err.status || 500;
-    const message =
-      err.code === 11000 ? "Duplicate key error (likely Location uniqueness)" : err.message || "Server error";
-    res.status(code).json({ success: false, message });
+    res.status(err.status || 500).json({ success: false, message: err.message || "Server error" });
   }
 }
 
@@ -304,4 +365,14 @@ export async function destroy(req, res) {
   }
 }
 
-export default { index, show, create, update, destroy };
+// GET /api/items/low-stock
+export async function lowStock(req, res) {
+  try {
+    const items = await Item.find({ $expr: { $lt: ["$quantity", "$threshold"] } });
+    res.status(200).json({ success: true, count: items.length, data: items });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Failed to fetch low stock items" });
+  }
+}
+
+export default { index, show, create, update, destroy, lowStock };

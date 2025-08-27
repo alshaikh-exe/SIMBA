@@ -1,14 +1,10 @@
 //Zahraa
 import React from "react";
-import NavBar from "../../../components/Navbar/Navbar";
-// import Items from "../../../components/Items/Items";
+import Items from "../../../components/Items/Items";
 
 const ItemsPage = ({ user, setUser }) => {
   return (
     <main>
-      <aside>
-        <NavBar user={user} setUser={setUser} />
-      </aside>
       <div>
         <h1>Items</h1>
         <Items user={user} />
@@ -18,9 +14,30 @@ const ItemsPage = ({ user, setUser }) => {
 };
 
 export default ItemsPage;
+
+
+// import React from "react";
+// import NavBar from "../../../components/Navbar/Navbar";
+// // import Items from "../../../components/Items/Items";
+
+// const ItemsPage = ({ user, setUser }) => {
+//   return (
+//     <main>
+//       <aside>
+//         <NavBar user={user} setUser={setUser} />
+//       </aside>
+//       <div>
+//         <h1>Items</h1>
+//         <Items user={user} />
+//       </div>
+//     </main>
+//   );
+// };
+
+
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
-// import './ItemsPage.scss';
+// import './Items.module.scss';
 // import Button from '../../../components/Button/Button';
 
 // const ItemsPage = ({ user, cart, setCart }) => {

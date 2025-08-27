@@ -13,6 +13,10 @@ import itemsRoutes from "./routes/api/items.js"
 import ordersRoutes from "./routes/api/orders.js"
 import checkToken from "./config/checkToken.js"
 import ensureLoggedIn from "./config/ensureLoggedIn.js"
+import managementRoutes from "./routes/api/management.js";
+import analyticsRoutes from "./routes/api/analytics.js";
+import locationRoutes from "./routes/api/locations.js";
+
 
 const app = express()
 
@@ -32,10 +36,13 @@ app.use((req, res, next) => {
 app.use("/api/users", userRoutes)
 
 // Protected routes (attach checkToken + ensureLoggedIn)
-app.use("/api/users", checkToken, ensureLoggedIn, adminRoutes)
+app.use("/api/admin", checkToken, ensureLoggedIn, adminRoutes)
 app.use("/api/roles", checkToken, ensureLoggedIn, roleRoutes)
 app.use("/api/items", checkToken, ensureLoggedIn, itemsRoutes)
 app.use("/api/orders", checkToken, ensureLoggedIn, ordersRoutes)
+app.use("/api/management", checkToken, ensureLoggedIn, managementRoutes);
+app.use("/api/analytics", checkToken, ensureLoggedIn, analyticsRoutes);
+app.use("/api/locations", checkToken, ensureLoggedIn, locationRoutes);
 
 // ---------- STATIC / REACT ----------
 const staticDir = process.env.NODE_ENV === "production" ? "dist" : "public"

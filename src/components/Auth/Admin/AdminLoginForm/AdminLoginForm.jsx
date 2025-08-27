@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './AdminLoginForm.module.scss';
 import { login } from '../../../../utilities/users-service';
+
 export default function LoginForm({ setUser }) {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -14,7 +15,8 @@ export default function LoginForm({ setUser }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const user = await login(credentials);
+      // Add role before sending
+      const user = await login({ ...credentials, role: 'admin' });
       setUser(user);
     } catch {
       setError('Invalid credentials');
@@ -43,11 +45,8 @@ export default function LoginForm({ setUser }) {
       />
       {error && <div className={styles.error}>{error}</div>}
       <button type="submit" className={styles.button}>Log In</button>
-      <p>
-                <p>No Account?<Link to="/admin">Sign Up as Admin</Link></p>
-                <Link to="/user">User</Link>
-                
-            </p>
+      <p>No Account?<Link to="/admin">Sign Up as Admin</Link></p>
+      <p><Link to="/user">User</Link></p>
     </form>
   );
 }
