@@ -108,7 +108,8 @@ const ItemsPage = ({ user, setUser }) => {
       <div className="items-container">
         <div className="items-header">
           <h2>Items Catalog</h2>
-         <Link to= '/items/create'>Add New Item</Link>
+           {user.role === "admin" ? <Link to= '/items/create'>Add New Item</Link> : ""}
+         
           <input
             type="text"
             placeholder="Search equipment..."
