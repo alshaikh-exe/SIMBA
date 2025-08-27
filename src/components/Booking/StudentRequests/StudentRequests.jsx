@@ -1,94 +1,168 @@
-// StudentRequests.jsx
-import React, { useState } from "react";
-import styles from "./StudentRequests.module.scss";   // <— add this
+// components/Booking/StudentRequests/StudentRequests.jsx
+import React, { useEffect, useState } from "react";
+import styles from "./StudentRequests.module.scss";
+import {
+  getStudentRequests,   // now -> GET /api/orders?scope=requested
+  getMyRequests,        // now -> GET /api/orders
+  approveOrder,         // <-- added in requests-api.js
+} from "../../../utilities/requests-api";
 
 const StudentRequests = ({ user }) => {
-  const [requests, setRequests] = useState([]);
-  const [newRequest, setNewRequest] = useState({ item: "", description: "" });
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleChange = (e) => {
-    setNewRequest({ ...newRequest, [e.target.name]: e.target.value });
-  };
+  const isAdmin = user?.role === "admin";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("New request:", newRequest);
-    setNewRequest({ item: "", description: "" });
-  };
+  async function load() {
+    try {
+      setLoading(true);
+      setError("");
+      const res = isAdmin ? await getStudentRequests() : await getMyRequests();
+      const data = Array.isArray(res?.data) ? res.data : [];
+      setOrders(data);
+    } catch (e) {
+      console.error(e);
+      setError("Failed to load orders.");
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  const canRequest = user?.role !== "admin";
+  useEffect(() => { load(); }, [isAdmin]);
+
+  // --- Admin actions ---
+  async function handleApproveAll(order) {
+  try {
+    const decisions = (order.lineItems || []).map((li) => ({
+      item: li.item?._id || li.item,
+      decision: "return",
+      approvedDays: li.requestedDays || 1,
+    }));
+
+    // Optimistically remove from list
+    setOrders(prev => prev.filter(o => o._id !== order._id));
+
+    await approveOrder(order._id, { decisions });
+
+    // Safety reload to reflect any other changes
+    await load();
+  } catch (e) {
+    // On error, reload to restore
+    await load();
+    setError(e.message || "Failed to approve order.");
+  }
+}
+
+async function handleReject(order) {
+  try {
+    setOrders(prev => prev.filter(o => o._id !== order._id));
+    await approveOrder(order._id, { reject: true });
+    await load();
+  } catch (e) {
+    await load();
+    setError(e.message || "Failed to reject order.");
+  }
+}
+
+
+  async function handleReject(order) {
+    try {
+      await approveOrder(order._id, { reject: true });
+      await load();
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Failed to reject order.");
+    }
+  }
 
   return (
     <div className={styles.wrap}>
       <h2 className={styles.title}>Student Requests</h2>
       <p className={styles.userline}>User: {user?.name || "Guest"}</p>
 
-      {canRequest && (
-        <form className={styles.formCard} onSubmit={handleSubmit}>
-          <div className={styles.field}>
-            <label>Item</label>
-            <input
-              type="text"
-              name="item"
-              value={newRequest.item}
-              onChange={handleChange}
-              placeholder="e.g. Digital Oscilloscope"
-              required
-            />
-          </div>
-
-          <div className={styles.field}>
-            <label>Description</label>
-            <textarea
-              name="description"
-              value={newRequest.description}
-              onChange={handleChange}
-              placeholder="Briefly describe your use case, time window, etc."
-              required
-            />
-          </div>
-
-          <div className={styles.actions}>
-            <button type="submit" className={styles.primaryBtn}>
-              Submit Request
-            </button>
-          </div>
-        </form>
-      )}
+      {error && <div className={styles.error}>{error}</div>}
+      {loading && <div className={styles.loading}>Loading…</div>}
 
       <section className={styles.listSection}>
         <div className={styles.listHeader}>
-          <h3>Previous Requests</h3>
-          <span className={styles.count}>{requests.length}</span>
+          <h3>{isAdmin ? "All Student Requests" : "My Orders"}</h3>
+          <span className={styles.count}>{orders.length}</span>
         </div>
 
-        {requests.length === 0 ? (
+        {orders.length === 0 ? (
           <div className={styles.emptyCard}>
             <div className={styles.emptyIcon}>🧰</div>
-            <div className={styles.emptyTitle}>No requests found</div>
+            <div className={styles.emptyTitle}>No orders found</div>
             <div className={styles.emptySub}>
-              {canRequest
-                ? "Submit a request using the form above to get started."
-                : "Students haven’t submitted any requests yet."}
+              {isAdmin ? "No pending orders to approve." : "Create an order from the items catalog."}
             </div>
           </div>
         ) : (
           <div className={styles.reqList}>
-            {requests.map((request, index) => (
-              <article key={index} className={styles.reqCard}>
+            {orders.map((order) => (
+              <article key={order._id} className={styles.reqCard}>
                 <div className={styles.reqMeta}>
-                  <div className={styles.reqItem}>{request.item}</div>
-                  <span className={`${styles.badge} ${styles[request.status || "pending"]}`}>
-                    {request.status || "pending"}
+                  <div className={styles.reqItem}>
+                    {/* Top line: requester (admin sees who requested) */}
+                    {isAdmin ? (order.user?.name || order.user?.email || "Unknown user") : "Order"}
+                  </div>
+                  <span className={`${styles.badge} ${styles[order.status || "pending"]}`}>
+                    {order.status || "pending"}
                   </span>
                 </div>
+
+                {/* Lines/items */}
                 <div className={styles.reqBody}>
-                  {request.description || "—"}
+                  {(order.lineItems || []).length === 0 ? (
+                    <div>—</div>
+                  ) : (
+                    <ul className={styles.lines}>
+                      {order.lineItems.map((li, idx) => (
+                        <li key={li._id || idx} className={styles.line}>
+                          <div className={styles.lineMain}>
+                            <span className={styles.lineName}>
+                              {li.item?.name || "Unnamed item"}
+                            </span>
+                            <span className={styles.lineInfo}>
+                              requestedDays: {li.requestedDays ?? "—"}
+                            </span>
+                          </div>
+                          {li.status && (
+                            <span className={`${styles.badge} ${styles[li.status]}`}>
+                              {li.status}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
+
                 <div className={styles.reqFooter}>
                   <span className={styles.date}>
-                    {request.date || "—"}
+                    {order.createdAt ? new Date(order.createdAt).toLocaleString() : "—"}
                   </span>
+
+                  {/* Admin actions for pending orders */}
+                  {isAdmin && order.status === "requested" && (
+                    <div className={styles.actions}>
+                      <button
+                        className={styles.primaryBtn}
+                        onClick={() => handleApproveAll(order)}
+                        title="Approve all lines for their requested days"
+                      >
+                        Approve All
+                      </button>
+                      <button
+                        className={styles.dangerBtn}
+                        onClick={() => handleReject(order)}
+                      >
+                        Reject Order
+                      </button>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
