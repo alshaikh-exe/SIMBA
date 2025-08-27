@@ -6,11 +6,33 @@ import { enrichItemDetails } from "../../config/aiService.js"; // DeepSeek integ
 
 const { Types } = mongoose;
 
+/* ----------------- constants ----------------- */
 const VALID_RETURN_POLICIES = ["returnable", "nonreturnable"];
 const DEADLINE_MIN = 1;
-const DEADLINE_MAX = 50;
+const DEADLINE_MAX = 70; // match schema
 
-// ----------------- helpers -----------------
+const VALID_STATUS = new Set([
+  "available",
+  "reserved",         // fixed typo
+  "maintenance",
+  "out of order",
+  "repair",
+  "out of stock",
+]);
+
+const VALID_CATEGORIES = new Set([
+  "electronics",
+  "3d printing",
+  "machining",
+  "testing",
+  "measurement",
+  "fabrication",
+  "assembly",
+  "safety",
+  "general",
+]);
+
+/* ----------------- helpers ----------------- */
 function buildTextFilter(q) {
   if (!q) return {};
   return {
@@ -39,6 +61,7 @@ function sanitizePolicyInputs({ returnPolicy, deadline }) {
   return sanitized;
 }
 
+// keep location logic unchanged
 async function resolveLocation({ locationId, campus, building, classroom }) {
   if (locationId) {
     if (!Types.ObjectId.isValid(locationId)) {
@@ -66,14 +89,38 @@ async function resolveLocation({ locationId, campus, building, classroom }) {
   throw err;
 }
 
+function sanitizeItemInputs(body) {
+  const out = {};
+
+  // strings
+  if (typeof body.image === "string" && body.image.trim()) out.image = body.image.trim();
+  if (typeof body.maintenanceSchedule === "string") out.maintenanceSchedule = body.maintenanceSchedule.trim();
+
+  // values is a STRING in your schema; stringify objects/arrays
+  if (body.values !== undefined) {
+    if (typeof body.values === "string") out.values = body.values;
+    else out.values = JSON.stringify(body.values);
+  }
+
+  // enums
+  if (typeof body.status === "string" && VALID_STATUS.has(body.status)) out.status = body.status;
+  if (typeof body.category === "string" && VALID_CATEGORIES.has(body.category)) out.category = body.category;
+
+  // stock
+  if (body.quantity !== undefined && Number.isFinite(Number(body.quantity))) out.quantity = Number(body.quantity);
+  if (body.threshold !== undefined && Number.isFinite(Number(body.threshold))) out.threshold = Number(body.threshold);
+
+  return out;
+}
+
 function selectUpdatableFields(body) {
   const updatable = {};
   if (typeof body.name === "string") updatable.name = body.name;
   if (typeof body.details === "string") updatable.details = body.details;
-  if (typeof body.picture === "string") updatable.picture = body.picture;
-  if (typeof body.quantity === "number") updatable.quantity = body.quantity;
-  if (typeof body.threshold === "number") updatable.threshold = body.threshold;
+
+  Object.assign(updatable, sanitizeItemInputs(body)); // image, values, status, category, etc.
   Object.assign(updatable, sanitizePolicyInputs({ returnPolicy: body.returnPolicy, deadline: body.deadline }));
+
   return updatable;
 }
 
@@ -81,7 +128,7 @@ function populateItem(query) {
   return query.populate("location").populate("createdBy", "name email");
 }
 
-// ---- datasheet helpers (no external API) ----
+/* ---- datasheet helpers (no external API) ---- */
 const ALLDATASHEET_BASE = "https://www.alldatasheet.net/view.jsp?Searchword=";
 
 function extractLikelyPartNumbers(...texts) {
@@ -115,16 +162,22 @@ function policySummary(item) {
     : "Non-returnable/one-way issue.";
 }
 
-// ----------------- controllers -----------------
+/* ----------------- controllers ----------------- */
 
 // GET /api/items
 export async function index(req, res) {
   try {
-    const { q, campus, building, classroom, returnPolicy, page = 1, limit = 10, sort = "-createdAt" } = req.query;
+    const { q, campus, building, classroom, returnPolicy, status, category, page = 1, limit = 10, sort = "-createdAt" } = req.query;
 
     const filters = { ...buildTextFilter(q) };
     if (typeof returnPolicy === "string" && VALID_RETURN_POLICIES.includes(returnPolicy)) {
       filters.returnPolicy = returnPolicy;
+    }
+    if (typeof status === "string" && VALID_STATUS.has(status)) {
+      filters.status = status;
+    }
+    if (typeof category === "string" && VALID_CATEGORIES.has(category)) {
+      filters.category = category;
     }
 
     if (campus || building || classroom) {
@@ -191,13 +244,12 @@ export async function show(req, res) {
 
 // POST /api/items
 export async function create(req, res) {
-  console.log(req.body)
-  console.log(req.body.name)
+  console.log(req.body);
+  console.log(req.body.name);
   try {
     if (!req.user?._id) return res.status(401).json({ success: false, message: "Unauthorized" });
 
-
-    const { name, details, picture, returnPolicy, deadline, quantity, threshold, location, campus, building, classroom } = req.body;
+    const { name, details, image, values, status, category, maintenanceSchedule, returnPolicy, deadline, quantity, threshold, location, campus, building, classroom } = req.body;
 
     if (!name || !details) {
       return res.status(400).json({ success: false, message: "name and details are required" });
@@ -220,14 +272,15 @@ export async function create(req, res) {
       // keep original details on AI failure
     }
 
+    // sanitize new fields
+    const misc = sanitizeItemInputs({ image, values, status, category, maintenanceSchedule, quantity, threshold });
+
     const toCreate = {
       name: name.trim(),
       details: combinedDetails,
-      picture,
-      location: location,
+      ...misc,
+      location: location,              
       createdBy: req.user._id,
-      quantity: quantity ?? 0,
-      threshold: threshold ?? 5,
       ...policy,
     };
 
@@ -263,7 +316,9 @@ export async function update(req, res) {
 
     // If either name or details changed, refresh AI details and **replace** combined text
     const baseName = typeof req.body.name === "string" ? req.body.name : existing.name;
-    const baseDetails = typeof req.body.details === "string" ? req.body.details : existing.details.split("\n\nAI Generated Details:\n")[0] || existing.details;
+    const baseDetails = typeof req.body.details === "string"
+      ? req.body.details
+      : (existing.details.split("\n\nAI Generated Details:\n")[0] || existing.details);
 
     if (req.body.name || req.body.details) {
       try {

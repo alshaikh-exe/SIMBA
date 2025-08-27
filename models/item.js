@@ -1,32 +1,60 @@
 import mongoose from "mongoose";
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const itemSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    details: {
-      type: String,
-      required: true,
-    },
-    picture: {
-      type: String,
-      default: "default.jpg",
+    name: { 
+      type: String, 
+      required: true, 
+      trim: true 
     },
 
-    location: {
-      type: Schema.Types.ObjectId,
-      ref: "Location",
-      required: true,
+    details: { 
+      type: String, 
+      required: true, 
+      
     },
 
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    image: { 
+      type: String, 
+      default:"default.jpg"
+    },
+
+    values: { 
+      type: String,
+      default: undefined 
+    },
+
+    location: { 
+      type: Schema.Types.ObjectId, 
+      ref: "Location", 
+      required: true 
+    },
+
+    createdBy: { 
+      type: Schema.Types.ObjectId, 
+      ref: "User", 
+      required: true 
+    },
+
+    status: {
+      type: String,
+      enum: ["available", "reserved", "maintenance", "out of order", "repair", "out of stock"],
+      default: "available",
+      index: true,
+    },
+
+    category: { 
+      type: String, 
+      enum: ["electronics", "3d printing", "machining", "testing", "measurement", "fabrication", "assembly", "safety", "general"],
+      trim: true, 
+      index: true,
+      default:"electronics"
+    },
+
+    maintenanceSchedule: { 
+      type: String, 
+      trim: true 
     },
 
     returnPolicy: {
@@ -35,24 +63,24 @@ const itemSchema = new Schema(
       default: "returnable",
     },
 
-    deadline: {
-      type: Number,
-      default: 7,
-      min: 1,
-      max: 50,
+    deadline: { 
+      type: Number, 
+      default: 7, 
+      min: 1, 
+      max: 70 
     },
 
-    // Stock management fields
-    quantity: {
-      type: Number,
-      required: true,
-      default: 0, // start with no stock unless set
-      min: 0,
+    quantity: { 
+      type: Number, 
+      required: true, 
+      default: 0, 
+      min: 0 
     },
-    threshold: {
-      type: Number,
-      default: 5, // warn if below 5 by default
-      min: 0,
+
+    threshold: { 
+      type: Number, 
+      default: 5, 
+      min: 0 
     },
   },
   { timestamps: true }
