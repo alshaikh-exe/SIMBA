@@ -116,9 +116,15 @@ export default function SignUpForm({ setUser }) {
             <button type="submit" className={styles.button} disabled={!isFormComplete}>
                 Sign Up
             </button>
+            <div className={styles.adminLink}>
+                <p>Already Have an Account?
+                    <Link to="/admin/login"> Login as Admin</Link>
+                </p>
 
-                <p>Already Have an Account? <Link to="/admin/login">Login as Admin</Link></p>
-                <p><Link to="/user">User</Link></p>
+                <p>
+                    <Link to="/user">User</Link>
+                </p>
+            </div>
 
         </form>
     );
