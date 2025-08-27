@@ -41,8 +41,8 @@ export default function ItemShow({ user, onAddToCart }) {
     <main className="item-show">
       <h1>{item.name}</h1>
 
-      {item.picture && (
-        <img src={item.picture} alt={item.name} style={{ maxWidth: "300px" }} />
+      {item.image && (
+        <img src={item.image} alt={item.name} style={{ maxWidth: "300px" }} />
       )}
 
       <section>
@@ -86,7 +86,7 @@ export default function ItemShow({ user, onAddToCart }) {
         </section>
       )}
 
-      {user && item.quantity > 0 && (
+      {user.role === "user" && item.quantity > 0 && (
         <Button variant="primary" onClick={() => onAddToCart?.(item)}>
           Add to Cart
         </Button>
@@ -94,7 +94,9 @@ export default function ItemShow({ user, onAddToCart }) {
       <Button onClick={() => navigate('/items')} className="secondary">
         ← Back to Item
       </Button>
-      <Link to={`/items/edit/${item._id}`}>Edit Item</Link>
+      {user.role === "admin" ? <Link to={`/items/edit/${item._id}`}>Edit Item</Link> : ""}
+      
+      
     </main>
   );
 }

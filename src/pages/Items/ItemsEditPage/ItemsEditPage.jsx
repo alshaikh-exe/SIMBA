@@ -325,7 +325,7 @@ const ItemsEditPage = ({ user }) => {
           <Button type="button" onClick={() => navigate('/items')} className="secondary">
             Cancel
           </Button>
-          <Button type="submit" className="primary">
+          <Button type="submit" onClick={() => navigate('/items')} className="primary">
             Update Item
           </Button>
         </div>
