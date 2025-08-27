@@ -1,7 +1,7 @@
 //Zahraa
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../ItemsEditPage/items.module.scss';
+import '../ItemsEditPage/Items.module.scss';
 import { updateItem, getItemById } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
