@@ -117,10 +117,9 @@ export default function SignUpForm({ setUser }) {
                 Sign Up
             </button>
 
-            <p>
                 <p>Already Have an Account? <Link to="/admin/login">Login as Admin</Link></p>
-                <Link to="/user">User</Link>
-            </p>
+                <p><Link to="/user">User</Link></p>
+
         </form>
     );
 }

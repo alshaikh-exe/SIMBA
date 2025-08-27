@@ -29,7 +29,7 @@ const userSchema = new Schema({
     adminId: { type: String, unique: true, sparse: true }, // e.g., AD001
     adminCampus: { type: String }, // free-form: A, B, C, etc.
     adminOfficeHours: { type: String }, // e.g., "9am-9pm"
-    adminAvailability: { type: Boolean },
+    adminAvailability: { type: Boolean, default: false },
 
     // User-specific fields
     studentId: { type: String, unique: true, sparse: true }, // e.g., 20230001

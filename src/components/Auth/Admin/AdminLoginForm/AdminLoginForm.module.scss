@@ -1,137 +1,112 @@
-/* AdminLoginForm.module.scss — Neumorphic theme */
+/* UserLoginForm.module.scss */
+/* Neumorphism — soft white panel + inset inputs */
 
 $bg: #e0e5ec;
-$shadow-dark: #bec3cf;
-$shadow-light: #ffffff;
-
+$light: #ffffff;
+$shadow: #bec3cf;
 $text: #3d4468;
-$muted: #6c7293;
-$error: #ff3b5c;
+$muted: #8d93b8;
+$accent: #6c7293;
 
-$radius-card: 30px;
-$radius-field: 15px;
+@mixin neu($d: 12px, $b: 24px) {
+  box-shadow: #{$d} #{$d} #{$b} $shadow, -#{$d} -#{$d} #{$b} $light;
+}
+@mixin neu-inset($d: 8px, $b: 16px) {
+  box-shadow: inset #{$d} #{$d} #{$b} $shadow, inset -#{$d} -#{$d} #{$b} $light;
+}
 
-/* Card-like form wrapper */
 .form {
-  width: min(92vw, 420px);
-  margin: 6vh auto 0;
-  padding: 48px 36px;
+  width: min(420px, 92vw);
+  margin: 0 auto;
+  padding: 36px 28px;
+  border-radius: 28px;
   background: $bg;
-  border-radius: $radius-card;
-  box-shadow: 20px 20px 60px $shadow-dark, -20px -20px 60px $shadow-light;
-
-  display: grid;
-  gap: 18px;
-  color: $text;
-
-  /* generic link text inside the form (for your <p> links) */
-  p {
-    margin: 2px 0 0;
-    text-align: center;
-    color: $muted;
-    a {
-      color: $muted;
-      font-weight: 700;
-      text-decoration: none;
-      &:hover { color: $text; text-decoration: underline; }
-    }
-  }
-}
-
-/* Neumorphic inputs */
-.input {
-  width: 100%;
-  border: 0;
-  outline: none;
-  border-radius: $radius-field;
-  padding: 18px 22px;
-  background: $bg;
-  color: $text;
-  font-size: 1rem;
-  font-weight: 500;
-
-  box-shadow:
-    inset 8px 8px 16px $shadow-dark,
-    inset -8px -8px 16px $shadow-light;
-  transition: box-shadow .22s ease;
-
-  &::placeholder { color: lighten($muted, 12%); }
-
-  &:focus {
-    box-shadow:
-      inset 4px 4px 8px $shadow-dark,
-      inset -4px -4px 8px $shadow-light;
-  }
-}
-
-/* Neumorphic button */
-.button {
-  margin-top: 4px;
-  border: 0;
-  border-radius: $radius-field;
-  padding: 16px 24px;
-  background: $bg;
-  color: $text;
-  font-weight: 700;
-  letter-spacing: .2px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-
-  box-shadow: 8px 8px 20px $shadow-dark, -8px -8px 20px $shadow-light;
-  transition: transform .08s ease, box-shadow .18s ease;
-
-  &::before {
-    content: '';
-    position: absolute; inset: 0;
-    left: -100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-    transition: left .5s ease;
-  }
+  @include neu(20px, 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform .2s ease, box-shadow .2s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 12px 12px 30px $shadow-dark, -12px -12px 30px $shadow-light;
-    &::before { left: 100%; }
+  }
+}
+
+.input {
+  background: $bg;
+  border: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 16px;
+  color: $text;
+  @include neu-inset(8px, 16px);
+  outline: none;
+  transition: box-shadow .2s ease, transform .06s ease;
+
+  &::placeholder { color: $muted; }
+
+  &:focus {
+    @include neu-inset(4px, 8px);
   }
 
   &:active {
-    transform: translateY(0);
-    box-shadow: inset 4px 4px 10px $shadow-dark, inset -4px -4px 10px $shadow-light;
+    transform: scale(0.998);
   }
-
-  &:disabled { opacity: .6; cursor: not-allowed; }
 }
 
-/* Error toast */
-.error {
-  margin-top: -4px;
-  padding: .6rem .8rem;
-  border-left: 4px solid $error;
-  background: #fff1f4;
-  color: darken($error, 20%);
-  border-radius: 10px;
-  font-size: .92rem;
-}
-
-/* Optional: use instead of raw <p> links
-.links {
+.button {
   margin-top: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: $muted;
+  width: 100%;
+  background: $bg;
+  color: $text;
+  border: 0;
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  cursor: pointer;
+  @include neu(10px, 22px);
+  transition: transform .12s ease, box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    @include neu(12px, 28px);
+  }
+  &:active {
+    box-shadow: inset 4px 4px 10px $shadow, inset -4px -4px 10px $light;
+    transform: translateY(0);
+  }
+}
+
+.error {
+  margin-top: 4px;
+  padding: 10px 12px;
+  text-align: center;
+  border-radius: 12px;
+  color: #a4303f;
+  background: #fff1f3;
+  @include neu-inset(4px, 8px);
+  font-size: .9rem;
+}
+
+.adminLink {
+  margin-top: 6px;
+  text-align: center;
 
   a {
-    color: $muted;
-    font-weight: 700;
+    color: $accent;
     text-decoration: none;
-    &:hover { color: $text; text-decoration: underline; }
+    font-weight: 600;
+    transition: color .15s ease;
+
+    &:hover { color: $text; }
+    &:active { opacity: .85; }
   }
 }
-*/
 
+/* Small screens */
 @media (max-width: 480px) {
-  .form { padding: 36px 24px; border-radius: 22px; }
-  .input { padding: 16px 18px; }
+  .form { padding: 28px 22px; border-radius: 22px; }
+  .input { padding: 14px 16px; }
+  .button { padding: 12px 16px; }
 }
