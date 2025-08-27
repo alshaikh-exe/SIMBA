@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getItems, addToCart } from '../../../utilities/items-api';
 import { Link } from 'react-router-dom';
 import ItemCard from "../../../components/Items/ItemCard";
+import '../ItemsPage/Items.module.scss';
 
 const ItemsPage = ({ user, setUser }) => {
   const [items, setItems] = useState([]);
