@@ -12,7 +12,7 @@ import UserAuthPage from '../pages/Auth/UserAuthPage/UserAuthPage';
 import ProfilePage from '../pages/Profile/ProfilePage/ProfilePage';
 import ItemsPage from '../pages/Items/ItemsPage/ItemsPage';
 import ItemsEditPage from '../pages/Items/ItemsEditPage/ItemsEditPage';
-import ItemsShowPage from '../pages/Items/ItemsShowPage/Items';
+import ItemsShowPage from '../pages/Items/ItemsShowPage/ItemsShow';
 import ItemsCreatePage from '../pages/Items/ItemsCreate/ItemsCreate';
 import OrdersPage from '../pages/Booking/OrdersPage/OrdersPage';
 import CartPage from '../pages/Booking/CartPage/CartPage';
