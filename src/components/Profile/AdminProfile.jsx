@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from "react";
+// src/pages/Profile/AdminProfile.jsx
+import React, { useEffect, useState } from "react";
 import { getAdminProfile, updateAdminAvailability } from "../../utilities/users-api";
+import styles from "./AdminProfile.module.scss";
 
-const AdminProfile = () => {
+export default function AdminProfile() {
   const [admin, setAdmin] = useState(null);
   const [availability, setAvailability] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // Fetch current admin profile on mount
   useEffect(() => {
     async function fetchProfile() {
       try {
         const profile = await getAdminProfile();
         setAdmin(profile);
-        setAvailability(profile.adminAvailability || false);
+        setAvailability(Boolean(profile.adminAvailability));
       } catch (err) {
         console.error("Failed to fetch admin profile", err);
       }
@@ -21,16 +22,23 @@ const AdminProfile = () => {
     fetchProfile();
   }, []);
 
-  if (!admin) return <p>Loading profile...</p>;
+  if (!admin) {
+    return (
+      <div className={styles.wrap}>
+        <section className={styles.card}>
+          <div className={styles.loading}>Loading profile…</div>
+        </section>
+      </div>
+    );
+  }
 
   async function handleSave() {
     setLoading(true);
     try {
       await updateAdminAvailability(availability);
-      // Update local state with saved value from DB
-      setAdmin((prev) => ({ ...prev, adminAvailability: availability }));
+      setAdmin(prev => ({ ...prev, adminAvailability: availability }));
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setTimeout(() => setSaved(false), 1600);
     } catch (err) {
       console.error("Failed to update availability", err);
     } finally {
@@ -38,41 +46,96 @@ const AdminProfile = () => {
     }
   }
 
+  const initial = admin?.name?.[0]?.toUpperCase() || "A";
+
   return (
-    <div className="profile-container">
-      <img
-        src={admin.profilePicture || "/default-avatar.png"}
-        alt={`${admin.name}'s profile`}
-        className="profile-pic"
-      />
-      <h2>{admin.name}</h2>
-      <p><strong>ID:</strong> {admin._id}</p>
-      <p><strong>Email:</strong> {admin.email}</p>
-      <p><strong>Campus:</strong> {admin.adminCampus}</p>
-      <p><strong>Office Hours:</strong> {admin.adminOfficeHours}</p>
+    <div className={styles.wrap}>
+      <section className={styles.card}>
+        {/* header */}
+        <header className={styles.header}>
+          <div className={styles.avatar}>
+            {admin.profilePicture ? (
+              <img src={admin.profilePicture} alt={`${admin.name} avatar`} />
+            ) : (
+              <span className={styles.initial}>{initial}</span>
+            )}
+          </div>
+          <div className={styles.headMeta}>
+            <h2 className={styles.name}>{admin.name}</h2>
+            <p className={styles.role}>Administrator</p>
+          </div>
+        </header>
 
-      <p>
-        <strong>Current Availability:</strong> {admin.adminAvailability ? "Yes" : "No"}
-      </p>
+        {/* details */}
+        <div className={styles.grid}>
+          <div className={styles.item}>
+            <span className={styles.label}>ID</span>
+            <span className={styles.value} title={admin._id}>{admin._id}</span>
+          </div>
+          <div className={styles.item}>
+            <span className={styles.label}>Email</span>
+            <span className={styles.value}>{admin.email}</span>
+          </div>
+          <div className={styles.item}>
+            <span className={styles.label}>Campus</span>
+            <span className={styles.value}>{admin.adminCampus || "—"}</span>
+          </div>
+          <div className={styles.item}>
+            <span className={styles.label}>Office Hours</span>
+            <span className={styles.value}>{admin.adminOfficeHours || "—"}</span>
+          </div>
+        </div>
 
-      <p>
-        <strong>Change Availability:</strong>{" "}
-        <select
-          value={availability}
-          onChange={(e) => setAvailability(e.target.value === "true")}
-          disabled={loading}
-        >
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-      </p>
+        {/* availability */}
+        <div className={styles.availBlock}>
+          <span className={styles.label}>Availability</span>
 
-      <button onClick={handleSave} disabled={loading}>
-        {loading ? "Saving..." : "Save"}
-      </button>
-      {saved && <span style={{ marginLeft: "8px" }}>Saved!</span>}
+          <div className={styles.toggle} role="group" aria-label="Availability">
+            <input
+              id="avail-yes"
+              type="radio"
+              name="availability"
+              checked={availability === true}
+              onChange={() => setAvailability(true)}
+            />
+            <label htmlFor="avail-yes">Available</label>
+
+            <input
+              id="avail-no"
+              type="radio"
+              name="availability"
+              checked={availability === false}
+              onChange={() => setAvailability(false)}
+            />
+            <label htmlFor="avail-no">Unavailable</label>
+
+            <span
+              className={styles.toggleBg}
+              data-pos={availability ? "right" : "left"}
+            />
+          </div>
+
+          <span
+            className={`${styles.badge} ${availability ? styles.badgeOn : styles.badgeOff}`}
+            aria-live="polite"
+          >
+            {availability ? "Yes" : "No"}
+          </span>
+        </div>
+
+        {/* actions */}
+        <div className={styles.actions}>
+          <button
+            className={styles.button}
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {loading ? "Saving…" : "Save changes"}
+          </button>
+
+          {saved && <span className={styles.saved}>Saved!</span>}
+        </div>
+      </section>
     </div>
   );
-};
-
-export default AdminProfile;
+}

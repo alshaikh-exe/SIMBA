@@ -1,24 +1,59 @@
 import React from "react";
+import styles from "./UserProfile.module.scss";
 
-const UserProfile = ({ user }) => {
+export default function UserProfile({ user }) {
   if (!user) return <p>Loading profile...</p>;
 
-  return (
-    <div className="profile-container">
-      <img
-        src={user.profilePicture || "/default-avatar.png"}
-        alt={`${user.name}'s profile`}
-        className="profile-pic"
-      />
-      <h2>{user.name}</h2>
-      <p><strong>ID:</strong> {user._id}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Student ID:</strong> {user.studentId}</p>
-      <p><strong>Academic Year:</strong> {user.academicYear}</p>
-      <p><strong>Major:</strong> {user.major}</p>
-      <p><strong>Age:</strong> {user.age}</p>
-    </div>
-  );
-};
+  const initial = user?.name?.[0]?.toUpperCase() || "U";
 
-export default UserProfile;
+  return (
+    <section className={styles.profile}>
+      <div className={styles.card}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.avatar}>
+            {user.profilePicture ? (
+              <img src={user.profilePicture} alt={`${user.name}'s profile`} />
+            ) : (
+              <span className={styles.initial}>{initial}</span>
+            )}
+          </div>
+
+          <div className={styles.idBlock}>
+            <h2 className={styles.name}>{user.name}</h2>
+            <div className={styles.badges}>
+              {user.major && <span className={`${styles.badge} ${styles.badgeMain}`}>{user.major}</span>}
+              {user.academicYear && (
+                <span className={styles.badge}>Year {user.academicYear}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Meta grid */}
+        <div className={styles.grid}>
+          <div className={styles.field}>
+            <span className={styles.label}>User ID</span>
+            <span className={styles.value} title={user._id}>{user._id}</span>
+          </div>
+          <div className={styles.field}>
+            <span className={styles.label}>Email</span>
+            <a className={styles.valueLink} href={`mailto:${user.email}`}>{user.email}</a>
+          </div>
+          {user.studentId && (
+            <div className={styles.field}>
+              <span className={styles.label}>Student ID</span>
+              <span className={styles.value}>{user.studentId}</span>
+            </div>
+          )}
+          {user.age && (
+            <div className={styles.field}>
+              <span className={styles.label}>Age</span>
+              <span className={styles.value}>{user.age}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
