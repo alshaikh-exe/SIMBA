@@ -55,3 +55,11 @@ export function confirmPasswordReset(token, newPassword) {
     newPassword
   });
 }
+
+export function updateAdminAvailability(availability) {
+  return sendRequest('/api/admin', 'PATCH', { adminAvailability: availability });
+}
+
+export function getAdminProfile() {
+  return sendRequest('/api/admin/profile', 'GET');
+}
