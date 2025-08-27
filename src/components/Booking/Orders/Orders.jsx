@@ -1,26 +1,35 @@
-//Zahraa
-import React, { useState } from "react";
+// src/components/Orders/Order.jsx
+import React from 'react';
+import styles from './Orders.module.scss';
 
-const Orders = ({ user }) => {
-  const [orders, setOrders] = useState([]);
-
+export default function Order({ lines = [] }) {
   return (
-    <div>
-      {orders.length === 0 ? (
-        <p>No orders found</p>
-      ) : (
-        <div>
-          {orders.map((order, index) => (
-            <div key={index} style={{ padding: "10px", border: "1px solid #ccc", margin: "5px" }}>
-              <p>Order ID: {order.id}</p>
-              <p>Status: {order.status}</p>
-              <p>Date: {order.date}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <table className={styles.table}>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Requested Days</th>
+          <th>Status</th>
+          <th>Decision</th>
+          <th>Due</th>
+        </tr>
+      </thead>
+      <tbody>
+        {lines.map((li) => {
+          const id = li.item?._id || li.item;
+          return (
+            <tr key={id}>
+              <td>{li.item?.name || id}</td>
+              <td>{li.qty}</td>
+              <td>{li.requestedDays ?? '—'}</td>
+              <td>{li.status}</td>
+              <td>{li.decision}</td>
+              <td>{li.dueAt ? new Date(li.dueAt).toLocaleString() : '—'}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
-};
-
-export default Orders;
+}

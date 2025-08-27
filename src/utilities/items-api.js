@@ -105,9 +105,7 @@ export const addToCart = async (itemId) => {
     headers:getAuthHeaders(),
     body: JSON.stringify({amount:1})
   })
-  return { success: true, message: 'Item added to cart' };
-  
-//   if (cart.some(c => (c.itemId || c._id) === itemId)) {
+  return { success: true, message: 'Item added to cart' };//   if (cart.some(c => (c.itemId || c._id) === itemId)) {
 //     throw new Error('Item is already in your cart');
 //   }
 //   cart.push({ itemId, addedAt: new Date().toISOString() });
