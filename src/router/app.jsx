@@ -1,3 +1,4 @@
+// src/router/AppRouter.jsx (merged)
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import styles from './AppRouter.module.scss';
@@ -20,7 +21,6 @@ import StudentRequestsPage from '../pages/Booking/StudentRequestsPage/StudentReq
 import StockRequestPage from '../pages/Management/StockRequest/StockRequestPage';
 import AnalyticsPage from '../pages/Analytics/AnalyticsPage/AnalyticsPage';
 
-
 const AppRouter = () => {
   const [user, setUser] = useState(getUser());
 
@@ -29,42 +29,44 @@ const AppRouter = () => {
       <main className={styles.App}>
         <Navbar user={user} setUser={setUser} />
         <Routes>
-          {/* Routes for authentication pages */}
+          {/* --- Public / Auth --- */}
           {!user && (
             <>
               <Route path="/admin/login" element={<AdminLoginPage setUser={setUser} />} />
               <Route path="/admin" element={<AdminSignupPage setUser={setUser} />} />
               <Route path="/user" element={<UserAuthPage setUser={setUser} />} />
+              {/* Default for unauthenticated */}
               <Route path="/*" element={<Navigate to="/user" />} />
             </>
           )}
 
-          {/* Protected routes if user is logged in */}
+          {/* --- Admin --- */}
           {user && user.role === 'admin' && (
             <>
               <Route path="/analytics" element={<AnalyticsPage user={user} setUser={setUser} />} />
-              <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} /> 
+              <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} />
               <Route path="/items" element={<ItemsPage user={user} setUser={setUser} />} />
               <Route path="/items/edit/:id" element={<ItemsEditPage user={user} setUser={setUser} />} />
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
               <Route path="/items/create" element={<ItemsCreatePage user={user} setUser={setUser} />} />
               <Route path="/stock-request" element={<StockRequestPage user={user} setUser={setUser} />} />
               <Route path="/requests" element={<StudentRequestsPage user={user} setUser={setUser} />} />
+              {/* Default for admins */}
               <Route path="/*" element={<Navigate to="/stock-request" />} />
             </>
           )}
 
+          {/* --- Standard User --- */}
           {user && user.role === 'user' && (
             <>
               <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} />
               <Route path="/items" element={<ItemsPage user={user} setUser={setUser} />} />
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
               <Route path="/orders" element={<OrdersPage user={user} setUser={setUser} />} />
-              <Route path="/cart" element={<CartPage user={user} setUser={setUser} />} />
-              <Route path="/*" element={<Navigate to="/orders"/>} />
               <Route path="/orders/:orderId" element={<OrdersPage user={user} setUser={setUser} />} />
-
-              
+              <Route path="/cart" element={<CartPage user={user} setUser={setUser} />} />
+              {/* Default for users */}
+              <Route path="/*" element={<Navigate to="/orders" />} />
             </>
           )}
         </Routes>
@@ -75,8 +77,3 @@ const AppRouter = () => {
 };
 
 export default AppRouter;
-
-
-
-
-

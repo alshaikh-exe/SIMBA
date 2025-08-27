@@ -1,16 +1,14 @@
 //Zahraa
 
+// pages/Booking/StudentRequests/StudentRequestsPage.jsx
 import React from "react";
 import StudentRequests from "../../../components/Booking/StudentRequests/StudentRequests";
 
 const StudentRequestsPage = ({ user, setUser }) => {
   return (
-    <main>
-
-      <div>
-        <h1>Student Requests</h1>
-        <StudentRequests user={user} />
-      </div>
+    <main style={{ padding: "1rem" }}>
+      <h1>Student Requests</h1>
+      <StudentRequests user={user} />
     </main>
   );
 };
