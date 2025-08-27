@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Orders.module.scss';
 
-export function OrdersTable({
+function OrdersTable({
   lines = [],
   editableQty = false,
   onQtyChange,
@@ -92,3 +92,5 @@ export function OrdersTable({
     </table>
   );
 }
+
+export default OrdersTable
