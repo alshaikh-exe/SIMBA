@@ -45,8 +45,12 @@ export default function LoginForm({ setUser }) {
       />
       {error && <div className={styles.error}>{error}</div>}
       <button type="submit" className={styles.button}>Log In</button>
-      <p>No Account?<Link to="/admin">Sign Up as Admin</Link></p>
+
+      <div className={styles.adminLink}>
+      <p>No Account?<Link to="/admin"> Sign Up as Admin</Link></p>
       <p><Link to="/user">User</Link></p>
+      </div>
+
     </form>
   );
 }
