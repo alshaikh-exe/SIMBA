@@ -1,1 +1,240 @@
-//Zahraa
+/* StudentRequests.module.scss — white neumorphic theme with light electronics blue */
+
+$bg: #e0e5ec;
+$light: #ffffff;
+$shadow: #bec3cf;
+$text: #3d4468;
+$muted: #6c7293;
+$blue: #6aa9ff; // subtle electronics blue accent
+
+@mixin neu($d: 14px, $b: 28px) {
+  box-shadow: #{$d} #{$d} #{$b} $shadow, -#{$d} -#{$d} #{$b} $light;
+}
+@mixin neu-inset($d: 8px, $b: 16px) {
+  box-shadow: inset #{$d} #{$d} #{$b} $shadow, inset -#{$d} -#{$d} #{$b} $light;
+}
+
+.wrap {
+  width: min(920px, 92vw);
+  margin: 24px auto 56px;
+  color: $text;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  text-align: left;
+  margin: 6px 0 8px;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 92px;
+    height: 4px;
+    margin-top: .5rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(0,0,0,.06), rgba(0,0,0,.02), transparent);
+  }
+}
+
+.userline {
+  color: $muted;
+  margin-bottom: 18px;
+}
+
+/* -------- Form Card (hidden for admins) -------- */
+.formCard {
+  background: $bg;
+  border-radius: 24px;
+  padding: 22px 20px;
+  @include neu(18px, 44px);
+  margin-bottom: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+
+  label {
+    font-size: .92rem;
+    font-weight: 700;
+    color: $muted;
+  }
+
+  input,
+  textarea {
+    background: $bg;
+    border: 0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: $text;
+    outline: none;
+    @include neu-inset(8px, 16px);
+
+    &::placeholder { color: lighten($muted, 8%); }
+    &:focus { @include neu-inset(4px, 8px); }
+  }
+
+  textarea { min-height: 110px; resize: vertical; }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primaryBtn {
+  appearance: none;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, $blue, darken($blue, 10%));
+  box-shadow: 0 8px 18px rgba($blue, .35);
+  transition: transform .06s ease, box-shadow .18s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba($blue, .42);
+  }
+  &:active { transform: translateY(0); }
+}
+
+/* -------- List Section -------- */
+.listSection {
+  margin-top: 18px;
+}
+
+.listHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 800;
+  color: darken($blue, 24%);
+  background: rgba($blue, .15);
+  border: 1px solid rgba($blue, .22);
+}
+
+/* Empty state */
+.emptyCard {
+  background: $bg;
+  border-radius: 22px;
+  padding: 28px 18px;
+  text-align: center;
+  color: $muted;
+  @include neu(18px, 44px);
+}
+
+.emptyIcon {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+.emptyTitle {
+  color: $text;
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+.emptySub {
+  font-size: .95rem;
+  color: $muted;
+}
+
+/* Requests list grid */
+.reqList {
+  display: grid;
+  gap: 14px;
+}
+
+/* Request card */
+.reqCard {
+  background: $bg;
+  border-radius: 18px;
+  padding: 16px;
+  @include neu(10px, 24px);
+}
+
+.reqMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.reqItem {
+  font-weight: 800;
+  font-size: 1rem;
+  color: $text;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: #f2f4f8;
+  color: #2a2e43;
+}
+
+.pending  { background: rgba($blue, .12); color: darken($blue, 28%); border-color: rgba($blue, .28); }
+.approved { background: #e9f8ef; color: #1c8d4c; border-color: #b8e6c8; }
+.rejected { background: #fdecef; color: #b9314f; border-color: #fac3ce; }
+
+.reqBody {
+  color: $muted;
+  line-height: 1.35;
+  margin: 0 2px 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;      /* Safari/Chromium */
+  line-clamp: 3;              /* Standard property (fallback warning safe) */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reqFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.date {
+  font-size: .85rem;
+  color: $muted;
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  .wrap { width: min(96vw, 720px); }
+  .formCard, .reqCard, .emptyCard { border-radius: 16px; }
+  .primaryBtn { width: 100%; }
+}
