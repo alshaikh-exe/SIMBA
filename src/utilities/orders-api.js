@@ -13,6 +13,7 @@ export const submitOrder = (lines, notes) =>
 
 // Read order
 export const getOrderById = (orderId) => sendRequest(`${BASE_URL}/${orderId}`, 'GET');
+export const getOrders = () => sendRequest(BASE_URL, "GET");
 
 // Admin approve/reject
 export const approveOrder = (orderId, decisions, reject = false) =>

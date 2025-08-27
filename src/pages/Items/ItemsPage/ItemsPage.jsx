@@ -125,7 +125,7 @@ const ItemsPage = ({ user, setUser }) => {
 
         <div className="items-grid">
           {filteredItems.map(item => (
-            <ItemCard user={user} item={item} loading={loading} handleAddToCart={handleAddToCart} />
+ <ItemCard key={item._id} user={user} item={item} loading={loading} handleAddToCart={handleAddToCart} />
           ))}
         </div>
 
