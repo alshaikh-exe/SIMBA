@@ -168,7 +168,7 @@ const ItemsCreatePage = ({ user }) => {
                   value={item.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                 >
-                  <option value="">-----</option>
+                  <option value="">Select Location</option>
                   {locations?.map((location, i) => (
                     <option key={i} value={location._id}>{location.building}.{location.classroom} {location.campus}</option>
                   ))}
