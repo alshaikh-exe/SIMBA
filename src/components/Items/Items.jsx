@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getItems } from '../../utilities/equipment-api';
+import { getItems } from '../../utilities/items-api';
 import Button from '../Button/Button';
 import './Items.module.scss';
 
