@@ -61,7 +61,7 @@ const ItemsCreatePage = ({ user }) => {
 
   useEffect(() => {
     if (user.role !== 'manager' && user.role !== 'admin') {
-      navigate('/item');
+      navigate('/items');
     }
   }, [user.role, navigate]);
 
@@ -82,7 +82,7 @@ const ItemsCreatePage = ({ user }) => {
     try {
       const response = await createItem(item)
       alert(`Item created successfully!`);
-      navigate('/item');
+      navigate('/items');
     } catch (error) {
       alert('Error saving item: ' + error.message);
     }
@@ -93,7 +93,7 @@ const ItemsCreatePage = ({ user }) => {
       <div className="page-header">
         <h1>'Add New Item'</h1>
         <div className="header-actions">
-          <Button onClick={() => navigate('/item')} className="secondary">
+          <Button onClick={() => navigate('/items')} className="secondary">
             ← Back to Item
           </Button>
         </div>
@@ -265,7 +265,7 @@ const ItemsCreatePage = ({ user }) => {
         </div>
 
         <div className="form-actions">
-          <Button type="button" onClick={() => navigate('/item')} className="secondary">
+          <Button type="button" onClick={() => navigate('/items')} className="secondary">
             Cancel
           </Button>
           <Button type="submit" className="primary">
