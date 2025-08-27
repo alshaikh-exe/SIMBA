@@ -1,6 +1,6 @@
 //Zahraa
 import React, { useState, useEffect } from 'react';
-import { getItems } from '../../../utilities/items-api';
+import { getItems, addToCart } from '../../../utilities/items-api';
 import ItemCard from "../../../components/Items/ItemCard";
 
 const ItemsPage = ({ user, setUser }) => {
@@ -52,7 +52,8 @@ const ItemsPage = ({ user, setUser }) => {
           Authorization: `Bearer ${user.token}`
         },
         body: JSON.stringify({ quantity: item.quantity - 1 })
-      });*/      await addToCart (item._id)
+      });*/      
+      await addToCart (item._id)
       // Update items page locally
       setItems(prev =>
         prev.map(i => i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i)
@@ -60,20 +61,20 @@ const ItemsPage = ({ user, setUser }) => {
 
       
       // Add to localStorage cart
-      const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existing = savedCart.find(i => i._id === item._id);
+      // const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+      // const existing = savedCart.find(i => i._id === item._id);
       
-      let updatedCart;
-      if (existing) {
-        updatedCart = savedCart.map(i =>
-          i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
-        );
-      } else {
-        updatedCart = [...savedCart, { ...item, quantity: 1 }];
-      }
+      // let updatedCart;
+      // if (existing) {
+      //   updatedCart = savedCart.map(i =>
+      //     i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+      //   );
+      // } else {
+      //   updatedCart = [...savedCart, { ...item, quantity: 1 }];
+      // }
       
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
-      onAddToCart && onAddToCart(); // notify parent
+      // localStorage.setItem('cart', JSON.stringify(updatedCart));
+      // onAddToCart && onAddToCart(); // notify parent
     } catch (err) {
       console.error(err);
       setError('Failed to add item to cart');
