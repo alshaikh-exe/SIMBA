@@ -41,8 +41,8 @@ export default function ItemShow({ user, onAddToCart }) {
     <main className="item-show">
       <h1>{item.name}</h1>
 
-      {item.picture && (
-        <img src={item.picture} alt={item.name} style={{ maxWidth: "300px" }} />
+      {item.image && (
+        <img src={item.image} alt={item.name} style={{ maxWidth: "300px" }} />
       )}
 
       <section>
