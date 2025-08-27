@@ -1,69 +1,53 @@
 //Zahraa
-// import React from "react";
-// import NavBar from "../../../components/Navbar/Navbar";
-
-// const ItemsEditPage = ({ user, setUser }) => {
-//   return (
-//     <main>
-//       <aside>
-//         <NavBar user={user} setUser={setUser} />
-//       </aside>
-//       <div>
-//         <h1>Edit Items</h1>
-//         {/* Add your edit form component here */}
-//       </div>
-//     </main>
-//   );
-// };
-
-// export default ItemsEditPage;
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Items.module.scss';
+import { updateItem, getItemById } from '../../../utilities/equipment-api'
+import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
 const ItemsEditPage = ({ user }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = id !== 'new';
-  
+  const [locations, setLocations] = useState([])
+
+  useEffect(() => {
+    async function getAllLocations() {
+      const res = await getLocations()
+      console.log(res)
+      setLocations(res.data)
+    }
+    getAllLocations()
+  }, [])
+
   const [loading, setLoading] = useState(isEditing);
   const [saving, setSaving] = useState(false);
   const [equipment, setEquipment] = useState({
     name: '',
-    description: '',
+    details: '',
     category: '',
-    manufacturer: '',
-    model: '',
     location: '',
     status: 'available',
     image: '',
-    specifications: {},
-    requiresApproval: false,
     maintenanceSchedule: '',
-    purchaseDate: '',
-    warrantyInfo: '',
-    operatingInstructions: '',
-    safetyNotes: '',
-    maxBookingDuration: 4, // hours
-    bookingAdvanceLimit: 7 // days
+    deadline: 7 // days
   });
-  
-  const [specificationInputs, setSpecificationInputs] = useState([
-    { key: '', value: '' }
-  ]);
+
+  // const [specificationInputs, setSpecificationInputs] = useState([
+  //   { key: '', value: '' }
+  // ]);
 
   const categories = [
-    'Electronics',
-    '3D Printing',
-    'Machining',
-    'Testing',
-    'Measurement',
-    'Fabrication',
-    'Assembly',
-    'Safety',
-    'General'
+    { value: 'electronics', label: 'Electronics' },
+    { value: '3d printing', label: '3D Printing' },
+    { value: 'machining', label: 'Machining' },
+    { value: 'testing', label: 'Testing' },
+    { value: 'measurement', label: 'Measurement' },
+    { value: 'fabrication', label: 'Fabrication' },
+    { value: 'assembly', label: 'Assembly' },
+    { value: 'safety', label: 'Safety' },
+    { value: 'general', label: 'General' }
   ];
 
   const statusOptions = [
@@ -71,14 +55,39 @@ const ItemsEditPage = ({ user }) => {
     { value: 'reserved', label: 'Reserved' },
     { value: 'maintenance', label: 'Under Maintenance' },
     { value: 'repair', label: 'In Repair' },
-    { value: 'out of order', label: 'Out of Order' }
+    { value: 'out of order', label: 'Out of Order' },
+    { value: 'out of stock', label: 'Out of Stock' }
   ];
 
+  const returnPolicyOptions = [
+    { value: 'returnable', label: 'Returnable' },
+    { value: 'nonreturnable', label: 'Non-Returnable' }
+  ];
+
+
+
   useEffect(() => {
-    if (isEditing) {
-      fetchEquipment();
-    }
-  }, [id, isEditing]);
+      const fetchEquipment = async () => {
+        try {
+          const response = await getItemById(id)
+          const data = response.data.item
+          console.log(data)
+          // if (data.specifications && Object.keys(data.specifications).length > 0) {
+          //   const specs = Object.entries(data.specifications).map(([key, value]) => ({
+          //     key, value
+          //   }));
+          //   setSpecificationInputs([...specs, { key: '', value: '' }]);
+          // }
+          setEquipment({...equipment, ...data});
+          console.log(equipment)
+        } catch (error) {
+          console.error('Error fetching equipment:', error);
+          alert('Error loading equipment data');
+        }
+        setLoading(false);
+      };
+    fetchEquipment();
+  }, [id]);
 
   // Check permissions
   useEffect(() => {
@@ -87,32 +96,29 @@ const ItemsEditPage = ({ user }) => {
     }
   }, [user.role, navigate]);
 
-  const fetchEquipment = async () => {
-    try {
-      const response = await fetch(`/api/items/${id}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setEquipment(data);
-        
-        // Convert specifications object to input array
-        if (data.specifications && Object.keys(data.specifications).length > 0) {
-          const specs = Object.entries(data.specifications).map(([key, value]) => ({
-            key, value
-          }));
-          setSpecificationInputs([...specs, { key: '', value: '' }]);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching equipment:', error);
-      alert('Error loading equipment data');
-    }
-    setLoading(false);
-  };
+  // const fetchEquipment = async () => {
+  //   try {
+  //     const response = await getItemById(id)
+  //     const data = response.data.item
+  //     console.log(data)
+  //     console.log(equipment)
+  //     setEquipment(data);
+  //     // if (response.ok) {
+
+  //       // Convert specifications object to input array
+  //       if (data.specifications && Object.keys(data.specifications).length > 0) {
+  //         const specs = Object.entries(data.specifications).map(([key, value]) => ({
+  //           key, value
+  //         }));
+  //         setSpecificationInputs([...specs, { key: '', value: '' }]);
+  //       }
+  //     // }
+  //   } catch (error) {
+  //     console.error('Error fetching equipment:', error);
+  //     alert('Error loading equipment data');
+  //   }
+  //   setLoading(false);
+  // };
 
   const handleInputChange = (field, value) => {
     setEquipment(prev => ({
@@ -121,29 +127,29 @@ const ItemsEditPage = ({ user }) => {
     }));
   };
 
-  const handleSpecificationChange = (index, field, value) => {
-    const newSpecs = [...specificationInputs];
-    newSpecs[index][field] = value;
-    
-    // Add new empty row if last row is being filled
-    if (index === newSpecs.length - 1 && newSpecs[index].key && newSpecs[index].value) {
-      newSpecs.push({ key: '', value: '' });
-    }
-    
-    setSpecificationInputs(newSpecs);
-  };
+  // const handleSpecificationChange = (index, field, value) => {
+  //   const newSpecs = [...specificationInputs];
+  //   newSpecs[index][field] = value;
 
-  const removeSpecification = (index) => {
-    const newSpecs = specificationInputs.filter((_, i) => i !== index);
-    if (newSpecs.length === 0) {
-      newSpecs.push({ key: '', value: '' });
-    }
-    setSpecificationInputs(newSpecs);
-  };
+  //   // Add new empty row if last row is being filled
+  //   if (index === newSpecs.length - 1 && newSpecs[index].key && newSpecs[index].value) {
+  //     newSpecs.push({ key: '', value: '' });
+  //   }
+
+  //   setSpecificationInputs(newSpecs);
+  // };
+
+  // const removeSpecification = (index) => {
+  //   const newSpecs = specificationInputs.filter((_, i) => i !== index);
+  //   if (newSpecs.length === 0) {
+  //     newSpecs.push({ key: '', value: '' });
+  //   }
+  //   setSpecificationInputs(newSpecs);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!equipment.name.trim()) {
       alert('Equipment name is required');
       return;
@@ -153,32 +159,17 @@ const ItemsEditPage = ({ user }) => {
 
     try {
       // Convert specification inputs to object
-      const specifications = {};
-      specificationInputs.forEach(spec => {
-        if (spec.key && spec.value) {
-          specifications[spec.key] = spec.value;
-        }
-      });
+      // const specifications = {};
+      // specificationInputs.forEach(spec => {
+      //   if (spec.key && spec.value) {
+      //     specifications[spec.key] = spec.value;
+      //   }
+      // });
 
-      const equipmentData = {
-        ...equipment,
-        specifications
-      };
-
-      const url = isEditing ? `/api/items/${id}` : '/api/items';
-      const method = isEditing ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(equipmentData)
-      });
+      const response = await updateItem(equipment)
 
       if (response.ok) {
-        alert(`Equipment ${isEditing ? 'updated' : 'created'} successfully!`);
+        alert(`Equipment updated successfully!`);
         navigate('/equipment');
       } else {
         throw new Error('Failed to save equipment');
@@ -229,7 +220,7 @@ const ItemsEditPage = ({ user }) => {
   return (
     <div className="items-edit-page">
       <div className="page-header">
-        <h1>{isEditing ? 'Edit Equipment' : 'Add New Equipment'}</h1>
+        <h1>Edit Equipment</h1>
         <div className="header-actions">
           <Button onClick={() => navigate('/equipment')} className="secondary">
             ← Back to Equipment
@@ -247,7 +238,7 @@ const ItemsEditPage = ({ user }) => {
           {/* Basic Information */}
           <div className="form-section">
             <h2>Basic Information</h2>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="name">Equipment Name *</label>
@@ -260,7 +251,7 @@ const ItemsEditPage = ({ user }) => {
                   required
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="category">Category</label>
                 <select
@@ -270,64 +261,54 @@ const ItemsEditPage = ({ user }) => {
                 >
                   <option value="">Select category</option>
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat.value} value={cat.value}>{cat.label}</option>
                   ))}
                 </select>
+              </div>
+
+                <div className="form-group">
+                <label htmlFor="values">Item Values</label>
+                <input
+                  type="text"
+                  id="values"
+                  value={equipment.values}
+                  onChange={(e) => handleInputChange('values', e.target.value)}
+                  placeholder="Enter item values"
+                />
               </div>
             </div>
 
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="details">Details</label>
               <textarea
-                id="description"
-                value={equipment.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                id="details"
+                value={equipment.details}
+                onChange={(e) => handleInputChange('details', e.target.value)}
                 placeholder="Describe the equipment's purpose and features"
                 rows="3"
               />
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="manufacturer">Manufacturer</label>
-                <input
-                  type="text"
-                  id="manufacturer"
-                  value={equipment.manufacturer}
-                  onChange={(e) => handleInputChange('manufacturer', e.target.value)}
-                  placeholder="Equipment manufacturer"
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="model">Model</label>
-                <input
-                  type="text"
-                  id="model"
-                  value={equipment.model}
-                  onChange={(e) => handleInputChange('model', e.target.value)}
-                  placeholder="Model number/name"
-                />
-              </div>
             </div>
           </div>
 
           {/* Location and Status */}
           <div className="form-section">
             <h2>Location and Status</h2>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="location">Location</label>
-                <input
-                  type="text"
+                <select
                   id="location"
                   value={equipment.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder="Room, building, or area"
-                />
+                >
+                  <option value="">-----</option>
+                  {locations?.map((location, i) => (
+                    <option key={i} value={location._id}>{location.building}.{location.classroom} {location.campus}</option>
+                  ))}
+                </select>
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="status">Status</label>
                 <select
@@ -341,6 +322,16 @@ const ItemsEditPage = ({ user }) => {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="quantity">Quantity</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  value={equipment.quantity}
+                  onChange={(e) => handleInputChange('quantity', parseInt(e.target.value))}
+                />
               </div>
             </div>
 
@@ -356,78 +347,36 @@ const ItemsEditPage = ({ user }) => {
             </div>
           </div>
 
-          {/* Specifications */}
-          <div className="form-section">
-            <h2>Technical Specifications</h2>
-            
-            <div className="specifications-list">
-              {specificationInputs.map((spec, index) => (
-                <div key={index} className="specification-row">
-                  <input
-                    type="text"
-                    placeholder="Specification name"
-                    value={spec.key}
-                    onChange={(e) => handleSpecificationChange(index, 'key', e.target.value)}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Value"
-                    value={spec.value}
-                    onChange={(e) => handleSpecificationChange(index, 'value', e.target.value)}
-                  />
-                  {specificationInputs.length > 1 && (
-                    <Button
-                      type="button"
-                      onClick={() => removeSpecification(index)}
-                      className="danger small"
-                    >
-                      Remove
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Booking Settings */}
           <div className="form-section">
             <h2>Booking Settings</h2>
-            
-            <div className="form-group checkbox-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={equipment.requiresApproval}
-                  onChange={(e) => handleInputChange('requiresApproval', e.target.checked)}
-                />
-                <span className="checkmark"></span>
-                Requires manager approval for booking
-              </label>
-            </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="maxBookingDuration">Max Booking Duration (hours)</label>
+                <label htmlFor="deadline">Deadline (days)</label>
                 <input
                   type="number"
-                  id="maxBookingDuration"
-                  value={equipment.maxBookingDuration}
-                  onChange={(e) => handleInputChange('maxBookingDuration', parseInt(e.target.value))}
+                  id="deadline"
+                  value={equipment.deadline}
+                  onChange={(e) => handleInputChange('deadline', parseInt(e.target.value))}
                   min="1"
-                  max="168"
+                  max="70"
                 />
               </div>
-              
-              <div className="form-group">
-                <label htmlFor="bookingAdvanceLimit">Booking Advance Limit (days)</label>
-                <input
-                  type="number"
-                  id="bookingAdvanceLimit"
-                  value={equipment.bookingAdvanceLimit}
-                  onChange={(e) => handleInputChange('bookingAdvanceLimit', parseInt(e.target.value))}
-                  min="1"
-                  max="365"
-                />
+
+               <div className="form-group">
+                <label htmlFor="returnPolicy">Return Policy</label>
+                <select
+                  id="returnPolicy"
+                  value={equipment.returnPolicy}
+                  onChange={(e) => handleInputChange('returnPolicy', e.target.value)}
+                >
+                  {returnPolicyOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -435,29 +384,6 @@ const ItemsEditPage = ({ user }) => {
           {/* Additional Information */}
           <div className="form-section">
             <h2>Additional Information</h2>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="purchaseDate">Purchase Date</label>
-                <input
-                  type="date"
-                  id="purchaseDate"
-                  value={equipment.purchaseDate}
-                  onChange={(e) => handleInputChange('purchaseDate', e.target.value)}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="warrantyInfo">Warranty Information</label>
-                <input
-                  type="text"
-                  id="warrantyInfo"
-                  value={equipment.warrantyInfo}
-                  onChange={(e) => handleInputChange('warrantyInfo', e.target.value)}
-                  placeholder="Warranty details"
-                />
-              </div>
-            </div>
 
             <div className="form-group">
               <label htmlFor="maintenanceSchedule">Maintenance Schedule</label>
@@ -469,28 +395,6 @@ const ItemsEditPage = ({ user }) => {
                 placeholder="e.g., Monthly calibration, Quarterly cleaning"
               />
             </div>
-
-            <div className="form-group">
-              <label htmlFor="operatingInstructions">Operating Instructions</label>
-              <textarea
-                id="operatingInstructions"
-                value={equipment.operatingInstructions}
-                onChange={(e) => handleInputChange('operatingInstructions', e.target.value)}
-                placeholder="Brief operating instructions or links to manuals"
-                rows="3"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="safetyNotes">Safety Notes</label>
-              <textarea
-                id="safetyNotes"
-                value={equipment.safetyNotes}
-                onChange={(e) => handleInputChange('safetyNotes', e.target.value)}
-                placeholder="Important safety information and precautions"
-                rows="3"
-              />
-            </div>
           </div>
         </div>
 
@@ -499,7 +403,7 @@ const ItemsEditPage = ({ user }) => {
             Cancel
           </Button>
           <Button type="submit" className="primary" disabled={saving}>
-            {saving ? 'Saving...' : (isEditing ? 'Update Equipment' : 'Create Equipment')}
+            Update Equipment
           </Button>
         </div>
       </form>
