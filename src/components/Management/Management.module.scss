@@ -1,0 +1,189 @@
+/* Management.module.scss — white/neo theme with a soft electronics-blue accent */
+
+$bg: #f3f6fb;
+$card: #ffffff;
+$ink: #2f3651;
+$muted: #7a84a3;
+$accent: #66a6ff;
+$accent-deep: #0f3e84;
+
+$shadow-outer: 20px 20px 60px #d6dbe6, -20px -20px 60px #ffffff;
+$inset-1: inset 8px 8px 16px #e1e6f1, inset -8px -8px 16px #ffffff;
+
+@mixin neu-inset($in1:8px,$in2:16px) {
+  box-shadow: inset $in1 $in1 $in2 #e1e6f1, inset -$in1 -$in1 $in2 #ffffff;
+}
+
+/* ---- PAGE WRAPPER ---- */
+:global(.management-container) {
+  min-height: 100dvh;
+  padding: 40px 16px 64px;
+  color: $ink;
+  background: radial-gradient(1200px 600px at 70% 30%, #ffffff 0%, $bg 60%),
+              linear-gradient(135deg, #ffffff 0%, $bg 100%);
+
+  max-width: 1060px;
+  margin: 0 auto;
+
+  h1 {
+    margin: 0 0 18px;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: .2px;
+    text-align: center;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 82px;
+      height: 4px;
+      margin: .6rem auto 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,.06), transparent);
+    }
+  }
+}
+
+/* ---- FORM CARD ---- */
+:global(.management-form) {
+  background: $card;
+  border-radius: 26px;
+  padding: 26px;
+  box-shadow: $shadow-outer;
+  outline: 1px solid rgba(0,0,0,.03);
+  margin: 0 auto 22px;
+  width: min(920px, 100%);
+
+  display: grid;
+  gap: 14px;
+
+  /* two-up layout for email/title at >=700px */
+  @media (min-width: 700px) {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: dense;
+
+    input[type="email"] { grid-column: 1; }
+    input[type="text"]  { grid-column: 2; }
+    textarea            { grid-column: 1 / -1; }
+    button              { grid-column: 1 / -1; justify-self: end; }
+  }
+
+  input, textarea {
+    background: #f8fbff;
+    border: 0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: $ink;
+    font-size: 1rem;
+    @include neu-inset();
+    outline: none;
+    transition: box-shadow .2s ease, transform .05s ease;
+
+    &::placeholder { color: $muted; }
+    &:focus { @include neu-inset(4px, 8px); }
+    &:active { transform: scale(0.998); }
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  button {
+    justify-self: start;
+    border: 0;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-weight: 800;
+    letter-spacing: .2px;
+    color: #fff;
+    background: linear-gradient(180deg, lighten($accent, 3%), $accent);
+    box-shadow:
+      0 10px 24px rgba(102,166,255,.28),
+      0 2px 6px rgba(102,166,255,.22);
+    cursor: pointer;
+    transition: transform .08s ease, box-shadow .18s ease, opacity .18s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 30px rgba(102,166,255,.34),
+        0 3px 10px rgba(102,166,255,.22);
+    }
+    &:active { transform: translateY(0); }
+    &:disabled { opacity: .7; cursor: not-allowed; }
+  }
+}
+
+/* ---- STATUS MESSAGE ---- */
+:global(.status-message) {
+  width: min(920px, 100%);
+  margin: 10px auto 22px;
+  background: #f0f7ff;
+  border-left: 4px solid $accent;
+  color: $accent-deep;
+  padding: 12px 14px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(102,166,255,.12);
+}
+
+/* ---- LOW STOCK CARD ---- */
+:global(.low-stock-section) {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  background: $card;
+  border-radius: 26px;
+  padding: 22px;
+  box-shadow: $shadow-outer;
+  outline: 1px solid rgba(0,0,0,.03);
+
+  h2 {
+    margin: 0 0 14px;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: .2px;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  li {
+    background: linear-gradient(180deg, #f8fbff, #eef4ff);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    @include neu-inset();
+
+    .name {
+      font-weight: 700;
+      color: $ink;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .qty {
+      font-size: .85rem;
+      font-weight: 800;
+      color: #9a2c2c;
+      background: #ffeaea;
+      border-radius: 999px;
+      padding: 6px 10px;
+      box-shadow: inset 0 0 0 1px rgba(154,44,44,.18);
+    }
+  }
+
+  /* empty state */
+  p {
+    margin: 8px 0 0;
+    color: $muted;
+    text-align: center;
+  }
+}
