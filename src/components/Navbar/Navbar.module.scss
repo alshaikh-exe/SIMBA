@@ -1,0 +1,160 @@
+/* Animated-gif navbar with transparent ghost buttons */
+
+$white: #fff;
+$ghost: rgba(255,255,255,.14);
+$ghost-strong: rgba(255,255,255,.22);
+$text: #f7f8ff;
+$muted: rgba(255,255,255,.75);
+
+.nav {
+  --height: 150px;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--height);
+  padding: 0 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  color: $text;
+
+  /* animated background */
+  background-image: var(--bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* subtle blur/glass for readability */
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+
+  /* soft inner shadow so content pops */
+  box-shadow:
+    inset 0 -1px 0 rgba(255,255,255,.08),
+    0 6px 18px rgba(0,0,0,.10);
+}
+
+/* gradient veil so text stays readable regardless of frame */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0,0,0,.22) 0%,
+    rgba(0,0,0,.12) 40%,
+    rgba(0,0,0,.10) 100%
+  );
+  pointer-events: none;
+}
+
+.left {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0; /* prevent overflow */
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  flex: 0 0 auto;
+  border: 2px solid rgba(255,255,255,.28);
+  box-shadow: 0 3px 12px rgba(0,0,0,.22);
+
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.12);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.initial {
+  font-weight: 800;
+  color: $white;
+  letter-spacing: .5px;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 0;
+
+  .name {
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .email {
+    font-size: .85rem;
+    color: $muted;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.right {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Transparent “ghost” button (works for Links and <button>) */
+.btn {
+  appearance: none;
+  background: transparent;
+  color: $white;
+  border: 1px solid rgba(255,255,255,.38);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: .9rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: .25px;
+  cursor: pointer;
+
+  transition: background .2s ease, border-color .2s ease, transform .06s ease;
+
+  &:hover {
+    background: $ghost;
+    border-color: rgba(255,255,255,.55);
+  }
+  &:active { transform: translateY(1px); }
+}
+
+/* a little more emphasis on logout */
+.logout {
+  border-color: rgba(255,85,85,.55);
+  color: #fff0f0;
+
+  &:hover {
+    background: rgba(255,85,85,.15);
+    border-color: rgba(255,85,85,.75);
+  }
+}
+
+/* responsiveness */
+@media (max-width: 860px) {
+  .nav { --height: 92px; align-items: start; padding: 10px 14px; }
+  .right { gap: 8px; }
+  .btn { padding: 8px 12px; font-size: .85rem; }
+}
