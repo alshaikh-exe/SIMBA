@@ -73,6 +73,27 @@ export default function CartPage({ user, onCartUpdate }) {
     }
   };
 
+const handleCheckout = async () => {
+  try {
+    const res = await fetch(`${API_BASE}/api/orders/submit`, {   // 👈 use submit
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        pickupDate: pickupDate?.toISOString(),
+        returnDate: returnDate?.toISOString(),
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Order submitted:", data);
+  } catch (err) {
+    console.error("Checkout failed", err);
+  }
+};
+
   return (
     <div style={{ padding: "1rem" }}>
       {/* Cart items */}
@@ -125,6 +146,11 @@ export default function CartPage({ user, onCartUpdate }) {
             <p>Return: {returnDate.toDateString()}</p>
           </div>
         )}
+
+        {/* Checkout button */}
+        <div style={{ marginTop: 20 }}>
+          <button onClick={handleCheckout}>Checkout</button>
+        </div>
       </div>
     </div>
   );
