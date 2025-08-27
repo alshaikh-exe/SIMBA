@@ -15,28 +15,25 @@ const ItemsEditPage = ({ user }) => {
   useEffect(() => {
     async function getAllLocations() {
       const res = await getLocations()
-      console.log(res)
       setLocations(res.data)
     }
     getAllLocations()
   }, [])
 
   const [loading, setLoading] = useState(isEditing);
-  const [saving, setSaving] = useState(false);
   const [equipment, setEquipment] = useState({
     name: '',
     details: '',
-    category: '',
+    image: '',
+    values: '',
     location: '',
     status: 'available',
-    image: '',
+    category: 'electronics',
     maintenanceSchedule: '',
-    deadline: 7 // days
+    returnPolicy: '',
+    deadline: 7,
+    quantity: 0
   });
-
-  // const [specificationInputs, setSpecificationInputs] = useState([
-  //   { key: '', value: '' }
-  // ]);
 
   const categories = [
     { value: 'electronics', label: 'Electronics' },
@@ -64,22 +61,13 @@ const ItemsEditPage = ({ user }) => {
     { value: 'nonreturnable', label: 'Non-Returnable' }
   ];
 
-
-
   useEffect(() => {
       const fetchEquipment = async () => {
         try {
           const response = await getItemById(id)
           const data = response.data.item
-          console.log(data)
-          // if (data.specifications && Object.keys(data.specifications).length > 0) {
-          //   const specs = Object.entries(data.specifications).map(([key, value]) => ({
-          //     key, value
-          //   }));
-          //   setSpecificationInputs([...specs, { key: '', value: '' }]);
-          // }
+          
           setEquipment({...equipment, ...data});
-          console.log(equipment)
         } catch (error) {
           console.error('Error fetching equipment:', error);
           alert('Error loading equipment data');
@@ -89,36 +77,11 @@ const ItemsEditPage = ({ user }) => {
     fetchEquipment();
   }, [id]);
 
-  // Check permissions
   useEffect(() => {
     if (user.role !== 'manager' && user.role !== 'admin') {
       navigate('/equipment');
     }
   }, [user.role, navigate]);
-
-  // const fetchEquipment = async () => {
-  //   try {
-  //     const response = await getItemById(id)
-  //     const data = response.data.item
-  //     console.log(data)
-  //     console.log(equipment)
-  //     setEquipment(data);
-  //     // if (response.ok) {
-
-  //       // Convert specifications object to input array
-  //       if (data.specifications && Object.keys(data.specifications).length > 0) {
-  //         const specs = Object.entries(data.specifications).map(([key, value]) => ({
-  //           key, value
-  //         }));
-  //         setSpecificationInputs([...specs, { key: '', value: '' }]);
-  //       }
-  //     // }
-  //   } catch (error) {
-  //     console.error('Error fetching equipment:', error);
-  //     alert('Error loading equipment data');
-  //   }
-  //   setLoading(false);
-  // };
 
   const handleInputChange = (field, value) => {
     setEquipment(prev => ({
@@ -127,25 +90,6 @@ const ItemsEditPage = ({ user }) => {
     }));
   };
 
-  // const handleSpecificationChange = (index, field, value) => {
-  //   const newSpecs = [...specificationInputs];
-  //   newSpecs[index][field] = value;
-
-  //   // Add new empty row if last row is being filled
-  //   if (index === newSpecs.length - 1 && newSpecs[index].key && newSpecs[index].value) {
-  //     newSpecs.push({ key: '', value: '' });
-  //   }
-
-  //   setSpecificationInputs(newSpecs);
-  // };
-
-  // const removeSpecification = (index) => {
-  //   const newSpecs = specificationInputs.filter((_, i) => i !== index);
-  //   if (newSpecs.length === 0) {
-  //     newSpecs.push({ key: '', value: '' });
-  //   }
-  //   setSpecificationInputs(newSpecs);
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -155,18 +99,8 @@ const ItemsEditPage = ({ user }) => {
       return;
     }
 
-    setSaving(true);
-
     try {
-      // Convert specification inputs to object
-      // const specifications = {};
-      // specificationInputs.forEach(spec => {
-      //   if (spec.key && spec.value) {
-      //     specifications[spec.key] = spec.value;
-      //   }
-      // });
-
-      const response = await updateItem(equipment)
+      const response = await updateItem(id, equipment)
 
       if (response.ok) {
         alert(`Equipment updated successfully!`);
@@ -177,16 +111,12 @@ const ItemsEditPage = ({ user }) => {
     } catch (error) {
       alert('Error saving equipment: ' + error.message);
     }
-
-    setSaving(false);
   };
 
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this equipment? This action cannot be undone.')) {
       return;
     }
-
-    setSaving(true);
 
     try {
       const response = await fetch(`/api/items/${id}`, {
@@ -205,8 +135,6 @@ const ItemsEditPage = ({ user }) => {
     } catch (error) {
       alert('Error deleting equipment: ' + error.message);
     }
-
-    setSaving(false);
   };
 
   if (loading) {
@@ -226,7 +154,7 @@ const ItemsEditPage = ({ user }) => {
             ← Back to Equipment
           </Button>
           {isEditing && (
-            <Button onClick={handleDelete} className="danger" disabled={saving}>
+            <Button onClick={handleDelete} className="danger">
               Delete Equipment
             </Button>
           )}
@@ -402,7 +330,7 @@ const ItemsEditPage = ({ user }) => {
           <Button type="button" onClick={() => navigate('/equipment')} className="secondary">
             Cancel
           </Button>
-          <Button type="submit" className="primary" disabled={saving}>
+          <Button type="submit" className="primary">
             Update Equipment
           </Button>
         </div>

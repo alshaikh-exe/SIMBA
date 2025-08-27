@@ -1,5 +1,4 @@
 //Zahraa
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ItemsCreate.module.scss';
@@ -15,36 +14,24 @@ const ItemsCreatePage = ({ user }) => {
   useEffect(() => {
     async function getAllLocations() {
       const res = await getLocations()
-      console.log(res)
       setLocations(res.data)
     }
     getAllLocations()
   }, [])
 
-  const [saving, setSaving] = useState(false);
   const [equipment, setEquipment] = useState({
-    name: '',
+     name: '',
     details: '',
-    category: '',
-    manufacturer: '',
-    model: '',
+    image: '',
+    values: '',
     location: '',
     status: 'available',
-    image: '',
-    specifications: {},
-    requiresApproval: false,
+    category: 'electronics',
     maintenanceSchedule: '',
-    purchaseDate: '',
-    warrantyInfo: '',
-    operatingInstructions: '',
-    safetyNotes: '',
-    maxBookingDuration: 4, // hours
-    bookingAdvanceLimit: 7 // days
+    returnPolicy: '',
+    deadline: 7,
+    quantity: 0
   });
-
-  // const [specificationInputs, setSpecificationInputs] = useState([
-  //   { key: '', value: '' }
-  // ]);
 
   const categories = [
     { value: 'electronics', label: 'Electronics' },
@@ -72,45 +59,11 @@ const ItemsCreatePage = ({ user }) => {
     { value: 'nonreturnable', label: 'Non-Returnable' }
   ];
 
-  //   useEffect(() => {
-  //     if (isEditing) {
-  //       fetchEquipment();
-  //     }
-  //   }, [id, isEditing]);
-
-  // Check permissions
   useEffect(() => {
     if (user.role !== 'manager' && user.role !== 'admin') {
       navigate('/equipment');
     }
   }, [user.role, navigate]);
-
-  //   const fetchEquipment = async () => {
-  //     try {
-  //       const response = await fetch(`/api/items/${id}`, {
-  //         headers: {
-  //           'Authorization': `Bearer ${localStorage.getItem('token')}`
-  //         }
-  //       });
-
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         setEquipment(data);
-
-  //         // Convert specifications object to input array
-  //         if (data.specifications && Object.keys(data.specifications).length > 0) {
-  //           const specs = Object.entries(data.specifications).map(([key, value]) => ({
-  //             key, value
-  //           }));
-  //           setSpecificationInputs([...specs, { key: '', value: '' }]);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching equipment:', error);
-  //       alert('Error loading equipment data');
-  //     }
-  //     setLoading(false);
-  //   };
 
   const handleInputChange = (field, value) => {
     setEquipment(prev => ({
@@ -119,26 +72,6 @@ const ItemsCreatePage = ({ user }) => {
     }));
   };
 
-  // const handleSpecificationChange = (index, field, value) => {
-  //   const newSpecs = [...specificationInputs];
-  //   newSpecs[index][field] = value;
-
-  //   // Add new empty row if last row is being filled
-  //   if (index === newSpecs.length - 1 && newSpecs[index].key && newSpecs[index].value) {
-  //     newSpecs.push({ key: '', value: '' });
-  //   }
-
-  //   setSpecificationInputs(newSpecs);
-  // };
-
-  // const removeSpecification = (index) => {
-  //   const newSpecs = specificationInputs.filter((_, i) => i !== index);
-  //   if (newSpecs.length === 0) {
-  //     newSpecs.push({ key: '', value: '' });
-  //   }
-  //   setSpecificationInputs(newSpecs);
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!equipment.name.trim()) {
@@ -146,25 +79,8 @@ const ItemsCreatePage = ({ user }) => {
       return;
     }
 
-    setSaving(true);
-
-    // const specifications = {};
-    // specificationInputs.forEach(spec => {
-    //   if (spec.key && spec.value) {
-    //     specifications[spec.key] = spec.value;
-    //   }
-    // });
-
-    // const equipmentData = {
-    //   ...equipment,
-    //   specifications: specifications
-    // };
-    // console.log(equipmentData)
     try {
-      // Convert specification inputs to object
-
       const response = await createItem(equipment)
-
 
       if (response.ok) {
         alert(`Equipment created successfully!`);
@@ -175,10 +91,7 @@ const ItemsCreatePage = ({ user }) => {
     } catch (error) {
       alert('Error saving equipment: ' + error.message);
     }
-
-    setSaving(false);
   };
-
 
   return (
     <div className="items-edit-page">
@@ -188,11 +101,6 @@ const ItemsCreatePage = ({ user }) => {
           <Button onClick={() => navigate('/equipment')} className="secondary">
             ← Back to Equipment
           </Button>
-          {/* {isEditing && (
-            <Button onClick={handleDelete} className="danger" disabled={saving}>
-              Delete Equipment
-            </Button>
-          )} */}
         </div>
       </div>
 
@@ -365,7 +273,7 @@ const ItemsCreatePage = ({ user }) => {
           <Button type="button" onClick={() => navigate('/equipment')} className="secondary">
             Cancel
           </Button>
-          <Button type="submit" className="primary" disabled={saving}>
+          <Button type="submit" className="primary">
             Create Equipment
           </Button>
         </div>
