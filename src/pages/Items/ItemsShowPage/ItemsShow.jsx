@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getItemById } from "../../../utilities/items-api";
 import { Link } from "react-router-dom";
 import Button from "../../../components/Button/Button";
+import '../ItemsShowPage/items.module.scss';
 
 export default function ItemShow({ user, onAddToCart }) {
   const { id } = useParams();

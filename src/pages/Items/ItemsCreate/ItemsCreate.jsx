@@ -1,7 +1,7 @@
 //Zahraa
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ItemsCreate.module.scss';
+import '../ItemsCreate/itemsCreate.module.scss';
 import { createItem } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
