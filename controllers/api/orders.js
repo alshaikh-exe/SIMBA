@@ -172,4 +172,24 @@ export async function show(req, res) {
   }
 }
 
-export default { getCart, addToCart, setCartQty, submit, approve, show };
+export async function setCartDates(req, res) {
+  try {
+    const { pickupDate, returnDate } = req.body;
+    if (!pickupDate || !returnDate) {
+      return res.status(400).json({ success: false, message: "Both dates required" });
+    }
+
+    const cart = await Order.getCart(req.user._id);
+    cart.pickupDate = new Date(pickupDate);
+    cart.returnDate = new Date(returnDate);
+
+    await cart.save();
+    res.status(200).json({ success: true, data: cart });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
+  }
+}
+
+export default { getCart, addToCart, setCartQty, submit, approve, show, setCartDates };
