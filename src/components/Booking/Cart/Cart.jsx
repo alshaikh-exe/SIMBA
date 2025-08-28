@@ -80,7 +80,7 @@ export default function Cart({ user, onCartUpdate }) {
       {cartItems.map(item => (
         <div key={item._id} className="cart-item">
           <div className="item-image">
-            {item.picture ? <img src={item.picture} alt={item.name} /> : <div>No Image</div>}
+            {item.image ? <img src={item.image} alt={item.name} /> : <div>No Image</div>}
           </div>
           <div className="item-details">
             <h3>{item.name}</h3>
