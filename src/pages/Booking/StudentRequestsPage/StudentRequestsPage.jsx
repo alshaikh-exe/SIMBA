@@ -1,6 +1,6 @@
 // components/Booking/StudentRequests/StudentRequests.jsx
 import React, { useEffect, useState } from "react";
-import styles from "./StudentRequests.module.scss";
+import styles from "./StudentRequestsPage.module.scss";
 import {
   getStudentRequests,   // now -> GET /api/orders?scope=requested
   getMyRequests,        // now -> GET /api/orders
@@ -156,7 +156,7 @@ async function handleReject(order) {
                         Approve All
                       </button>
                       <button
-                        className={styles.primaryBtn}
+                        className={styles.dangerBtn}
                         onClick={() => handleReject(order)}
                       >
                         Reject Order
