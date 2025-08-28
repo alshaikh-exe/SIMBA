@@ -375,6 +375,12 @@ The application uses SCSS Modules for component-level styling with:
 - Ensure all dependencies are installed
 - Check for environment variable requirements
 
+## Links
+1. Repo: [SIMBA](https://github.com/alshaikh-exe/SIMBA)
+2. Trello: [Trello](https://trello.com/b/2l6n4cfR/simba)
+3. Wireframe: [Wireframe](https://excalidraw.com/#json=paggr5vhldLd96GkyxZ_x,DKIrxC_pR74QODhPxWcXAw)
+
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
