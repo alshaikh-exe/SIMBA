@@ -45,9 +45,6 @@ export default function LoginForm({ setUser }) {
       />
       {error && <div className={styles.error}>{error}</div>}
       <button type="submit" className={styles.button}>Log In</button>
-      <p className={styles.adminLink}>
-        <Link to="/admin/login">Admin</Link>
-      </p>
     </form>
   );
 }

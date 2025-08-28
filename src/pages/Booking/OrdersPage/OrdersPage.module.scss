@@ -1,337 +1,126 @@
-//Zahraa
-// src/components/Booking/Orders/Orders.scss
-// .orders-container {
-//   padding: 2rem;
-//   max-width: 1000px;
-//   margin: 0 auto;
+/* src/pages/Booking/OrdersPage/OrdersPage.module.scss */
 
-//   .orders-header {
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     margin-bottom: 2rem;
-//     flex-wrap: wrap;
-//     gap: 1rem;
+$bg: #f3f6fb;
+$panel: #ffffff;
+$ink: #2f3356;
+$muted: #6c7293;
 
-//     h2 {
-//       color: #2c3e50;
-//       font-size: 2rem;
-//       font-weight: 600;
-//       margin: 0;
-//     }
+$shadow-dark: rgba(22, 28, 45, 0.15);
+$shadow-line: rgba(22, 28, 45, 0.06);
 
-//     .orders-controls {
-//       display: flex;
-//       gap: 1rem;
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.25rem 1.25rem 4rem;
+  color: $ink;
 
-//       .filter-select {
-//         padding: 0.75rem;
-//         border: 2px solid #e1e8ed;
-//         border-radius: 8px;
-//         background: white;
-//         font-size: 1rem;
-//         cursor: pointer;
-//         transition: all 0.3s ease;
+  h1 {
+    margin: 0 0 1rem;
+    text-align: center;
+    font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+    font-weight: 800;
+    letter-spacing: .2px;
 
-//         &:focus {
-//           outline: none;
-//           border-color: #3498db;
-//         }
-//       }
-//     }
-//   }
+    &::after {
+      content: "";
+      display: block;
+      width: 84px;
+      height: 4px;
+      margin: .6rem auto 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,.08), transparent);
+    }
+  }
+}
 
-//   .orders-loading {
-//     text-align: center;
-//     padding: 3rem;
-//     font-size: 1.2rem;
-//     color: #7f8c8d;
-//   }
+.center {
+  min-height: 40vh;
+  display: grid;
+  place-items: center;
+  color: $muted;
+  font-weight: 600;
+}
 
-//   .error-message {
-//     background-color: #fee;
-//     color: #c53030;
-//     padding: 1rem;
-//     border-radius: 8px;
-//     margin-bottom: 1rem;
-//     border: 1px solid #feb2b2;
-//   }
+.error {
+  max-width: 900px;
+  margin: 1rem auto;
+  padding: .9rem 1rem;
+  border-left: 4px solid #ff5670;
+  background: #fff1f4;
+  color: #7b1b29;
+  border-radius: 12px;
+}
 
-//   .no-orders {
-//     text-align: center;
-//     padding: 4rem 2rem;
-//     background: white;
-//     border-radius: 12px;
-//     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.section {
+  margin-top: 1.75rem;
 
-//     p {
-//       color: #7f8c8d;
-//       font-size: 1.1rem;
-//       margin-bottom: 1rem;
+  h2 {
+    margin: 0 0 .75rem;
+    font-size: 1.15rem;
+    letter-spacing: .2px;
+    color: $ink;
+  }
+}
 
-//       &:first-child {
-//         font-size: 1.3rem;
-//         font-weight: 600;
-//         color: #2c3e50;
-//       }
-//     }
-//   }
+.card {
+  background: $panel;
+  border-radius: 22px;
+  padding: 16px;
+  margin: .75rem 0 1rem;
+  box-shadow:
+    0 14px 34px $shadow-dark,
+    inset 0 0 0 1px $shadow-line;
+}
 
-//   .orders-list {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 1.5rem;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  flex-wrap: wrap;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0,0,0,.06);
 
-//     .order-card {
-//       background: white;
-//       border-radius: 12px;
-//       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-//       border: 1px solid #e1e8ed;
-//       overflow: hidden;
-//       transition: all 0.3s ease;
+  strong { font-weight: 800; }
+}
 
-//       &:hover {
-//         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-//       }
+.badge {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: .8rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: #2f3b8f;
+  background: #e8eefc;
+  border: 1px solid rgba(47,59,143,.18);
+}
 
-//       .order-header {
-//         display: flex;
-//         justify-content: space-between;
-//         align-items: center;
-//         padding: 1.5rem;
-//         background: #f8f9fa;
-//         border-bottom: 1px solid #e1e8ed;
+/* Optional: if you set data-status on the badge, it will color-code automatically.
+   Example in JSX: <span className={styles.badge} data-status={order.status}>…</span> */
+.badge[data-status="approved" i] { color: #0a6130; background: #dcf6e7; border-color: rgba(10,97,48,.18); }
+.badge[data-status="pending"  i] { color: #784a00; background: #fff3d6; border-color: rgba(120,74,0,.18); }
+.badge[data-status="rejected" i] { color: #8f2230; background: #ffe5ea; border-color: rgba(143,34,48,.18); }
 
-//         .order-info {
-//           h3 {
-//             color: #2c3e50;
-//             font-size: 1.25rem;
-//             font-weight: 600;
-//             margin: 0 0 0.25rem 0;
-//           }
+.userTag {
+  margin-left: auto;
+  color: $muted;
+  font-size: .9rem;
+  background: rgba(0,0,0,.035);
+  border: 1px solid rgba(0,0,0,.06);
+  padding: 6px 10px;
+  border-radius: 10px;
+}
 
-//           .order-date {
-//             color: #7f8c8d;
-//             font-size: 0.9rem;
-//             margin: 0;
-//           }
-//         }
+.meta {
+  margin-top: .75rem;
+  color: $muted;
+  font-size: .92rem;
+}
 
-//         .order-status {
-//           .status-badge {
-//             padding: 0.5rem 1rem;
-//             border-radius: 20px;
-//             font-size: 0.875rem;
-//             font-weight: 600;
-//             text-transform: uppercase;
-//             letter-spacing: 0.5px;
-
-//             &.status-pending {
-//               background: #fef5e7;
-//               color: #f39c12;
-//             }
-
-//             &.status-approved {
-//               background: #e3f2fd;
-//               color: #2196f3;
-//             }
-
-//             &.status-active {
-//               background: #e8f5e8;
-//               color: #4caf50;
-//             }
-
-//             &.status-completed {
-//               background: #d5f4e6;
-//               color: #27ae60;
-//             }
-
-//             &.status-cancelled {
-//               background: #fdeaea;
-//               color: #e74c3c;
-//             }
-
-//             &.status-rejected {
-//               background: #fdf2f8;
-//               color: #e91e63;
-//             }
-
-//             &.status-unknown {
-//               background: #f8f9fa;
-//               color: #6c757d;
-//             }
-//           }
-//         }
-//       }
-
-//       .order-details {
-//         padding: 1.5rem;
-
-//         .order-summary {
-//           display: flex;
-//           gap: 2rem;
-//           margin-bottom: 1.5rem;
-//           padding: 1rem;
-//           background: #f8f9fa;
-//           border-radius: 8px;
-
-//           p {
-//             margin: 0;
-//             color: #2c3e50;
-
-//             strong {
-//               color: #34495e;
-//             }
-//           }
-//         }
-
-//         .order-items {
-//           margin-bottom: 1.5rem;
-
-//           h4 {
-//             color: #2c3e50;
-//             font-size: 1.1rem;
-//             font-weight: 600;
-//             margin-bottom: 1rem;
-//           }
-
-//           .booking-item {
-//             display: flex;
-//             justify-content: space-between;
-//             align-items: flex-start;
-//             padding: 1rem;
-//             border: 1px solid #e1e8ed;
-//             border-radius: 8px;
-//             margin-bottom: 0.75rem;
-//             background: white;
-
-//             &:last-child {
-//               margin-bottom: 0;
-//             }
-
-//             .item-info {
-//               flex: 1;
-
-//               strong {
-//                 display: block;
-//                 color: #2c3e50;
-//                 font-size: 1rem;
-//                 margin-bottom: 0.25rem;
-//               }
-
-//               .item-category {
-//                 background: #ecf0f1;
-//                 color: #2c3e50;
-//                 padding: 0.25rem 0.75rem;
-//                 border-radius: 15px;
-//                 font-size: 0.75rem;
-//                 font-weight: 500;
-//               }
-//             }
-
-//             .booking-time {
-//               text-align: right;
-//               font-size: 0.9rem;
-
-//               p {
-//                 margin: 0.25rem 0;
-//                 color: #7f8c8d;
-
-//                 strong {
-//                   color: #2c3e50;
-//                 }
-//               }
-//             }
-//           }
-//         }
-
-//         .order-notes,
-//         .rejection-reason {
-//           margin-bottom: 1rem;
-
-//           h4 {
-//             color: #2c3e50;
-//             font-size: 1rem;
-//             font-weight: 600;
-//             margin-bottom: 0.5rem;
-//           }
-
-//           p {
-//             color: #7f8c8d;
-//             line-height: 1.5;
-//             margin: 0;
-//             padding: 1rem;
-//             background: #f8f9fa;
-//             border-radius: 6px;
-//           }
-//         }
-
-//         .rejection-reason {
-//           p {
-//             background: #fdeaea;
-//             color: #c53030;
-//           }
-//         }
-//       }
-
-//       .order-actions {
-//         padding: 1rem 1.5rem;
-//         background: #f8f9fa;
-//         border-top: 1px solid #e1e8ed;
-//         display: flex;
-//         gap: 1rem;
-//         justify-content: flex-end;
-//       }
-//     }
-//   }
-// }
-
-// // Responsive design
-// @media (max-width: 768px) {
-//   .orders-container {
-//     padding: 1rem;
-
-//     .orders-header {
-//       flex-direction: column;
-//       align-items: stretch;
-
-//       .orders-controls {
-//         flex-direction: column;
-//       }
-//     }
-
-//     .orders-list {
-//       .order-card {
-//         .order-header {
-//           flex-direction: column;
-//           align-items: flex-start;
-//           gap: 1rem;
-//         }
-
-//         .order-details {
-//           padding: 1rem;
-
-//           .order-summary {
-//             flex-direction: column;
-//             gap: 0.5rem;
-//           }
-
-//           .booking-item {
-//             flex-direction: column;
-//             align-items: flex-start;
-//             gap: 0.75rem;
-
-//             .booking-time {
-//               text-align: left;
-//             }
-//           }
-//         }
-
-//         .order-actions {
-//           flex-direction: column;
-//           padding: 1rem;
-//         }
-//       }
-//     }
-//   }
-// }
+/* Compact on small screens */
+@media (max-width: 640px) {
+  .card   { padding: 12px; border-radius: 18px; }
+  .header { gap: 8px 10px; }
+  .badge  { padding: 5px 9px; }
+}

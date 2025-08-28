@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getItemById } from "../../../utilities/items-api";
 import { Link } from "react-router-dom";
 import Button from "../../../components/Button/Button";
-import '../ItemsShowPage/Items.module.scss';
+import style from '../ItemsShowPage/Items.module.scss';
 
 export default function ItemShow({ user, onAddToCart }) {
   const { id } = useParams();
@@ -39,7 +39,7 @@ export default function ItemShow({ user, onAddToCart }) {
   const { item, policySummary, datasheetLinks } = itemData;
 
   return (
-    <main className="item-show">
+    <main className="style.item-show">
       <h1>{item.name}</h1>
 
       {item.image && (
