@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import ItemCard from "../../../components/Items/ItemCard";
 import '../ItemsPage/Items.module.scss';
 
-const ItemsPage = ({ user, setUser }) => {
-  const [items, setItems] = useState([]);
+const ItemsPage = ({ user, setUser, items, setItems }) => {
+  // const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -124,7 +124,7 @@ const ItemsPage = ({ user, setUser }) => {
         {error && <div className="error-message">{error}</div>}
 
         <div className="items-grid">
-          {filteredItems.map(item => (
+          {filteredItems?.map(item => (
  <ItemCard key={item._id} user={user} item={item} loading={loading} handleAddToCart={handleAddToCart} />
           ))}
         </div>

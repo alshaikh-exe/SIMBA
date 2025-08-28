@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styles from '../ItemsEditPage/Items.module.scss';
-import { updateItem, getItemById } from '../../../utilities/items-api'
+import '../ItemsEditPage/Items.module.scss';
+import { updateItem, getItemById, getItems} from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
-const ItemsEditPage = ({ user }) => {
+const ItemsEditPage = ({ user, items, setItems }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = id !== 'new';
@@ -101,6 +102,8 @@ const ItemsEditPage = ({ user }) => {
 
     try {
       const response = await updateItem(id, item)
+      const newItemsArray = await getItems()
+      setItems(newItemsArray)
       alert(`Item updated successfully!`);
       navigate('/items');
     } catch (error) {
