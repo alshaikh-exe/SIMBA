@@ -1,7 +1,7 @@
 //Zahraa
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../ItemsCreate/ItemsCreate.module.scss';
+import styles from '../ItemsCreate/ItemsCreate.module.scss';
 import { createItem } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
@@ -89,10 +89,10 @@ const ItemsCreatePage = ({ user }) => {
   };
 
   return (
-    <div className="items-edit-page">
+    <div className={styles['items-edit-page']}>
       <div className="page-header">
         <h1>'Add New Item'</h1>
-        <div className="header-actions">
+        <div className={styles['header-actions']}>
           <Button onClick={() => navigate('/items')} className="secondary">
             ← Back to Item
           </Button>
@@ -100,13 +100,13 @@ const ItemsCreatePage = ({ user }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="item-form">
-        <div className="form-sections">
+        <div className={styles['form-sections']}>
           {/* Basic Information */}
-          <div className="form-section">
+          <div className={styles['form-section']}>
             <h2>Basic Information</h2>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className={styles['form-row']}>
+              <div className={styles['form-group']}>
                 <label htmlFor="name">Item Name *</label>
                 <input
                   type="text"
@@ -132,7 +132,7 @@ const ItemsCreatePage = ({ user }) => {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className={styles['form-group']}>
                 <label htmlFor="values">Item Values</label>
                 <input
                   type="text"
@@ -144,7 +144,7 @@ const ItemsCreatePage = ({ user }) => {
               </div>
             </div>
 
-            <div className="form-group">
+            <div className={styles['form-group']}>
               <label htmlFor="details">Details</label>
               <textarea
                 id="details"
@@ -157,11 +157,11 @@ const ItemsCreatePage = ({ user }) => {
           </div>
 
           {/* Location and Status */}
-          <div className="form-section">
+          <div className={styles['form-section']}>
             <h2>Location and Status</h2>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className={styles['form-row']}>
+              <div className={styles['form-group']}>
                 <label htmlFor="location">Location</label>
                 <select
                   id="location"
@@ -175,7 +175,7 @@ const ItemsCreatePage = ({ user }) => {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className={styles['form-group']}>
                 <label htmlFor="status">Status</label>
                 <select
                   id="status"
@@ -190,7 +190,7 @@ const ItemsCreatePage = ({ user }) => {
                 </select>
               </div>
 
-              <div className="form-group">
+              <div className={styles['form-group']}>
                 <label htmlFor="quantity">Quantity</label>
                 <input
                   type="number"
@@ -201,7 +201,7 @@ const ItemsCreatePage = ({ user }) => {
               </div>
             </div>
 
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="image">Image URL</label>
               <input
                 type="url"
@@ -214,11 +214,11 @@ const ItemsCreatePage = ({ user }) => {
           </div>
 
           {/* Booking Settings */}
-          <div className="form-section">
+          <div className={styles.formSection}>
             <h2>Booking Settings</h2>
 
-            <div className="form-row">
-              <div className="form-group">
+            <div className={styles.formRow}>
+              <div className={styles.formGroup}>
                 <label htmlFor="deadline">Deadline (days)</label>
                 <input
                   type="number"
@@ -230,7 +230,7 @@ const ItemsCreatePage = ({ user }) => {
                 />
               </div>
 
-              <div className="form-group">
+              <div className={styles.formGroup}>
                 <label htmlFor="returnPolicy">Return Policy</label>
                 <select
                   id="returnPolicy"
@@ -248,10 +248,10 @@ const ItemsCreatePage = ({ user }) => {
           </div>
 
           {/* Additional Information */}
-          <div className="form-section">
+          <div className={styles.formSection}>
             <h2>Additional Information</h2>
 
-            <div className="form-group">
+            <div className={styles.formGroup}>
               <label htmlFor="maintenanceSchedule">Maintenance Schedule</label>
               <input
                 type="text"
@@ -264,7 +264,7 @@ const ItemsCreatePage = ({ user }) => {
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className={styles.formActions}>
           <Button type="button" onClick={() => navigate('/items')} className="secondary">
             Cancel
           </Button>
