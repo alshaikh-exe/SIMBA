@@ -108,9 +108,6 @@ export default function UserSignUpForm({ setUser }) {
         Sign Up
       </button>
 
-      <p className={styles.adminLink}>
-        <Link to="/admin">Sign In as Admin</Link>
-      </p>
     </form>
   );
 }
