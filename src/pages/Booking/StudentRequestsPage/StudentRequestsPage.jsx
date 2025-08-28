@@ -156,7 +156,7 @@ async function handleReject(order) {
                         Approve All
                       </button>
                       <button
-                        className={styles.dangerBtn}
+                        className={styles.primaryBtn}
                         onClick={() => handleReject(order)}
                       >
                         Reject Order
