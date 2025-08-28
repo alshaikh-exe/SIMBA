@@ -37,7 +37,7 @@ A comprehensive web application for managing item bookings, inventory, and maint
 
 ### 📊 Analytics & Reporting
 - Equipment utilization statistics
-- Usage heatmaps and peak time analysis
+- Peak time analysis
 - Maintenance scheduling and tracking
 
 ### 🛠️ Admin Features
