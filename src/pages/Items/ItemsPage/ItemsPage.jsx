@@ -5,8 +5,8 @@ import { getItems, addToCart } from '../../../utilities/items-api';
 import { Link } from 'react-router-dom';
 import ItemCard from "../../../components/Items/ItemCard";
 
-const ItemsPage = ({ user, setUser }) => {
-  const [items, setItems] = useState([]);
+const ItemsPage = ({ user, setUser, items, setItems }) => {
+  // const [items, setItems] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');

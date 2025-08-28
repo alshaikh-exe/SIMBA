@@ -6,7 +6,7 @@ import { createItem } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
-const ItemsCreatePage = ({ user }) => {
+const ItemsCreatePage = ({ user, items, setItems}) => {
   const navigate = useNavigate();
 
   const [locations, setLocations] = useState([])
@@ -81,6 +81,8 @@ const ItemsCreatePage = ({ user }) => {
 
     try {
       const response = await createItem(item)
+      const newItemsArray = new Set ([...items, response.data])
+      setItems(Array.from(newItemsArray))
       alert(`Item created successfully!`);
       navigate('/items');
     } catch (error) {

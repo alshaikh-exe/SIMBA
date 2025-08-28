@@ -23,6 +23,7 @@ import AnalyticsPage from '../pages/Analytics/AnalyticsPage/AnalyticsPage';
 
 const AppRouter = () => {
   const [user, setUser] = useState(getUser());
+  const [items, setItems] = useState([]);
 
   return (
     <Router>
@@ -44,10 +45,10 @@ const AppRouter = () => {
             <>
               <Route path="/analytics" element={<AnalyticsPage user={user} setUser={setUser} />} />
               <Route path="/profile" element={<ProfilePage user={user} setUser={setUser} />} /> 
-              <Route path="/items" element={<ItemsPage user={user} setUser={setUser} />} />
+              <Route path="/items" element={<ItemsPage user={user} setUser={setUser} items={items} setItems={setItems} />} />
               <Route path="/items/edit/:id" element={<ItemsEditPage user={user} setUser={setUser} />} />
               <Route path="/items/:id" element={<ItemsShowPage user={user} setUser={setUser} />} />
-              <Route path="/items/create" element={<ItemsCreatePage user={user} setUser={setUser} />} />
+              <Route path="/items/create" element={<ItemsCreatePage user={user} setUser={setUser} items={items} setItems={setItems}/>} />
               <Route path="/stock-request" element={<StockRequestPage user={user} setUser={setUser} />} />
               <Route path="/requests" element={<StudentRequestsPage user={user} setUser={setUser} />} />
               <Route path="/*" element={<Navigate to="/stock-request" />} />
