@@ -105,7 +105,6 @@ const ItemsPage = ({ user, setUser, items, setItems }) => {
 
   return (
     <main>
-      <h1>Items</h1>
       <div className="items-container">
         <div className="items-header">
           <h2>Items Catalog</h2>
