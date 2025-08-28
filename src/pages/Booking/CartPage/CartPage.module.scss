@@ -1,241 +1,173 @@
-//Zahraa
-// src/components/Booking/Cart/Cart.scss
-// .cart-container {
-//   padding: 2rem;
-//   max-width: 1000px;
-//   margin: 0 auto;
+.cart-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #e0e5ec;
+  border-radius: 30px;
+  box-shadow: 
+    20px 20px 60px #bec3cf,
+    -20px -20px 60px #ffffff;
+  transition: all 0.3s ease;
 
-//   .cart-header {
-//     margin-bottom: 2rem;
-//     text-align: center;
+  .cart-header {
+    text-align: center;
+    margin-bottom: 2rem;
 
-//     h2 {
-//       color: #2c3e50;
-//       font-size: 2rem;
-//       font-weight: 600;
-//       margin-bottom: 0.5rem;
-//     }
+    h2 {
+      color: #3d4468;
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
 
-//     p {
-//       color: #7f8c8d;
-//       font-size: 1.1rem;
-//     }
-//   }
+    p {
+      color: #9499b7;
+      font-size: 1rem;
+    }
+  }
 
-//   .empty-cart {
-//     text-align: center;
-//     padding: 4rem 2rem;
-//     background: white;
-//     border-radius: 12px;
-//     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  .cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 
-//     p {
-//       color: #7f8c8d;
-//       font-size: 1.1rem;
-//       margin-bottom: 1rem;
+    .cart-item {
+      background: #e0e5ec;
+      border-radius: 25px;
+      padding: 1.5rem;
+      box-shadow: 
+        8px 8px 20px #bec3cf,
+        -8px -8px 20px #ffffff;
+      transition: all 0.3s ease;
 
-//       &:first-child {
-//         font-size: 1.3rem;
-//         font-weight: 600;
-//         color: #2c3e50;
-//       }
-//     }
-//   }
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+          12px 12px 30px #bec3cf,
+          -12px -12px 30px #ffffff;
+      }
 
-//   .error-message {
-//     background-color: #fee;
-//     color: #c53030;
-//     padding: 1rem;
-//     border-radius: 8px;
-//     margin-bottom: 1rem;
-//     border: 1px solid #feb2b2;
-//   }
+      .item-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
 
-//   .success-message {
-//     background-color: #f0fff4;
-//     color: #22543d;
-//     padding: 1rem;
-//     border-radius: 8px;
-//     margin-bottom: 1rem;
-//     border: 1px solid #c6f6d5;
-//   }
+        label {
+          font-weight: 500;
+          color: #3d4468;
+        }
 
-//   .cart-items {
-//     display: flex;
-//     flex-direction: column;
-//     gap: 2rem;
-//     margin-bottom: 2rem;
+        .neu-input {
+          position: relative;
+          border-radius: 15px;
+          background: #e0e5ec;
+          box-shadow: inset 8px 8px 16px #bec3cf,
+                      inset -8px -8px 16px #ffffff;
+          transition: all 0.3s ease;
 
-//     .cart-item {
-//       background: white;
-//       border-radius: 12px;
-//       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-//       border: 1px solid #e1e8ed;
-//       overflow: hidden;
+          &:focus-within {
+            box-shadow: inset 4px 4px 8px #bec3cf,
+                        inset -4px -4px 8px #ffffff;
+          }
 
-//       .item-info {
-//         display: flex;
-//         padding: 1.5rem;
-//         border-bottom: 1px solid #e1e8ed;
+          input {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 15px;
+            outline: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #3d4468;
+          }
+        }
+      }
 
-//         .item-image {
-//           width: 100px;
-//           height: 100px;
-//           background: #f8f9fa;
-//           border-radius: 8px;
-//           display: flex;
-//           align-items: center;
-//           justify-content: center;
-//           overflow: hidden;
-//           margin-right: 1rem;
-//           flex-shrink: 0;
+      .item-actions {
+        margin-top: 1rem;
+        display: flex;
+        justify-content: flex-end;
 
-//           img {
-//             width: 100%;
-//             height: 100%;
-//             object-fit: cover;
-//           }
+        .neu-button {
+          padding: 12px 28px;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #3d4468;
+          border-radius: 15px;
+          border: none;
+          background: #e0e5ec;
+          cursor: pointer;
+          box-shadow: 8px 8px 20px #bec3cf,
+                      -8px -8px 20px #ffffff;
+          transition: all 0.3s ease;
 
-//           .no-image {
-//             color: #95a5a6;
-//             font-size: 0.8rem;
-//           }
-//         }
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 12px 12px 30px #bec3cf,
+                        -12px -12px 30px #ffffff;
+          }
 
-//         .item-details {
-//           flex: 1;
+          &:active {
+            box-shadow: inset 4px 4px 10px #bec3cf,
+                        inset -4px -4px 10px #ffffff;
+          }
+        }
+      }
 
-//           h3 {
-//             color: #2c3e50;
-//             font-size: 1.25rem;
-//             font-weight: 600;
-//             margin-bottom: 0.5rem;
-//           }
+      .selected-time {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 15px;
+        background: #e0e5ec;
+        box-shadow: inset 8px 8px 16px #bec3cf,
+                    inset -8px -8px 16px #ffffff;
 
-//           p {
-//             color: #7f8c8d;
-//             margin-bottom: 0.75rem;
-//             line-height: 1.4;
-//           }
+        p {
+          margin: 0.25rem 0;
+          color: #3d4468;
 
-//           .item-category {
-//             background: #ecf0f1;
-//             color: #2c3e50;
-//             padding: 0.25rem 0.75rem;
-//             border-radius: 20px;
-//             font-size: 0.875rem;
-//             font-weight: 500;
-//           }
-//         }
-//       }
+          strong {
+            color: #6c7293;
+          }
+        }
+      }
+    }
+  }
 
-//       .booking-section {
-//         padding: 1.5rem;
-//         border-bottom: 1px solid #e1e8ed;
+  .cart-summary {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-radius: 25px;
+    background: #e0e5ec;
+    box-shadow: 8px 8px 20px #bec3cf,
+                -8px -8px 20px #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 
-//         h4 {
-//           color: #2c3e50;
-//           margin-bottom: 1rem;
-//           font-size: 1.1rem;
-//           font-weight: 600;
-//         }
+    p {
+      font-size: 1rem;
+      color: #3d4468;
+      strong {
+        color: #6c7293;
+      }
+    }
+  }
+}
 
-//         .selected-time {
-//           margin-top: 1rem;
-//           padding: 1rem;
-//           background: #f8f9fa;
-//           border-radius: 8px;
-//           border: 1px solid #e1e8ed;
+/* Responsive */
+@media (max-width: 768px) {
+  .cart-container {
+    padding: 1rem;
 
-//           p {
-//             margin: 0.25rem 0;
-//             color: #2c3e50;
-
-//             strong {
-//               color: #34495e;
-//             }
-//           }
-//         }
-//       }
-
-//       .item-actions {
-//         padding: 1rem 1.5rem;
-//         display: flex;
-//         justify-content: flex-end;
-//       }
-//     }
-//   }
-
-//   .cart-summary {
-//     background: white;
-//     border-radius: 12px;
-//     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-//     border: 1px solid #e1e8ed;
-//     padding: 2rem;
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     gap: 2rem;
-
-//     .summary-details {
-//       flex: 1;
-
-//       h3 {
-//         color: #2c3e50;
-//         font-size: 1.3rem;
-//         font-weight: 600;
-//         margin-bottom: 1rem;
-//       }
-
-//       p {
-//         color: #7f8c8d;
-//         margin: 0.5rem 0;
-//         font-size: 1rem;
-
-//         strong {
-//           color: #2c3e50;
-//         }
-//       }
-//     }
-//   }
-// }
-
-// // Responsive design
-// @media (max-width: 768px) {
-//   .cart-container {
-//     padding: 1rem;
-
-//     .cart-items {
-//       .cart-item {
-//         .item-info {
-//           flex-direction: column;
-//           padding: 1rem;
-
-//           .item-image {
-//             align-self: center;
-//             margin-right: 0;
-//             margin-bottom: 1rem;
-//           }
-//         }
-
-//         .booking-section {
-//           padding: 1rem;
-//         }
-
-//         .item-actions {
-//           padding: 1rem;
-//         }
-//       }
-//     }
-
-//     .cart-summary {
-//       flex-direction: column;
-//       text-align: center;
-//       padding: 1.5rem;
-
-//       .summary-details {
-//         margin-bottom: 1rem;
-//       }
-//     }
-//   }
-// }
+    .cart-items {
+      .cart-item {
+        .item-actions .neu-button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
