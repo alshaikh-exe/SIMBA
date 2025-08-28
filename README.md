@@ -2,7 +2,7 @@
 
 A comprehensive web application for managing item bookings, inventory, and maintenance in engineering labs, workshops, and makerspaces.
 
-![Home Page Screenshot](./src/assets/SIMBAPIC.png) 
+<img width="700" height="700" alt="SIMBA" src="https://github.com/user-attachments/assets/12b6e9d3-c021-4fa9-b947-8b7c126114db" />
 
 ## 👥 Team Roles
 
