@@ -2,6 +2,8 @@
 
 A comprehensive web application for managing item bookings, inventory, and maintenance in engineering labs, workshops, and makerspaces.
 
+![Home Page Screenshot](./src/assets/SIMBAPIC.png) 
+
 ## 👥 Team Roles
 
 - **Project Manager & GitHub Manager**: Abdulla Alshaikh - Owned the repository, managed releases, and coordinated merges.
@@ -332,6 +334,63 @@ The application uses SCSS Modules for component-level styling with:
 - Modern, clean interface
 
 ## 🚀 Deployment
-## Production Build
-```bash
-npm run build
+
+### Render Deployment Setup
+
+#### Connect your repository to Render
+1. Link your GitHub repository to Render
+2. Set up automatic deployments on push to main branch
+
+#### Environment Variables in Render
+- Set `NODE_ENV=production`
+- Configure production MongoDB Atlas connection string
+- Set up proper JWT secret for production
+- Configure CORS for your production domain
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Database Connection Issues
+- Verify MongoDB connection string
+- Check if MongoDB instance is running
+
+#### Authentication Problems
+- Ensure JWT secret is set
+- Verify token expiration settings
+
+#### CORS Errors
+- Check CORS configuration in server setup
+- Verify frontend URL is included in allowed origins
+
+#### Build Failures
+- Ensure all dependencies are installed
+- Check for environment variable requirements
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+For support and questions:
+- Create an issue in the GitHub repository
+- Contact the development team
+- Check the documentation
+
+## 🙏 Acknowledgments
+
+- React team for the amazing framework
+- MongoDB for the robust database solution
+- Vite for the fast build tooling
+- All contributors and testers
+
+**SIMBA** - Making equipment management smarter and more efficient for educational institutions and makerspaces worldwide. 🚀
