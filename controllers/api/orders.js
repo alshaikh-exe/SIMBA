@@ -1,3 +1,5 @@
+// controllers/orders/apiController.js (merged)
+
 import mongoose from "mongoose";
 import Order from "../../models/order.js";
 import Item from "../../models/item.js";
@@ -11,6 +13,8 @@ const clampDays = (n) => {
   return x;
 };
 
+// ---------------- CART ACTIONS ----------------
+
 // GET /api/orders/cart
 export async function getCart(req, res) {
   try {
@@ -18,7 +22,9 @@ export async function getCart(req, res) {
     await cart.populate("lineItems.item");
     res.status(200).json({ success: true, data: cart });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
   }
 }
 
@@ -26,16 +32,25 @@ export async function getCart(req, res) {
 export async function addToCart(req, res) {
   try {
     const { itemId } = req.body;
-    if (!Types.ObjectId.isValid(itemId)) return res.status(400).json({ success: false, message: "Invalid itemId" });
+    if (!Types.ObjectId.isValid(itemId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid itemId" });
+
     const exists = await Item.findById(itemId).select("_id");
-    if (!exists) return res.status(404).json({ success: false, message: "Item not found" });
+    if (!exists)
+      return res
+        .status(404)
+        .json({ success: false, message: "Item not found" });
 
     const cart = await Order.getCart(req.user._id);
     await cart.addItemToCart(itemId);
     await cart.populate("lineItems.item");
     res.status(200).json({ success: true, data: cart });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
   }
 }
 
@@ -44,16 +59,46 @@ export async function setCartQty(req, res) {
   try {
     const { itemId } = req.params;
     const { qty } = req.body;
-    if (!Types.ObjectId.isValid(itemId)) return res.status(400).json({ success: false, message: "Invalid itemId" });
+    if (!Types.ObjectId.isValid(itemId))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid itemId" });
 
     const cart = await Order.getCart(req.user._id);
     await cart.setItemQty(itemId, Math.max(0, Number(qty)));
     await cart.populate("lineItems.item");
     res.status(200).json({ success: true, data: cart });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
   }
 }
+
+// POST /api/orders/set-dates  { pickupDate, returnDate }
+export async function setCartDates(req, res) {
+  try {
+    const { pickupDate, returnDate } = req.body;
+    if (!pickupDate || !returnDate) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Both dates required" });
+    }
+
+    const cart = await Order.getCart(req.user._id);
+    cart.pickupDate = new Date(pickupDate);
+    cart.returnDate = new Date(returnDate);
+    await cart.save();
+
+    res.status(200).json({ success: true, data: cart });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
+  }
+}
+
+// ---------------- ORDER ACTIONS ----------------
 
 /**
  * POST /api/orders/submit
@@ -63,19 +108,32 @@ export async function submit(req, res) {
   try {
     const { lines = [], notes } = req.body;
     if (!Array.isArray(lines) || !lines.length) {
-      return res.status(400).json({ success: false, message: "lines is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "lines is required" });
     }
 
     const cart = await Order.getCart(req.user._id);
-    if (!cart.lineItems.length) return res.status(400).json({ success: false, message: "Cart is empty" });
+    if (!cart.lineItems.length)
+      return res
+        .status(400)
+        .json({ success: false, message: "Cart is empty" });
 
     // attach requestedDays to each cart line
     for (const li of cart.lineItems) {
       const match = lines.find((x) => x.item && li.item.equals(x.item));
-      if (!match) return res.status(400).json({ success: false, message: "Each line needs requestedDays" });
+      if (!match)
+        return res.status(400).json({
+          success: false,
+          message: "Each line needs requestedDays",
+        });
 
       const days = clampDays(match.requestedDays);
-      if (!days) return res.status(400).json({ success: false, message: "requestedDays must be 1..50" });
+      if (!days)
+        return res.status(400).json({
+          success: false,
+          message: "requestedDays must be 1..50",
+        });
 
       li.requestedDays = days;
       li.decision = "pending";
@@ -85,14 +143,20 @@ export async function submit(req, res) {
     }
 
     cart.status = "requested";
-    if (typeof notes === "string" && notes.trim()) cart.message = cart.message || undefined;
+    if (typeof notes === "string" && notes.trim()) {
+      cart.message = notes.trim(); // store notes (fix from your friend's version)
+    }
     await cart.save();
 
     res.status(200).json({ success: true, data: cart });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
   }
 }
+
+// ---------------- APPROVAL ACTIONS ----------------
 
 /**
  * PUT /api/orders/:id/approve  (admin)
@@ -101,12 +165,20 @@ export async function submit(req, res) {
 export async function approve(req, res) {
   try {
     const { id } = req.params;
-    if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid id" });
+    if (!Types.ObjectId.isValid(id))
+      return res.status(400).json({ success: false, message: "Invalid id" });
 
     const order = await Order.findById(id);
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+
     if (order.status !== "requested") {
-      return res.status(400).json({ success: false, message: "Only requested orders can be approved/rejected" });
+      return res.status(400).json({
+        success: false,
+        message: "Only requested orders can be approved/rejected",
+      });
     }
 
     const { decisions = [], reject = false } = req.body;
@@ -129,14 +201,22 @@ export async function approve(req, res) {
     for (const li of order.lineItems) {
       const d = decisions.find((x) => x.item && li.item.equals(x.item));
       if (!d || !["return", "keep"].includes(d.decision)) {
-        return res.status(400).json({ success: false, message: "Each line needs decision: return or keep" });
+        return res.status(400).json({
+          success: false,
+          message: "Each line needs decision: return or keep",
+        });
       }
 
       li.decision = d.decision;
 
       if (d.decision === "return") {
-        let days = clampDays(d.approvedDays ?? li.requestedDays);
-        if (!days) return res.status(400).json({ success: false, message: "approvedDays/requestedDays must be 1..50" });
+        const days = clampDays(d.approvedDays ?? li.requestedDays);
+        if (!days)
+          return res.status(400).json({
+            success: false,
+            message: "approvedDays/requestedDays must be 1..50",
+          });
+
         li.approvedDays = days;
         li.dueAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
         li.status = "open";
@@ -152,24 +232,79 @@ export async function approve(req, res) {
     order.approvedAt = new Date();
     await order.save();
 
-    await order.populate("lineItems.item").populate("user", "name email");
+    await order.populate([
+      { path: "lineItems.item" },
+      { path: "user", select: "name email" },
+    ]);
+
     res.status(200).json({ success: true, data: order });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
   }
 }
+
+// ---------------- QUERY ACTIONS ----------------
 
 // GET /api/orders/:id
 export async function show(req, res) {
   try {
     const { id } = req.params;
-    if (!Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid id" });
-    const order = await Order.findById(id).populate("lineItems.item").populate("user", "name email");
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!Types.ObjectId.isValid(id))
+      return res.status(400).json({ success: false, message: "Invalid id" });
+
+    const order = await Order.findById(id)
+      .populate("lineItems.item")
+      .populate("user", "name email");
+
+    if (!order)
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+
     res.status(200).json({ success: true, data: order });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message || "Server error" });
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
   }
 }
 
-export default { getCart, addToCart, setCartQty, submit, approve, show };
+// GET /api/orders
+// - Students: only their own orders
+// - Admins: all orders, or only requested via ?scope=requested
+export async function index(req, res) {
+  try {
+    const isAdmin = req.user?.role === "admin";
+    const { scope } = req.query; // 'requested' | 'all' | undefined
+
+    const filter = isAdmin
+      ? scope === "requested"
+        ? { status: "requested" }
+        : {}
+      : { user: req.user._id };
+
+    const orders = await Order.find(filter)
+      .populate("lineItems.item")
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, data: orders });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, message: err.message || "Server error" });
+  }
+}
+
+export default {
+  getCart,
+  addToCart,
+  setCartQty,
+  setCartDates,
+  submit,
+  approve,
+  show,
+  index,
+};

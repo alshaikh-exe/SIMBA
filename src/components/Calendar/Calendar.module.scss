@@ -1,0 +1,158 @@
+/* src/components/Calendar/AdminCalendar.module.scss */
+
+/* Theme */
+$bg-page: #f3f6fb;
+$card: #ffffff;
+$ink: #3d4468;
+$muted: #6c7293;
+$accent: #5f7cff;          // electronics blue
+$accent-2: #20c6b7;        // soft cyan accent
+$shadow-d: 20px 20px 60px #d6dbe6;
+$shadow-l: -20px -20px 60px #ffffff;
+
+.wrap {
+  padding: 24px 16px 40px;
+  background:
+    radial-gradient(900px 420px at 70% 0%, #fff 0%, $bg-page 60%),
+    linear-gradient(135deg, #fff 0%, $bg-page 100%);
+  border-radius: 24px;
+}
+
+.head {
+  max-width: 1160px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.title {
+  margin: 0;
+  color: $ink;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: .2px;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 84px;
+    height: 4px;
+    border-radius: 999px;
+    margin-top: .45rem;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,.08), transparent);
+  }
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: $muted;
+  font-size: .92rem;
+
+  .dot {
+    width: 10px; height: 10px; border-radius: 999px;
+    display: inline-block; margin-right: 6px;
+    box-shadow: 0 0 0 3px rgba(0,0,0,.04) inset;
+
+    &[data-variant="pickup"] { background: #39a067; }
+    &[data-variant="return"] { background: #cf4a4a; }
+  }
+}
+
+/* Calendar card */
+.card {
+  max-width: 1160px;
+  margin: 0 auto;
+  background: $card;
+  border-radius: 24px;
+  box-shadow: $shadow-d, $shadow-l;
+  outline: 1px solid rgba(0,0,0,.03);
+  padding: 10px 12px 12px;
+}
+
+/* --- Overrides for react-big-calendar --- */
+.calendar {
+  /* header area */
+  .rbc-toolbar {
+    color: $ink;
+    margin: 4px 4px 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    .rbc-toolbar-label {
+      font-weight: 800;
+      color: $ink;
+      letter-spacing: .2px;
+    }
+
+    .rbc-btn-group > button {
+      background: transparent;
+      border: 1px solid rgba(0,0,0,.08);
+      color: $ink;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 700;
+      transition: background .18s ease, border-color .18s ease, transform .06s ease;
+
+      &:hover {
+        background: rgba(95, 124, 255, .08);
+        border-color: rgba(95, 124, 255, .35);
+      }
+      &.rbc-active,
+      &:focus {
+        background: linear-gradient(180deg, rgba(95,124,255,.16), rgba(95,124,255,.08));
+        border-color: rgba(95,124,255,.65);
+        box-shadow: 0 0 0 3px rgba(95,124,255,.14);
+      }
+      &:active { transform: translateY(1px); }
+    }
+  }
+
+  /* grid */
+  .rbc-time-view, .rbc-month-view {
+    border: 0;
+  }
+
+  .rbc-month-row {
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
+  .rbc-header {
+    padding: 8px 0;
+    color: $muted;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+    background: linear-gradient(180deg, #fafcff, #f5f7fd);
+  }
+
+  /* today highlight */
+  .rbc-today {
+    background: linear-gradient(180deg, rgba(32,198,183,.08), rgba(95,124,255,.06));
+  }
+
+  /* event pills are styled via eventPropGetter; add interactions here */
+  .rbc-event {
+    border-radius: 12px;
+    padding: 2px 8px;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: .2px;
+    transition: transform .06s ease, box-shadow .18s ease;
+    &:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.12); }
+  }
+  .rbc-event-content {
+    font-size: .85rem;
+  }
+
+  /* selection */
+  .rbc-selected-cell { background: rgba(95,124,255,.08); }
+  .rbc-slot-selection { background: rgba(95,124,255,.1); color: $ink; }
+}
+
+/* responsive */
+@media (max-width: 540px) {
+  .title { font-size: 1.35rem; }
+  .card { padding: 6px; border-radius: 18px; }
+}

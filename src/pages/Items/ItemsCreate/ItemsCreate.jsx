@@ -1,12 +1,12 @@
 //Zahraa
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ItemsCreate.module.scss';
-import { createItem } from '../../../utilities/items-api'
+import '../ItemsCreate/ItemsCreate.module.scss';
+import { createItem, getItems } from '../../../utilities/items-api'
 import { getLocations } from '../../../utilities/location-api';
 import Button from '../../../components/Button/Button';
 
-const ItemsCreatePage = ({ user, items, setItems}) => {
+const ItemsCreatePage = ({ user, items, setItems }) => {
   const navigate = useNavigate();
 
   const [locations, setLocations] = useState([])
@@ -81,8 +81,8 @@ const ItemsCreatePage = ({ user, items, setItems}) => {
 
     try {
       const response = await createItem(item)
-      const newItemsArray = new Set ([...items, response.data])
-      setItems(Array.from(newItemsArray))
+      const newItemsArray = await getItems()
+      setItems(newItemsArray)
       alert(`Item created successfully!`);
       navigate('/items');
     } catch (error) {

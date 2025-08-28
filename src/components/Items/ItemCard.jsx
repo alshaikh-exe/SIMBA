@@ -9,7 +9,7 @@ export default function Items({ user, item, loading, handleAddToCart }) {
   return (
     <div key={item._id} className="item-card">
             <div className="item-image">
-            <img src={item.picture} alt={item.name} />
+            <img src={item.image} alt={item.name} />
             </div>
 
             <div className="item-info">

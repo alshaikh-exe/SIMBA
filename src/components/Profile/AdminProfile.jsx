@@ -36,7 +36,7 @@ export default function AdminProfile() {
     setLoading(true);
     try {
       await updateAdminAvailability(availability);
-      setAdmin(prev => ({ ...prev, adminAvailability: availability }));
+      setAdmin((prev) => ({ ...prev, adminAvailability: availability }));
       setSaved(true);
       setTimeout(() => setSaved(false), 1600);
     } catch (err) {

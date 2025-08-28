@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { getItems, addToCart } from '../../../utilities/items-api';
 import { Link } from 'react-router-dom';
 import ItemCard from "../../../components/Items/ItemCard";
+import '../ItemsPage/Items.module.scss';
 
 const ItemsPage = ({ user, setUser, items, setItems }) => {
   // const [items, setItems] = useState([]);
@@ -124,7 +125,7 @@ const ItemsPage = ({ user, setUser, items, setItems }) => {
 
         <div className="items-grid">
           {filteredItems.map(item => (
-            <ItemCard user={user} item={item} loading={loading} handleAddToCart={handleAddToCart} />
+ <ItemCard key={item._id} user={user} item={item} loading={loading} handleAddToCart={handleAddToCart} />
           ))}
         </div>
 

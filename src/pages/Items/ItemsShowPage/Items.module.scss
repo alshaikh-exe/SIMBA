@@ -1,496 +1,115 @@
-//Zahraa
-// .items-show-page {
-//   max-width: 1000px;
-//   margin: 0 auto;
-//   padding: 2rem;
+/* ItemShow.module.scss — soft white / electronics-blue theme */
 
-//   .loading, .not-found {
-//     text-align: center;
-//     padding: 4rem;
-    
-//     h2 {
-//       color: #333;
-//       margin-bottom: 2rem;
-//     }
-    
-//     .loading {
-//       font-size: 1.2rem;
-//       color: #666;
-//     }
-//   }
+$bg: #f3f6fb;
+$card: #ffffff;
+$ink: #3d4468;
+$muted: #6c7293;
+$accent: #5f7cff;
 
-//   .page-header {
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     margin-bottom: 2rem;
-    
-//     @media (max-width: 768px) {
-//       flex-direction: column;
-//       gap: 1rem;
-//       align-items: flex-start;
-//     }
-//   }
+$shadow-d: 20px 20px 60px #d6dbe6;
+$shadow-l: -20px -20px 60px #ffffff;
 
-//   .equipment-details {
-//     .equipment-main {
-//       display: grid;
-//       grid-template-columns: 300px 1fr;
-//       gap: 2rem;
-//       margin-bottom: 2rem;
-      
-//       @media (max-width: 768px) {
-//         grid-template-columns: 1fr;
-//       }
+/* Page canvas */
+.item-show {
+  max-width: 1100px;
+  margin: 20px auto 48px;
+  padding: 0 16px 8px;
+  color: $ink;
 
-//       .equipment-image {
-//         position: relative;
-        
-//         img {
-//           width: 100%;
-//           height: 300px;
-//           object-fit: cover;
-//           border-radius: 12px;
-//           box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-//         }
-        
-//         .placeholder-image {
-//           width: 100%;
-//           height: 300px;
-//           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-//           border-radius: 12px;
-//           display: flex;
-//           align-items: center;
-//           justify-content: center;
-//           box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-          
-//           .equipment-icon {
-//             font-size: 4rem;
-//           }
-//         }
-        
-//         .status-badge {
-//           position: absolute;
-//           top: 1rem;
-//           left: 1rem;
-//           padding: 0.5rem 1rem;
-//           border-radius: 20px;
-//           font-size: 0.9rem;
-//           font-weight: 500;
-//           backdrop-filter: blur(10px);
-          
-//           &.status-green {
-//             background: rgba(76, 175, 80, 0.9);
-//             color: white;
-//           }
-          
-//           &.status-blue {
-//             background: rgba(33, 150, 243, 0.9);
-//             color: white;
-//           }
-          
-//           &.status-orange {
-//             background: rgba(245, 124, 0, 0.9);
-//             color: white;
-//           }
-          
-//           &.status-red {
-//             background: rgba(244, 67, 54, 0.9);
-//             color: white;
-//           }
-          
-//           .status-icon {
-//             margin-right: 0.5rem;
-//           }
-//         }
-//       }
+  background:
+    radial-gradient(1000px 480px at 70% 0%, #fff 0%, $bg 60%),
+    linear-gradient(135deg, #fff 0%, $bg 100%);
 
-//       .equipment-info {
-//         .equipment-header {
-//           display: flex;
-//           justify-content: space-between;
-//           align-items: flex-start;
-//           margin-bottom: 1.5rem;
-          
-//           h1 {
-//             font-size: 2rem;
-//             color: #333;
-//             margin: 0;
-//             line-height: 1.2;
-//           }
-          
-//           .equipment-category {
-//             background: #f0f0f0;
-//             color: #666;
-//             padding: 0.5rem 1rem;
-//             border-radius: 20px;
-//             font-size: 0.9rem;
-//             white-space: nowrap;
-//           }
-//         }
-        
-//         .equipment-meta {
-//           margin-bottom: 2rem;
-          
-//           .meta-item {
-//             display: flex;
-//             align-items: center;
-//             gap: 0.75rem;
-//             margin-bottom: 0.75rem;
-//             font-size: 1rem;
-            
-//             .meta-icon {
-//               width: 20px;
-//               font-size: 1.1rem;
-//             }
-//           }
-//         }
-        
-//         .equipment-description {
-//           margin-bottom: 1.5rem;
-          
-//           h3 {
-//             color: #333;
-//             margin-bottom: 0.75rem;
-//             font-size: 1.1rem;
-//           }
-          
-//           p {
-//             color: #666;
-//             line-height: 1.6;
-//             font-size: 1rem;
-//           }
-//         }
-        
-//         .approval-notice {
-//           display: flex;
-//           align-items: center;
-//           gap: 0.75rem;
-//           background: #fff3e0;
-//           color: #f57c00;
-//           padding: 1rem;
-//           border-radius: 8px;
-//           font-weight: 500;
-          
-//           .approval-icon {
-//             flex-shrink: 0;
-//             font-size: 1.2rem;
-//           }
-//         }
-//       }
-//     }
+  /* Title */
+  > h1 {
+    margin: 10px 0 16px;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: .2px;
 
-//     .specifications-section,
-//     .instructions-section,
-//     .safety-section {
-//       background: white;
-//       border-radius: 12px;
-//       padding: 2rem;
-//       margin-bottom: 2rem;
-//       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-//       border: 1px solid #e0e0e0;
-      
-//       h3 {
-//         color: #333;
-//         margin-bottom: 1.5rem;
-//         font-size: 1.25rem;
-//         padding-bottom: 0.5rem;
-//         border-bottom: 2px solid #f0f0f0;
-//       }
-      
-//       .specifications-grid {
-//         display: grid;
-//         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-//         gap: 1rem;
-        
-//         .specification-item {
-//           display: flex;
-//           flex-direction: column;
-//           gap: 0.25rem;
-//           padding: 0.75rem;
-//           background: #f8f9fa;
-//           border-radius: 8px;
-          
-//           .spec-key {
-//             font-weight: 600;
-//             color: #333;
-//             font-size: 0.9rem;
-//           }
-          
-//           .spec-value {
-//             color: #666;
-//             font-size: 1rem;
-//           }
-//         }
-//       }
-      
-//       .instructions-content,
-//       .safety-content {
-//         p {
-//           color: #666;
-//           line-height: 1.6;
-//           font-size: 1rem;
-//         }
-//       }
-//     }
+    &::after {
+      content: "";
+      display: block;
+      width: 96px; height: 4px;
+      margin-top: .5rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,.08), transparent);
+    }
+  }
 
-//     .safety-section {
-//       border-left: 4px solid #ff5722;
-      
-//       h3 {
-//         color: #d84315;
-//       }
-//     }
+  /* Lead image as a soft card */
+  > img {
+    display: block;
+    width: min(100%, 360px);
+    max-height: 260px;
+    object-fit: contain;
+    background: #f7f9ff;
+    border-radius: 16px;
+    padding: 12px;
+    margin: 10px 0 18px;
+    box-shadow: $shadow-d, $shadow-l;
+    outline: 1px solid rgba(0,0,0,.03);
+  }
 
-//     .booking-actions {
-//       background: white;
-//       border-radius: 12px;
-//       padding: 2rem;
-//       margin-bottom: 2rem;
-//       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-//       border: 1px solid #e0e0e0;
-      
-//       .action-buttons {
-//         display: flex;
-//         gap: 1rem;
-//         margin-bottom: 1.5rem;
-        
-//         @media (max-width: 768px) {
-//           flex-direction: column;
-//         }
-        
-//         button {
-//           padding: 1rem 2rem;
-//           font-weight: 500;
-//           font-size: 1rem;
-          
-//           &:disabled {
-//             opacity: 0.6;
-//             cursor: not-allowed;
-//           }
-//         }
-//       }
-      
-//       .quick-booking-form {
-//         border-top: 1px solid #e0e0e0;
-//         padding-top: 2rem;
-        
-//         h3 {
-//           color: #333;
-//           margin-bottom: 1.5rem;
-//           font-size: 1.1rem;
-//         }
-        
-//         .booking-form-content {
-//           display: grid;
-//           gap: 1.5rem;
-          
-//           .quantity-control {
-//             label {
-//               display: block;
-//               font-weight: 500;
-//               margin-bottom: 0.5rem;
-//               color: #333;
-//             }
-            
-//             .quantity-input {
-//               display: flex;
-//               align-items: center;
-//               gap: 0.75rem;
-              
-//               button {
-//                 width: 40px;
-//                 height: 40px;
-//                 border: 1px solid #ddd;
-//                 background: white;
-//                 border-radius: 8px;
-//                 cursor: pointer;
-//                 display: flex;
-//                 align-items: center;
-//                 justify-content: center;
-//                 font-size: 1.2rem;
-                
-//                 &:hover:not(:disabled) {
-//                   background: #f5f5f5;
-//                 }
-                
-//                 &:disabled {
-//                   opacity: 0.5;
-//                   cursor: not-allowed;
-//                 }
-//               }
-              
-//               span {
-//                 min-width: 40px;
-//                 text-align: center;
-//                 font-weight: 500;
-//                 font-size: 1.1rem;
-//               }
-//             }
-//           }
-          
-//           .date-selection,
-//           .time-selection {
-//             label {
-//               display: block;
-//               font-weight: 500;
-//               margin-bottom: 0.5rem;
-//               color: #333;
-//             }
-//           }
-          
-//           .time-select {
-//             width: 100%;
-//             padding: 0.75rem;
-//             border: 1px solid #ddd;
-//             border-radius: 8px;
-//             font-size: 1rem;
-//             background: white;
-            
-//             &:focus {
-//               outline: none;
-//               border-color: #667eea;
-//               box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-//             }
-//           }
-          
-//           .notes-section {
-//             label {
-//               display: block;
-//               font-weight: 500;
-//               margin-bottom: 0.5rem;
-//               color: #333;
-//             }
-            
-//             textarea {
-//               width: 100%;
-//               padding: 0.75rem;
-//               border: 1px solid #ddd;
-//               border-radius: 8px;
-//               font-family: inherit;
-//               resize: vertical;
-//               min-height: 80px;
-              
-//               &:focus {
-//                 outline: none;
-//                 border-color: #667eea;
-//                 box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-//               }
-              
-//               &::placeholder {
-//                 color: #999;
-//               }
-//             }
-//           }
-          
-//           .booking-form-actions {
-//             display: flex;
-//             gap: 1rem;
-//             justify-content: flex-end;
-            
-//             @media (max-width: 768px) {
-//               flex-direction: column-reverse;
-//             }
-            
-//             button {
-//               padding: 0.75rem 1.5rem;
-//               font-weight: 500;
-              
-//               &:disabled {
-//                 opacity: 0.6;
-//                 cursor: not-allowed;
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
+  /* Content blocks */
+  > section {
+    background: $card;
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin: 12px 0;
+    box-shadow: $shadow-d, $shadow-l;
+    outline: 1px solid rgba(0,0,0,.03);
 
-//     .booking-history {
-//       background: white;
-//       border-radius: 12px;
-//       padding: 2rem;
-//       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-//       border: 1px solid #e0e0e0;
-      
-//       h3 {
-//         color: #333;
-//         margin-bottom: 1.5rem;
-//         font-size: 1.25rem;
-//         padding-bottom: 0.5rem;
-//         border-bottom: 2px solid #f0f0f0;
-//       }
-      
-//       .booking-list {
-//         .booking-item {
-//           display: flex;
-//           justify-content: space-between;
-//           align-items: center;
-//           padding: 1rem;
-//           border-bottom: 1px solid #f0f0f0;
-          
-//           &:last-child {
-//             border-bottom: none;
-//           }
-          
-//           @media (max-width: 768px) {
-//             flex-direction: column;
-//             align-items: flex-start;
-//             gap: 0.5rem;
-//           }
-          
-//           .booking-user {
-//             font-weight: 500;
-//             color: #333;
-//           }
-          
-//           .booking-date {
-//             color: #666;
-//             font-size: 0.9rem;
-//           }
-          
-//           .booking-status {
-//             padding: 0.25rem 0.75rem;
-//             border-radius: 12px;
-//             font-size: 0.8rem;
-//             font-weight: 500;
-            
-//             &.status-green {
-//               background: #e8f5e8;
-//               color: #2e7d32;
-//             }
-            
-//             &.status-blue {
-//               background: #e3f2fd;
-//               color: #1976d2;
-//             }
-            
-//             &.status-orange {
-//               background: #fff3e0;
-//               color: #f57c00;
-//             }
-            
-//             &.status-red {
-//               background: #ffebee;
-//               color: #c62828;
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: .2px;
+      color: $ink;
+    }
 
-//   @media (max-width: 768px) {
-//     padding: 1rem;
-    
-//     .equipment-details {
-//       .specifications-section,
-//       .instructions-section,
-//       .safety-section,
-//       .booking-actions,
-//       .booking-history {
-//         padding: 1.5rem;
-//       }
-//     }
-//   }
-// }
+    p { margin: 6px 0; color: $ink; }
+  }
+
+  /* Datasheet list */
+  section ul {
+    margin: 6px 0 0 16px;
+    padding: 0;
+    li {
+      margin: 6px 0;
+      a {
+        color: $accent;
+        text-decoration: none;
+        font-weight: 700;
+        &:hover { text-decoration: underline; }
+      }
+    }
+  }
+
+  /* Bottom controls: primary Button + back Button + (admin) Edit link */
+  /* Turn the trailing top-level link (Edit Item) into a pill */
+  > a {
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 12px;
+    text-decoration: none;
+    color: $ink;
+    background: #eef2ff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 700;
+    transition: background .18s ease, border-color .18s ease, transform .06s ease;
+
+    &:hover { background: rgba(95,124,255,.12); border-color: rgba(0,0,0,.18); }
+    &:active { transform: translateY(1px); }
+  }
+}
+
+/* Small screens */
+@media (max-width: 540px) {
+  .item-show {
+    > img { width: 100%; max-height: 220px; }
+    > section { padding: 14px 14px; }
+  }
+}
