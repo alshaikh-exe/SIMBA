@@ -7,7 +7,7 @@ import StudentRequests from "../../../components/Booking/StudentRequests/Student
 const StudentRequestsPage = ({ user, setUser }) => {
   return (
     <main style={{ padding: "1rem" }}>
-      <h1>Student Requests</h1>
+
       <StudentRequests user={user} />
     </main>
   );
