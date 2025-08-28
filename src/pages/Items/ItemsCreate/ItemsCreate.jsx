@@ -81,8 +81,8 @@ const ItemsCreatePage = ({ user, items, setItems }) => {
 
     try {
       const response = await createItem(item)
-      const newItemsArray = await getItems()
-      setItems(newItemsArray)
+      // const newItemsArray = await getItems()
+      // setItems(newItemsArray)
       alert(`Item created successfully!`);
       navigate('/items');
     } catch (error) {

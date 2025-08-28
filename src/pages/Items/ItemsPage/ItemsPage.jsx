@@ -124,7 +124,7 @@ const ItemsPage = ({ user, setUser, items, setItems }) => {
         {error && <div className="error-message">{error}</div>}
 
         <div className="items-grid">
-          {filteredItems.map(item => (
+          {filteredItems?.map(item => (
  <ItemCard key={item._id} user={user} item={item} loading={loading} handleAddToCart={handleAddToCart} />
           ))}
         </div>
