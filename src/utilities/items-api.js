@@ -1,5 +1,6 @@
 //Zahraa
 // src/utilities/item-api.js
+import sendRequest from './send-request';
 
 const BASE_URL = '/api';
 
@@ -533,3 +534,9 @@ export const addToCart = async (itemId) => {
 //     cache.clear();
 //   }
 // };
+export const getLowStock = (threshold) => {
+  const url = `/api/items/low-stock${Number.isFinite(threshold) ? `?threshold=${threshold}` : ''}`;
+  console.log('[items-api:getLowStock-HARDCODED]', { module: import.meta.url, url });
+  return sendRequest(url, 'GET');
+};
+
