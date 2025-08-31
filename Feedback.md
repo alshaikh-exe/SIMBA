@@ -1,4 +1,5 @@
 # SIMBA Repository Audit: Feedback and Action Plan
+<img width="2560" height="1440" alt="SimbaTeam" src="https://github.com/user-attachments/assets/ee4ad92f-1126-42a2-b3d5-b34f4671b203" />
 
 ## 1. Executive Summary
 
